@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "88149493204",
+    "project_id": "jobee-80f0a",
+    "storage_bucket": "jobee-80f0a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:88149493204:android:fefc966a150dd96458c241",
+        "android_client_info": {
+          "package_name": "com.jobee.jobee"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "88149493204-qv8h59bqnvg8a24gnllh1hqb0t8eb1mo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.jobee.jobee",
+            "certificate_hash": "5129e183468cdbcc7e658b1b92dc6a14efe40976"
+          }
+        },
+        {
+          "client_id": "88149493204-al6cktc6so6g297dno2fq030pj71bjuh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDwVZuqAJL4ioMOhcBudos8qdvIKGjvKwo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "88149493204-al6cktc6so6g297dno2fq030pj71bjuh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
