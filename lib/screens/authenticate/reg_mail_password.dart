@@ -29,12 +29,20 @@ class _RegMailPasswordState extends State<RegMailPassword> {
   Widget build(BuildContext context) {
     return loading ? Loading() :
     Scaffold(
-      //extendBodyBehindAppBar: true,
       resizeToAvoidBottomInset: false,
-      backgroundColor: Colors.amber[600],
+      backgroundColor: paletteColors["cream"],
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0.0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          color: Colors.black,
+          splashColor: paletteColors["orange"].withAlpha(0x5F),
+          highlightColor: paletteColors["orange"].withAlpha(0x5F),
+          onPressed: () {
+            Navigator.pushReplacementNamed(context, '/authenticate');
+          },
+        ),
+        backgroundColor: paletteColors["cream"],
+        elevation: 1.0,
         title: Text(
           "Register to Jobee",
           style: TextStyle(
@@ -42,83 +50,68 @@ class _RegMailPasswordState extends State<RegMailPassword> {
           ),
         ),
         actions: <Widget>[
-          TextButton.icon(
-            icon: Icon(
-              Icons.person,
-              color: Colors.black,
-            ),
-            label: Text(
-              "Login",
-              style: TextStyle(
-                color: Colors.black,
-              ),
-            ),
-            onPressed: () {
-              widget.toggleView();
-            },
-          ),
+          appBarTextIcon("Log In", Icons.person, Colors.black, () {
+            widget.toggleView();
+          }),
         ],
       ),
-      body: SizedBox.expand(
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 80.0, horizontal: 50.0),
-          // setting BackGround Image
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage('assets/net-honeycomb-pattern.jpg'),
-              fit: BoxFit.cover,
-            ),
-          ),
-          child: Form(
-            key: _formKey,
-            child: SingleChildScrollView(
-              child: Column(
-                children: <Widget>[
-                  SizedBox(height: 20.0),
-                  TextFormField(
-                    decoration: textInputDecoration.copyWith(hintText: 'Email'),
-                    validator: (val) => val.isEmpty ? "Enter an e-mail" : null,
-                    onChanged: (val) { setState(() => email = val); },
+      body: Container(
+        padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
+        child: Form(
+          key: _formKey,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                SizedBox(height: 20.0),
+                TextFormField(
+                  decoration: textInputDecoration.copyWith(hintText: 'Email'),
+                  validator: (val) => val.isEmpty ? "Enter an e-mail" : null,
+                  onChanged: (val) { setState(() => email = val); },
+                ),
+                SizedBox(height: 20.0),
+                TextFormField(
+                  decoration: textInputDecoration.copyWith(hintText: 'Password'),
+                  obscureText: true,
+                  validator: (val) => val.length <= 6
+                      ?"Enter a password with more than 6 characters"
+                      :null,
+                  onChanged: (val) { setState(() => password = val); },
+                ),
+                SizedBox(height: 20.0),
+                ElevatedButton(
+                  style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                              (Set<MaterialState> states) => Colors.orange),
+                      overlayColor: MaterialStateProperty.all(paletteColors["yellow1"].withAlpha(0x5F))
                   ),
-                  SizedBox(height: 20.0),
-                  TextFormField(
-                    decoration: textInputDecoration.copyWith(hintText: 'Password'),
-                    obscureText: true,
-                    validator: (val) => val.length <= 6
-                        ?"Enter a password with more than 6 characters"
-                        :null,
-                    onChanged: (val) { setState(() => password = val); },
+                  child: Text(
+                    'Register',
+                    style: TextStyle(color: Colors.white),
                   ),
-                  SizedBox(height: 20.0),
-                  ElevatedButton(
-                    style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                                (Set<MaterialState> states) => Colors.pinkAccent)
-                    ),
-                    child: Text(
-                      'Register',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    onPressed: () async {
-                      if (_formKey.currentState.validate()) {
-                        setState(() => loading = true);
-                        dynamic result = await _auth.registerWithEmailAndPassword(email, password);
-                        if (result==null) {
-                          setState(() {
-                            error = 'Please provide a valid email.';
-                            loading = false;
-                          });
-                        }
+                  onPressed: () async {
+                    if (_formKey.currentState.validate()) {
+                      setState(() => loading = true);
+                      dynamic result = await _auth.registerWithEmailAndPassword(email, password);
+                      if (result==null) {
+                        setState(() {
+                          error = 'Please provide a valid email.';
+                          loading = false;
+                        });
                       }
-                    },
+                    }
+                  },
+                ),
+                SizedBox(height: 12.0),
+                Text(
+                  error,
+                  style: TextStyle(
+                      color: Colors.red,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14.0
                   ),
-                  SizedBox(height: 12.0),
-                  Text(
-                    error,
-                    style: TextStyle(color: Colors.red, fontSize: 14.0),
-                  )
-                ],
-              ),
+                )
+              ],
             ),
           ),
         ),

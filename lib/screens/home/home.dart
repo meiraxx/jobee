@@ -3,6 +3,7 @@ import 'package:jobee/models/job.dart';
 import 'package:jobee/services/auth.dart';
 import 'package:jobee/services/database.dart';
 import 'package:provider/provider.dart';
+import 'package:jobee/shared/constants.dart';
 
 class Home extends StatelessWidget {
 
@@ -24,50 +25,26 @@ class Home extends StatelessWidget {
       initialData: [],
       value: DatabaseService().jobs,
       child: Scaffold(
-        backgroundColor: Colors.brown[50],
+        backgroundColor: paletteColors["cream"],
         appBar: AppBar(
-          title: Text("jobee"),
-          backgroundColor: Colors.brown[400],
-          elevation: 0.0,
+          title: Text(
+            "Jobee",
+            style: TextStyle(color: Colors.black),
+          ),
+          backgroundColor: paletteColors["cream"],
+          elevation: 1.0,
           actions: <Widget>[
-            TextButton.icon(
-              icon: Icon(
-                Icons.person,
-                color: Colors.limeAccent[100],
-              ),
-              label: Text(
-                "Logout",
-                style: TextStyle(color: Colors.limeAccent[100]),
-              ),
-              onPressed: () async {
-                await _auth.signOut();
-                print("User logged out.");
-              },
-            ),
-            TextButton.icon(
-                onPressed: () => _showSettingsPanel(),
-                icon: Icon(
-                  Icons.settings,
-                  color: Colors.limeAccent[100],
-                ),
-                label: Text(
-                  'Settings',
-                  style: TextStyle(
-                    color: Colors.limeAccent[100],
-                  ),
-                ),
-            ),
+            appBarTextIcon("Logout", Icons.person, Colors.black, () async {
+              await _auth.signOut();
+            }),
+          appBarTextIcon("Logout", Icons.person, Colors.black, () async {
+            _showSettingsPanel();
+          }),
           ],
         ),
         body: Container(
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage('assets/net-honeycomb-pattern.jpg'),
-              fit: BoxFit.cover,
-            ),
-          ),
           child: Container(
-
+            // adadadada
           ),
         ),
       ),

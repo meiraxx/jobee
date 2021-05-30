@@ -5,6 +5,7 @@ import 'authenticate/authenticate.dart';
 import 'home/home.dart';
 
 class Wrapper extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<AppUser>(context);
