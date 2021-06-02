@@ -3,6 +3,7 @@ import 'package:jobee/screens/authenticate/auth_mail_password.dart';
 import 'package:jobee/screens/authenticate/authenticate.dart';
 import 'package:jobee/screens/authenticate/reg_mail_password.dart';
 import 'package:jobee/screens/home/home.dart';
+import 'package:jobee/screens/loading/loading.dart';
 import 'package:jobee/screens/wrapper.dart';
 import 'package:jobee/services/auth.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +20,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return StreamProvider<AppUser>.value(
+    return StreamProvider<AppUser?>.value(
       initialData: null,
       value: AuthService().user,
       child: MaterialApp(

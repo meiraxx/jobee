@@ -34,12 +34,13 @@ class Home extends StatelessWidget {
           backgroundColor: paletteColors["cream"],
           elevation: 1.0,
           actions: <Widget>[
-            appBarTextIcon("Logout", Icons.person, Colors.black, () async {
+
+            appBarButton(text: "Logout", iconData: Icons.person, color: Colors.black, onPressedFunction: () async {
               await _auth.signOut();
             }),
-          appBarTextIcon("Logout", Icons.person, Colors.black, () async {
-            _showSettingsPanel();
-          }),
+            appBarButton(text: "Settings", iconData: Icons.settings, color: Colors.black,  onPressedFunction: () async {
+              _showSettingsPanel();
+            }),
           ],
         ),
         body: Container(

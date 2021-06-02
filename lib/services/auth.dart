@@ -6,22 +6,29 @@ class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   // create User object based on UserCredential
-  AppUser _appUserFromFirebaseUser(User user) {
-    return user!=null ? AppUser(uid: user.uid) : null;
+  AppUser _appUserFromFirebaseUser(User? user) {
+    return AppUser(uid: user!.uid);
   }
 
   // auth change user stream
-  Stream<AppUser> get user {
-    return _auth.authStateChanges()
-      .map((User user) => _appUserFromFirebaseUser(user));
+  Stream<AppUser?> get user {
+    return _auth.authStateChanges().map( (User? user) {
+
+      // return null to activate "authenticate"
+      if (user == null) {
+        return null;
+      }
+
+      return _appUserFromFirebaseUser(user);
+    });
   }
 
   // sign-in anonymously
   Future signInAnon() async {
     try {
       UserCredential userCredential = await _auth.signInAnonymously();
-      User user = userCredential.user;
-      return _appUserFromFirebaseUser(user);
+      User? user = userCredential.user;
+      return _appUserFromFirebaseUser(user!);
     } catch (e) {
       print(e);
       return null;
@@ -33,8 +40,8 @@ class AuthService {
     try {
       UserCredential userCredential = await _auth.signInWithEmailAndPassword
         (email: email, password: password);
-      User user = userCredential.user;
-      return _appUserFromFirebaseUser(user);
+      User? user = userCredential.user;
+      return _appUserFromFirebaseUser(user!);
     } catch(e){
       print(e);
       return null;
@@ -46,10 +53,10 @@ class AuthService {
     try {
       UserCredential userCredential = await _auth.createUserWithEmailAndPassword
         (email: email, password: password);
-      User user = userCredential.user;
+      User? user = userCredential.user;
 
       // create a new document for the user with the uid
-      await DatabaseService(uid: user.uid).updateUserData('0', 'new crew member', 100);
+      await DatabaseService(uid: user!.uid).updateUserData('0', 'new crew member', 100);
       return _appUserFromFirebaseUser(user);
     } catch(e){
       print(e);

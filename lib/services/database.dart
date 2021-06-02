@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DatabaseService {
   // uid
-  final String uid;
+  final String? uid;
   // collection reference
   final CollectionReference jobCollection = FirebaseFirestore.instance.collection("jobs");
 
@@ -28,8 +28,8 @@ class DatabaseService {
   // userData from snapshot
   AppUserData _appUserDataFromSnapshot(DocumentSnapshot snapshot) {
     return AppUserData(
-      uid: uid,
-      name: snapshot.data()['name']
+      uid: uid!,
+      name: snapshot.data()!['name']
     );
   }
 

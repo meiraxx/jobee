@@ -3,7 +3,7 @@ import 'package:jobee/models/job.dart';
 
 class JobTile extends StatelessWidget {
 
-  final Job job;
+  final Job? job;
 
   JobTile({ this.job });
 
@@ -18,7 +18,7 @@ class JobTile extends StatelessWidget {
             radius: 25.0,
             backgroundImage: AssetImage('assets/coffee_icon.png'),
           ),
-          title: Text(job.name),
+          title: Text(job!.name!),
           subtitle: Text('This job, located in ..., consists on ...'),
         ),
       ),

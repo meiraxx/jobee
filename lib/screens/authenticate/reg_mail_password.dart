@@ -6,7 +6,7 @@ import 'package:jobee/shared/loading.dart';
 class RegMailPassword extends StatefulWidget {
   final Function toggleView;
 
-  RegMailPassword({ this.toggleView });
+  RegMailPassword({ required this.toggleView });
 
   @override
   _RegMailPasswordState createState() => _RegMailPasswordState();
@@ -32,15 +32,9 @@ class _RegMailPasswordState extends State<RegMailPassword> {
       resizeToAvoidBottomInset: false,
       backgroundColor: paletteColors["cream"],
       appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          color: Colors.black,
-          splashColor: paletteColors["orange"].withAlpha(0x5F),
-          highlightColor: paletteColors["orange"].withAlpha(0x5F),
-          onPressed: () {
-            Navigator.pushReplacementNamed(context, '/authenticate');
-          },
-        ),
+        leading: appBarButton(iconData: Icons.arrow_back, color: Colors.black, onPressedFunction: () {
+          Navigator.pushReplacementNamed(context, '/authenticate');
+        }),
         backgroundColor: paletteColors["cream"],
         elevation: 1.0,
         title: Text(
@@ -48,73 +42,86 @@ class _RegMailPasswordState extends State<RegMailPassword> {
           style: TextStyle(
             color: Colors.black,
           ),
-        ),
-        actions: <Widget>[
-          appBarTextIcon("Log In", Icons.person, Colors.black, () {
-            widget.toggleView();
-          }),
-        ],
+        )
       ),
-      body: Container(
-        padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
-        child: Form(
-          key: _formKey,
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                SizedBox(height: 20.0),
-                TextFormField(
-                  decoration: textInputDecoration.copyWith(hintText: 'Email'),
-                  validator: (val) => val.isEmpty ? "Enter an e-mail" : null,
-                  onChanged: (val) { setState(() => email = val); },
-                ),
-                SizedBox(height: 20.0),
-                TextFormField(
-                  decoration: textInputDecoration.copyWith(hintText: 'Password'),
-                  obscureText: true,
-                  validator: (val) => val.length <= 6
-                      ?"Enter a password with more than 6 characters"
-                      :null,
-                  onChanged: (val) { setState(() => password = val); },
-                ),
-                SizedBox(height: 20.0),
-                ElevatedButton(
-                  style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                              (Set<MaterialState> states) => Colors.orange),
-                      overlayColor: MaterialStateProperty.all(paletteColors["yellow1"].withAlpha(0x5F))
+      body: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  SizedBox(height: 20.0),
+                  TextFormField(
+                    decoration: textInputDecoration.copyWith(hintText: 'Email'),
+                    validator: (val) => val!.isEmpty ? "Enter an e-mail" : null,
+                    onChanged: (val) { setState(() => email = val); },
                   ),
-                  child: Text(
-                    'Register',
-                    style: TextStyle(color: Colors.white),
+                  SizedBox(height: 20.0),
+                  TextFormField(
+                    decoration: textInputDecoration.copyWith(hintText: 'Password'),
+                    obscureText: true,
+                    validator: (val) => val!.length <= 6
+                        ?"Enter a password with more than 6 characters"
+                        :null,
+                    onChanged: (val) { setState(() => password = val); },
                   ),
-                  onPressed: () async {
-                    if (_formKey.currentState.validate()) {
-                      setState(() => loading = true);
-                      dynamic result = await _auth.registerWithEmailAndPassword(email, password);
-                      if (result==null) {
-                        setState(() {
-                          error = 'Please provide a valid email.';
-                          loading = false;
-                        });
+                  SizedBox(height: 20.0),
+                  ElevatedButton(
+                    style: orangeElevatedButtonStyle,
+                    child: Text(
+                      'Register',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    onPressed: () async {
+                      if (_formKey.currentState!.validate()) {
+                        setState(() => loading = true);
+                        dynamic result = await _auth.registerWithEmailAndPassword(email, password);
+                        if (result==null) {
+                          setState(() {
+                            error = 'Please provide a valid email.';
+                            loading = false;
+                          });
+                        }
                       }
-                    }
-                  },
-                ),
-                SizedBox(height: 12.0),
-                Text(
-                  error,
-                  style: TextStyle(
-                      color: Colors.red,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14.0
+                    },
                   ),
-                )
-              ],
+                  SizedBox(height: 12.0),
+                  Text(
+                    error,
+                    style: TextStyle(
+                        color: Colors.red,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14.0
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
-        ),
+          SizedBox(height: 260.0),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              Text(
+                "Already have an account?",
+                style: TextStyle(color: Colors.black),
+              ),
+              TextButton(
+                style: ButtonStyle( overlayColor: MaterialStateProperty.all(Colors.transparent) ),
+                child: Text(
+                  "Sign In",
+                  style: TextStyle(color: Colors.blue),
+                ),
+                onPressed: () {
+                  widget.toggleView();
+                },
+              )
+            ],
+          )
+        ],
       ),
     );
   }

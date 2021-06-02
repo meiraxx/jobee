@@ -1,6 +1,6 @@
 class Job {
   final String name;
 
-  Job({ this.name });
+  Job({ required this.name });
 
 }

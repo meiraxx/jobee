@@ -26,20 +26,55 @@ const InputDecoration textInputDecoration = InputDecoration(
   ),
 );
 
+Widget appBarButton({ String? text, IconData? iconData, required Color color, required Function() onPressedFunction }) {
+  assert(text!=null || iconData!=null);
 
-TextButton appBarTextIcon(String text, IconData iconData, Color color, Function onPressedFunction) {
+  // only TextButton
+  if ( iconData == null && text != null ) {
+    return TextButton(
+      child: Text(
+        text,
+        style: TextStyle(color: color),
+      ),
+      style: ButtonStyle(
+        overlayColor: MaterialStateProperty.all(paletteColors["brown"]!.withAlpha(0x1F)),
+      ),
+      onPressed: onPressedFunction,
+    );
+  }
+
+  // only IconButton
+  if ( text == null && iconData != null ) {
+    return IconButton(
+      icon: Icon(
+        iconData,
+        color: color,
+      ),
+      highlightColor: paletteColors["brown"]!.withAlpha(0x1F),
+      splashColor: paletteColors["brown"]!.withAlpha(0x1F),
+      onPressed: onPressedFunction,
+    );
+  }
+
+  // if all arguments are provided
   return TextButton.icon(
     icon: Icon(
       iconData,
       color: color,
     ),
     label: Text(
-      text,
+      text!,
       style: TextStyle(color: color),
     ),
     style: ButtonStyle(
-      overlayColor: MaterialStateProperty.all(paletteColors["orange"].withAlpha(0x5F)),
+      overlayColor: MaterialStateProperty.all(paletteColors["brown"]!.withAlpha(0x1F)),
     ),
     onPressed: onPressedFunction,
   );
 }
+
+ButtonStyle orangeElevatedButtonStyle = ButtonStyle(
+    backgroundColor: MaterialStateProperty.resolveWith<Color?>(
+            (Set<MaterialState> states) => paletteColors["orange"]),
+    overlayColor: MaterialStateProperty.all(paletteColors["yellow1"]!.withAlpha(0x5F))
+);
