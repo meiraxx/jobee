@@ -3,6 +3,7 @@ import 'package:jobee/screens/authenticate/reg_mail_password.dart';
 import 'package:jobee/screens/authenticate/auth_mail_password.dart';
 import 'package:jobee/shared/constants.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'google_sign_in_button.dart';
 
 class Authenticate extends StatefulWidget {
   @override
@@ -13,32 +14,14 @@ class _AuthenticateState extends State<Authenticate> {
   bool? showSignIn;
 
   void toggleView() {
-    print(showSignIn);
     setState( () => showSignIn = !(showSignIn!) );
   }
-
-  GoogleSignIn _googleSignIn = GoogleSignIn(
-    scopes: [
-      'email',
-      'https://www.googleapis.com/auth/contacts.readonly',
-    ],
-  );
-
-  Future<void> _handleSignIn() async {
-    try {
-      await _googleSignIn.signIn();
-    } catch (error) {
-      print(error);
-    }
-  }
-
-  Future<void> _handleSignOut() => _googleSignIn.disconnect();
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     precacheImage(
-      AssetImage("images/higher-quality/dude-call.png"),
+      AssetImage("images/dude-call.png"),
       context,
       size: Size(
         MediaQuery.of(context).size.width,
@@ -55,7 +38,6 @@ class _AuthenticateState extends State<Authenticate> {
     const double paddingBottom1 = 0.0;
     MediaQueryData queryData = MediaQuery.of(context);
     final Color? orRectangleColor = Colors.grey[600];
-    GoogleSignInAccount? _currentUser;
 
     if (showSignIn != null) {
       return (showSignIn!)?AuthMailPassword(toggleView: toggleView):RegMailPassword(toggleView: toggleView);
@@ -71,10 +53,12 @@ class _AuthenticateState extends State<Authenticate> {
             Container(
               color: paletteColors["cream"],
               child: Image.asset(
-                "images/higher-quality/dude-call.png",
+                "images/dude-call.png",
                 semanticLabel: "Businessman negotiating with a client",
                 width: queryData.size.width,
                 height: 232,
+                cacheWidth: 1500,
+                cacheHeight: 846,
                 fit: BoxFit.cover,
               ),
             ),
@@ -121,9 +105,6 @@ class _AuthenticateState extends State<Authenticate> {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(4.0),
                           color: paletteColors["orange"],
-                          /*boxShadow: [
-                            BoxShadow(color: Colors.grey[400], spreadRadius: 0.20, blurRadius: 0.0001),
-                          ],*/
                         ),
                         child: Padding(
                           padding: EdgeInsets.fromLTRB(4.0, 4.0, 10.0, 4.0),
@@ -152,8 +133,8 @@ class _AuthenticateState extends State<Authenticate> {
                               Text(
                                 "Create account",
                                 style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w500
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600
                                 ),
                               ),
                             ],
@@ -210,57 +191,7 @@ class _AuthenticateState extends State<Authenticate> {
                   SizedBox(height: 24.0),
                   // - Google Sign In
                   Center(
-                    child: InkWell(
-                      onTap: () {
-                        _handleSignIn();
-                      },
-                      overlayColor: MaterialStateProperty.all(Colors.lightBlueAccent.withAlpha(0x5F)),
-                      highlightColor: Colors.lightBlueAccent.withAlpha(0x5F),
-                      child: Ink(
-                        //color: Color(0xFF397AF3),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(4.0),
-                          color: Color(0xFF397AF3),
-                          /*boxShadow: [
-                            BoxShadow(color: Colors.grey[400], spreadRadius: 0.20, blurRadius: 0.0001),
-                          ],*/
-                        ),
-                        child: Padding(
-                          padding: EdgeInsets.fromLTRB(4.0, 4.0, 10.0, 4.0),
-                          child: Wrap(
-                            crossAxisAlignment: WrapCrossAlignment.center,
-                            children: <Widget>[
-                              SizedBox(
-                                width: 30.0,
-                                height: 30.0,
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(4.0),
-                                    color: Colors.white,
-                                  ),
-                                  child: Image.asset(
-                                    "images/google-logo-1080x1080.png",
-                                    semanticLabel: "Google logo",
-                                    width: 24.0, // default icon width
-                                    height: 24.0, // default icon height
-                                    //fit: BoxFit.scaleDown,
-                                    //alignment: FractionalOffset.center,
-                                  ),
-                                ),
-                              ),
-                              SizedBox(width: 12.0),
-                              Text(
-                                "Sign In with your Google account",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w500
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
+                    child: GoogleSignInButton(),
                   ),
                   SizedBox(height: 77.0),
                   // - Sign In Text
@@ -274,11 +205,10 @@ class _AuthenticateState extends State<Authenticate> {
                       TextButton(
                         style: ButtonStyle( overlayColor: MaterialStateProperty.all(Colors.transparent) ),
                         child: Text(
-                          "Sign In",
+                          "Sign in",
                           style: TextStyle(color: Colors.blue),
                         ),
                         onPressed: () {
-                          print("HI!2");
                           setState(() => showSignIn = true);
                         },
                       )

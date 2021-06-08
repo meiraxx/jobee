@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:jobee/models/job.dart';
+import 'package:jobee/models/profile.dart';
 
-class JobTile extends StatelessWidget {
+class ProfileTile extends StatelessWidget {
 
-  final Job? job;
+  final Profile? job;
 
-  JobTile({ this.job });
+  ProfileTile({ this.job });
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +18,7 @@ class JobTile extends StatelessWidget {
             radius: 25.0,
             backgroundImage: AssetImage('assets/coffee_icon.png'),
           ),
-          title: Text(job!.name!),
+          title: Text(job!.name),
           subtitle: Text('This job, located in ..., consists on ...'),
         ),
       ),

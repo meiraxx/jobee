@@ -1,18 +1,16 @@
 import 'package:jobee/models/app_user.dart';
-import 'package:jobee/screens/authenticate/auth_mail_password.dart';
 import 'package:jobee/screens/authenticate/authenticate.dart';
-import 'package:jobee/screens/authenticate/reg_mail_password.dart';
 import 'package:jobee/screens/home/home.dart';
-import 'package:jobee/screens/loading/loading.dart';
+import 'package:jobee/screens/profile/profile_screen.dart';
 import 'package:jobee/screens/wrapper.dart';
 import 'package:jobee/services/auth.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/cupertino.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await AuthService.initializeFirebaseApp();
   runApp(MyApp());
 }
 
@@ -20,15 +18,21 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    var routes = {
+      '/': (BuildContext context) => Wrapper(),
+      '/authenticate': (BuildContext context) => Authenticate(),
+      '/home': (BuildContext context) => Home(),
+      '/profile': (BuildContext context) => ProfileScreen(),
+    };
+
     return StreamProvider<AppUser?>.value(
       initialData: null,
-      value: AuthService().user,
+      value: AuthService.user,
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         initialRoute: '/',
-        routes: {
-          '/': (context) => Wrapper(),
-          '/authenticate': (context) => Authenticate(),
-          '/home': (context) => Home(),
+        onGenerateRoute: (RouteSettings settings) {
+          return CupertinoPageRoute(builder: (BuildContext context) => routes[settings.name]!(context));
         }
       ),
     );

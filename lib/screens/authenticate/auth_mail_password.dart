@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:jobee/services/auth.dart';
 import 'package:jobee/shared/constants.dart';
@@ -13,8 +14,6 @@ class AuthMailPassword extends StatefulWidget {
 }
 
 class _AuthMailPasswordState extends State<AuthMailPassword> {
-
-  final AuthService _auth = AuthService();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool loading = false;
 
@@ -24,6 +23,9 @@ class _AuthMailPasswordState extends State<AuthMailPassword> {
 
   // error state
   String error = '';
+  double errorSizedBoxHeight1 = 20.0;
+  double errorSizedBoxHeight2 = 20.0;
+  double errorSizedBoxHeight3 = 12.0;
 
   @override
   Widget build(BuildContext context) {
@@ -56,45 +58,78 @@ class _AuthMailPasswordState extends State<AuthMailPassword> {
                   SizedBox(height: 20.0),
                   TextFormField(
                     decoration: textInputDecoration.copyWith(hintText: 'Email'),
-                    validator: (val) => val!.isEmpty ? "Enter an email" : null,
+                    validator: (val) {
+                      if (val!.isEmpty) {
+                        setState(() {
+                          errorSizedBoxHeight1 = 9.0;
+                        });
+                        return "Enter an email";
+                      } else {
+                        setState(() {
+                          errorSizedBoxHeight1 = 20.0;
+                        });
+                        return null;
+                      }
+                    },
                     onChanged: (val) { setState(() => email = val); },
                   ),
-                  SizedBox(height: 20.0),
+                  SizedBox(height: errorSizedBoxHeight1),
                   TextFormField(
                     decoration: textInputDecoration.copyWith(hintText: 'Password'),
                     obscureText: true,
-                    validator: (val) => val!.length < 8
-                        ?"Enter a password with at least 8 characters"
-                        :null,
+                    validator: (val) {
+                      if (val!.length < 8) {
+                        setState(() {
+                          errorSizedBoxHeight2 = 9.0;
+                        });
+                        return "Enter a password with at least 8 characters";
+                      } else {
+                        setState(() {
+                          errorSizedBoxHeight2 = 20.0;
+                        });
+                        return null;
+                      }
+                    },
                     onChanged: (val) { setState(() => password = val); },
                   ),
-                  SizedBox(height: 20.0),
+                  SizedBox(height: errorSizedBoxHeight2),
                   ElevatedButton(
                     style: orangeElevatedButtonStyle,
                     child: Text(
-                      'Log In',
-                      style: TextStyle(color: Colors.white),
+                      'Login',
+                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
                     ),
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
+                        // while logging in, set loading to true
                         setState(() => loading = true);
-                        dynamic result = await _auth.loginWithEmailAndPassword(email, password);
-                        if (result==null) {
+                        try {
+                          await AuthService.loginWithEmailAndPassword(email, password);
+                        } on FirebaseAuthException catch (e) {
                           setState(() {
-                            error = 'The email and/or password provided are incorrect.';
-                            loading = false;
+                            if (e.message == "The email address is badly formatted.") {
+                              error = e.message!;
+                            } else {
+                              // This ELSE condition merges two conditions, for security reasons:
+                              // 1 - e.message == "There is no user record corresponding to this identifier. The user may have been deleted."
+                              // 2 - e.message == "The password is invalid or the user does not have a password."
+                              error = 'The email and/or password provided are incorrect.';
+                            }
+                            errorSizedBoxHeight3 = 0.0;
                           });
                         }
+                        // after everything is done, set loading back to false
+                        setState(() => loading = false);
                       }
                     },
                   ),
-                  SizedBox(height: 12.0),
+                  SizedBox(height: errorSizedBoxHeight3),
                   Text(
                     error,
                     style: TextStyle(
                         color: Colors.red,
                         fontWeight: FontWeight.bold,
-                        fontSize: 14.0
+                        fontSize: 12.0
                     ),
                   ),
                 ],
@@ -112,7 +147,7 @@ class _AuthMailPasswordState extends State<AuthMailPassword> {
               TextButton(
                 style: ButtonStyle( overlayColor: MaterialStateProperty.all(Colors.transparent) ),
                 child: Text(
-                  "Register",
+                  'Register',
                   style: TextStyle(color: Colors.blue),
                 ),
                 onPressed: () {

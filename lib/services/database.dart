@@ -1,25 +1,40 @@
 import 'package:jobee/models/app_user.dart';
-import 'package:jobee/models/job.dart';
+import 'package:jobee/models/profile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DatabaseService {
   // uid
   final String? uid;
   // collection reference
-  final CollectionReference jobCollection = FirebaseFirestore.instance.collection("jobs");
+  final CollectionReference profileCollection = FirebaseFirestore.instance.collection("profiles");
 
   DatabaseService({ this.uid });
 
-  Future updateUserData(String sugars, String name, int strength) async {
-    return await jobCollection.doc(uid).set({
-      'name': name
+  Future<void> createUserData(String email, String authProvider) async {
+    DocumentSnapshot ds = await profileCollection.doc(uid).get();
+    if (ds.exists) {
+      return null;
+    }
+
+    await profileCollection.doc(uid).set({
+      'email': email,
+      'authProvider': authProvider
     });
   }
 
-  // brew list from snapshot
-  List<Job> _brewListFromSnapshot(QuerySnapshot snapshot) {
+  Future<void> updateUserData(String email, String authProvider, String name, String gender) async {
+    await profileCollection.doc(uid).update({
+      'email': email,
+      'authProvider': authProvider,
+      'name': name,
+      'gender': gender
+    });
+  }
+
+  // profile list from snapshot
+  List<Profile> _profileListFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.docs.map((doc) {
-      return Job(
+      return Profile(
           name: doc.data()['name'] ?? ''
       );
     }).toList();
@@ -29,19 +44,20 @@ class DatabaseService {
   AppUserData _appUserDataFromSnapshot(DocumentSnapshot snapshot) {
     return AppUserData(
       uid: uid!,
+      email: snapshot.data()!['email'],
       name: snapshot.data()!['name']
     );
   }
 
 
   // get brews stream
-  Stream<List<Job>> get jobs {
-    return jobCollection.snapshots().map(_brewListFromSnapshot);
+  Stream<List<Profile>> get profiles {
+    return profileCollection.snapshots().map(_profileListFromSnapshot);
   }
 
   // get user doc stream
   Stream<AppUserData> get appUserData {
-    return jobCollection.doc(uid).snapshots().map( (snapshot) {
+    return profileCollection.doc(uid).snapshots().map( (snapshot) {
       return _appUserDataFromSnapshot(snapshot);
     });
   }

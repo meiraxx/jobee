@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:jobee/models/app_user.dart';
 import 'package:jobee/services/auth.dart';
 import 'package:jobee/shared/constants.dart';
 import 'package:jobee/shared/loading.dart';
@@ -13,8 +15,6 @@ class RegMailPassword extends StatefulWidget {
 }
 
 class _RegMailPasswordState extends State<RegMailPassword> {
-
-  final AuthService _auth = AuthService();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool loading = false;
 
@@ -24,6 +24,9 @@ class _RegMailPasswordState extends State<RegMailPassword> {
 
   // error state
   String error = '';
+  double errorSizedBoxHeight1 = 20.0;
+  double errorSizedBoxHeight2 = 20.0;
+  double errorSizedBoxHeight3 = 12.0;
 
   @override
   Widget build(BuildContext context) {
@@ -56,45 +59,69 @@ class _RegMailPasswordState extends State<RegMailPassword> {
                   SizedBox(height: 20.0),
                   TextFormField(
                     decoration: textInputDecoration.copyWith(hintText: 'Email'),
-                    validator: (val) => val!.isEmpty ? "Enter an e-mail" : null,
+                    validator: (val) {
+                      if (val!.isEmpty) {
+                        setState(() {
+                          errorSizedBoxHeight1 = 9.0;
+                        });
+                        return "Enter an email";
+                      } else {
+                        setState(() {
+                          errorSizedBoxHeight1 = 20.0;
+                        });
+                        return null;
+                      }
+                    },
                     onChanged: (val) { setState(() => email = val); },
                   ),
-                  SizedBox(height: 20.0),
+                  SizedBox(height: errorSizedBoxHeight1),
                   TextFormField(
                     decoration: textInputDecoration.copyWith(hintText: 'Password'),
                     obscureText: true,
-                    validator: (val) => val!.length <= 6
-                        ?"Enter a password with more than 6 characters"
-                        :null,
+                    validator: (val) {
+                      if (val!.length < 8) {
+                        setState(() {
+                          errorSizedBoxHeight2 = 9.0;
+                        });
+                        return "Enter a password with at least 8 characters";
+                      } else {
+                        setState(() {
+                          errorSizedBoxHeight2 = 20.0;
+                        });
+                        return null;
+                      }
+                    },
                     onChanged: (val) { setState(() => password = val); },
                   ),
-                  SizedBox(height: 20.0),
+                  SizedBox(height: errorSizedBoxHeight2),
                   ElevatedButton(
                     style: orangeElevatedButtonStyle,
                     child: Text(
                       'Register',
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
                     ),
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
                         setState(() => loading = true);
-                        dynamic result = await _auth.registerWithEmailAndPassword(email, password);
-                        if (result==null) {
+                        try {
+                          await AuthService.registerWithEmailAndPassword(email, password);
+                        } on FirebaseAuthException catch (e) {
                           setState(() {
-                            error = 'Please provide a valid email.';
+                            error = e.message!;
                             loading = false;
+                            errorSizedBoxHeight3 = 0.0;
                           });
                         }
                       }
                     },
                   ),
-                  SizedBox(height: 12.0),
+                  SizedBox(height: errorSizedBoxHeight3),
                   Text(
                     error,
                     style: TextStyle(
                         color: Colors.red,
                         fontWeight: FontWeight.bold,
-                        fontSize: 14.0
+                        fontSize: 12.0
                     ),
                   )
                 ],
@@ -112,7 +139,7 @@ class _RegMailPasswordState extends State<RegMailPassword> {
               TextButton(
                 style: ButtonStyle( overlayColor: MaterialStateProperty.all(Colors.transparent) ),
                 child: Text(
-                  "Sign In",
+                  "Sign in",
                   style: TextStyle(color: Colors.blue),
                 ),
                 onPressed: () {

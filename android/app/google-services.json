@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "88149493204-eubulb2v3qng86f8n6hcbageeh7iancb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.jobee.jobee",
+            "certificate_hash": "3876665fc4dd20ad0b44fc62df719bafb050e10b"
+          }
+        },
+        {
           "client_id": "88149493204-qv8h59bqnvg8a24gnllh1hqb0t8eb1mo.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

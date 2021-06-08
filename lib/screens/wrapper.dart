@@ -8,12 +8,18 @@ class Wrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    /// Choose between Authenticate or Home widget
+    ///
+    /// @param context BuildContext object.
+    /// @returns either the Authenticate() or the Home() screen.
     final AppUser? user = Provider.of<AppUser?>(context);
 
-    // return either Authenticate or Home widget
+    // maintain user in the authentication part of the app tree while login is not performed
     if (user == null) {
       return Authenticate();
-    } else {
+    }
+    // when login is performed, allows access to the app
+    else {
       return Home();
     }
   }
