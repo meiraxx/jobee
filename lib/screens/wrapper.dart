@@ -12,10 +12,10 @@ class Wrapper extends StatelessWidget {
     ///
     /// @param context BuildContext object.
     /// @returns either the Authenticate() or the Home() screen.
-    final AppUser? user = Provider.of<AppUser?>(context);
+    final AppUser? appUser = Provider.of<AppUser?>(context);
 
     // maintain user in the authentication part of the app tree while login is not performed
-    if (user == null) {
+    if (appUser == null) {
       return Authenticate();
     }
     // when login is performed, allows access to the app

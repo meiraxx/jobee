@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:jobee/screens/authenticate/reg_mail_password.dart';
 import 'package:jobee/screens/authenticate/auth_mail_password.dart';
 import 'package:jobee/shared/constants.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'google_sign_in_button.dart';
 
 class Authenticate extends StatefulWidget {
@@ -124,8 +123,6 @@ class _AuthenticateState extends State<Authenticate> {
                                     semanticLabel: "Jobee app logo",
                                     width: 24.0, // default icon width
                                     height: 24.0, // default icon height
-                                    //fit: BoxFit.scaleDown,
-                                    //alignment: FractionalOffset.center,
                                   ),
                                 ),
                               ),

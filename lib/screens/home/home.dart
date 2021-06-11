@@ -33,12 +33,6 @@ class _HomeState extends State<Home> {
     ],
   );
 
-  // INIT STATE
-  @override
-  void initState() {
-    super.initState();
-  }
-
   // BUILD
   @override
   Widget build(BuildContext context) {
@@ -111,7 +105,10 @@ class _HomeState extends State<Home> {
           backgroundColor: Colors.white,
           elevation: 1.0,
           actions: <Widget>[
-            appBarButton(text: "Search", iconData: Icons.search_rounded, color: Colors.black, onPressedFunction: () async {
+            appBarButton(iconData: Icons.notifications_none, color: Colors.black, onPressedFunction: () async {
+              // TODO : show notifications
+            }),
+            appBarButton(iconData: Icons.search_rounded, color: Colors.black, onPressedFunction: () async {
               // TODO : search through jobs (not job types)
             }),
           ],

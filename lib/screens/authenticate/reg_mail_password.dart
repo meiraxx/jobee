@@ -1,9 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:jobee/models/app_user.dart';
 import 'package:jobee/services/auth.dart';
 import 'package:jobee/shared/constants.dart';
-import 'package:jobee/shared/loading.dart';
 
 class RegMailPassword extends StatefulWidget {
   final Function toggleView;
@@ -30,8 +28,7 @@ class _RegMailPasswordState extends State<RegMailPassword> {
 
   @override
   Widget build(BuildContext context) {
-    return loading ? Loading() :
-    Scaffold(
+    return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: paletteColors["cream"],
       appBar: AppBar(
@@ -94,27 +91,32 @@ class _RegMailPasswordState extends State<RegMailPassword> {
                     onChanged: (val) { setState(() => password = val); },
                   ),
                   SizedBox(height: errorSizedBoxHeight2),
-                  ElevatedButton(
-                    style: orangeElevatedButtonStyle,
-                    child: Text(
-                      'Register',
-                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
-                    ),
-                    onPressed: () async {
-                      if (_formKey.currentState!.validate()) {
-                        setState(() => loading = true);
-                        try {
-                          await AuthService.registerWithEmailAndPassword(email, password);
-                        } on FirebaseAuthException catch (e) {
-                          setState(() {
-                            error = e.message!;
-                            loading = false;
-                            errorSizedBoxHeight3 = 0.0;
-                          });
+                  Builder(builder: (BuildContext context) {
+                    return loading ? CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(paletteColors["orange"]!),
+                    )
+                    : ElevatedButton(
+                      style: orangeElevatedButtonStyle,
+                      child: Text(
+                        'Register',
+                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                      ),
+                      onPressed: () async {
+                        if (_formKey.currentState!.validate()) {
+                          setState(() => loading = true);
+                          try {
+                            await AuthService.registerWithEmailAndPassword(email, password);
+                          } on FirebaseAuthException catch (e) {
+                            setState(() {
+                              error = e.message!;
+                              loading = false;
+                              errorSizedBoxHeight3 = 0.0;
+                            });
+                          }
                         }
-                      }
-                    },
-                  ),
+                      },
+                    );
+                  }),
                   SizedBox(height: errorSizedBoxHeight3),
                   Text(
                     error,

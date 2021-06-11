@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:jobee/services/auth.dart';
 import 'package:jobee/shared/constants.dart';
-import 'package:jobee/shared/loading.dart';
 
 class AuthMailPassword extends StatefulWidget {
   final Function toggleView;
@@ -29,8 +28,7 @@ class _AuthMailPasswordState extends State<AuthMailPassword> {
 
   @override
   Widget build(BuildContext context) {
-    return loading ? Loading() :
-    Scaffold(
+    return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: paletteColors["cream"],
       appBar: AppBar(
@@ -93,35 +91,42 @@ class _AuthMailPasswordState extends State<AuthMailPassword> {
                     onChanged: (val) { setState(() => password = val); },
                   ),
                   SizedBox(height: errorSizedBoxHeight2),
-                  ElevatedButton(
-                    style: orangeElevatedButtonStyle,
-                    child: Text(
-                      'Login',
-                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
-                    ),
-                    onPressed: () async {
-                      if (_formKey.currentState!.validate()) {
-                        // while logging in, set loading to true
-                        setState(() => loading = true);
-                        try {
-                          await AuthService.loginWithEmailAndPassword(email, password);
-                        } on FirebaseAuthException catch (e) {
-                          setState(() {
-                            if (e.message == "The email address is badly formatted.") {
-                              error = e.message!;
-                            } else {
-                              // This ELSE condition merges two conditions, for security reasons:
-                              // 1 - e.message == "There is no user record corresponding to this identifier. The user may have been deleted."
-                              // 2 - e.message == "The password is invalid or the user does not have a password."
-                              error = 'The email and/or password provided are incorrect.';
+                  Builder(
+                    builder: (BuildContext context) {
+                      return loading ? CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(paletteColors["orange"]!),
+                      )
+                      : ElevatedButton(
+                        style: orangeElevatedButtonStyle,
+                        child: Text(
+                          'Login',
+                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                        ),
+                        onPressed: () async {
+                          if (_formKey.currentState!.validate()) {
+                            // while logging in, set loading to true
+                            setState(() => loading = true);
+                            try {
+                              await AuthService.loginWithEmailAndPassword(email, password);
+                            } on FirebaseAuthException catch (e) {
+                              setState(() {
+                                if (e.message == "The email address is badly formatted.") {
+                                  error = e.message!;
+                                } else {
+                                  // This ELSE condition merges two conditions, for security reasons:
+                                  // 1 - e.message == "There is no user record corresponding to this identifier. The user may have been deleted."
+                                  // 2 - e.message == "The password is invalid or the user does not have a password."
+                                  error = 'The email and/or password provided are incorrect.';
+                                }
+                                errorSizedBoxHeight3 = 0.0;
+                              });
                             }
-                            errorSizedBoxHeight3 = 0.0;
-                          });
-                        }
-                        // after everything is done, set loading back to false
-                        setState(() => loading = false);
-                      }
-                    },
+                            // after everything is done, set loading back to false
+                            setState(() => loading = false);
+                          }
+                        },
+                      );
+                    }
                   ),
                   SizedBox(height: errorSizedBoxHeight3),
                   Text(

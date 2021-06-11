@@ -1,7 +1,5 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:jobee/models/app_user.dart';
 import 'package:jobee/services/auth.dart';
 import 'package:jobee/services/database.dart';
@@ -26,10 +24,6 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
           // if the user does not exist yet, we need to create
           // a new document for the user with the returned uid
           await DatabaseService(uid: appUser!.uid).createUserData(appUser.email, 'Google');
-
-          setState(() => _isSigningIn = false );
-
-          Navigator.pushReplacementNamed(context, '/home');
         } catch(e){
           setState(() => _isSigningIn = false );
           print(e);
@@ -79,7 +73,7 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
 
     return _isSigningIn
     ? CircularProgressIndicator(
-      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+      valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF397AF3)),
     )
     : button;
   }

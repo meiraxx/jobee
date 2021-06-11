@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:jobee/services/auth.dart';
+import 'package:jobee/models/app_user.dart';
 import 'package:jobee/shared/constants.dart';
+import 'package:jobee/shared/loading.dart';
+import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -11,8 +13,9 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  AppUser? appUser;
   int jobeeLevel = 0;
-  Map<String, Color> a = {
+  final Map<String, Color> a = {
     "AppBarBackground": Colors.grey[50]!,
     "ScaffoldBackground": paletteColors["cream"]!,
     "ProfileFieldText": Colors.grey[850]!,
@@ -23,6 +26,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    appUser = Provider.of<AppUser?>(context);
+    if (appUser == null) {
+      return Loading();
+    }
+
     return Scaffold(
       backgroundColor: paletteColors["cream"],
       appBar: AppBar(
@@ -79,7 +87,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     SizedBox(width: 10.0),
                     Text(
-                      FirebaseAuth.instance.currentUser!.email!,
+                      appUser!.email,
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: 18.0,
@@ -92,17 +100,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               SizedBox(height: 4.0),
               Center(
-                child: ElevatedButton(
-                  style: orangeElevatedButtonStyle,
-                  child: Text(
-                    'Logout',
-                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
-                  ),
-                  onPressed: () async {
-                    await AuthService.signOut(context: context);
-                    Navigator.pushReplacementNamed(context, "/");
-                  },
-                )
+                child: Builder(builder: (BuildContext context) {
+                  return ElevatedButton(
+                    style: orangeElevatedButtonStyle,
+                    child: Text(
+                      'Logout',
+                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                    ),
+                    onPressed: () async {
+                      await FirebaseAuth.instance.signOut();
+                      Navigator.pushReplacementNamed(context, "/");
+                    },
+                  );
+                })
               ),
               Divider(
                 color: Colors.black,

@@ -34,7 +34,6 @@ class AuthService {
     });
   }
 
-  /*
   // Sign In anonymously
   static Future<AppUser> signInAnon() async {
     try {
@@ -44,7 +43,7 @@ class AuthService {
     } catch (e) {
       throw(e);
     }
-  }*/
+  }
 
   // Sign In with e-mail and password
   static Future<AppUser> loginWithEmailAndPassword(String email, String password) async {
