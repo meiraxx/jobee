@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:jobee/models/app_user.dart';
 import 'package:jobee/shared/constants.dart';
 import 'package:jobee/shared/loading.dart';
@@ -15,7 +16,7 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   AppUser? appUser;
   int jobeeLevel = 0;
-  final Map<String, Color> a = {
+  final Map<String, Color> lightColors = {
     "AppBarBackground": Colors.grey[50]!,
     "ScaffoldBackground": paletteColors["cream"]!,
     "ProfileFieldText": Colors.grey[850]!,
@@ -36,14 +37,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
       appBar: AppBar(
         leading: appBarButton(iconData: Icons.arrow_back, color: Colors.black, onPressedFunction: () {
           Navigator.pop(context);
-        }),
+        }, splashColor: appbarDefaultButtonSplashColor,
+        tooltip: "Back"),
         title: Text(
-          "Jobee Profile",
+          "Profile",
           style: TextStyle(
-            color: Colors.black,
+            color: Colors.black
           ),
         ),
-        centerTitle: true,
+        //titleSpacing: 8.0,
+        centerTitle: false,
         backgroundColor: Colors.grey[50],
         elevation: 1.0,
       ),
@@ -70,8 +73,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   decoration: new BoxDecoration(
                     shape: BoxShape.circle,
                     border: new Border.all(
-                      color: paletteColors["brown"]!,
-                      width: 4.0,
+                      color: paletteColors["orange"]!,
+                      width: 3.0,
                     ),
                   ),
                 ),
@@ -83,7 +86,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   children: <Widget>[
                     Icon(
                       Icons.email,
-                      color: Colors.grey[850],
+                      color: Colors.black,
                     ),
                     SizedBox(width: 10.0),
                     Text(

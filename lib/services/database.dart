@@ -22,10 +22,8 @@ class DatabaseService {
     });
   }
 
-  Future<void> updateUserData(String email, String authProvider, String name, String gender) async {
+  Future<void> updateUserData(String name, String gender) async {
     await profileCollection.doc(uid).update({
-      'email': email,
-      'authProvider': authProvider,
       'name': name,
       'gender': gender
     });
@@ -45,12 +43,12 @@ class DatabaseService {
     return AppUserData(
       uid: uid!,
       email: snapshot.data()!['email'],
-      name: snapshot.data()!['name']
+      name: snapshot.data()!['name']??"Your Name"
     );
   }
 
 
-  // get brews stream
+  // get profiles stream
   Stream<List<Profile>> get profiles {
     return profileCollection.snapshots().map(_profileListFromSnapshot);
   }

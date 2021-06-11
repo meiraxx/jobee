@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:math' as math;
 
 const Map<String, Color> paletteColors = {
   "cream": const Color(0xFFF5F1D4),
@@ -33,9 +32,12 @@ const InputDecoration textInputDecoration = InputDecoration(
   ),
 );
 
+// appBarButton stuff
+final Color appbarDefaultButtonSplashColor = const Color(0xFFB25C36).withAlpha(0x1F);
+
 Widget appBarButton({ String? text, IconData? iconData, Image? image, BuildContext? context,
   Color splashColor = Colors.transparent, double splashRadius = Material.defaultSplashRadius - 5.0,
-  required Color color, required Function() onPressedFunction }) {
+  String? tooltip, required Color color, required Function() onPressedFunction }) {
   assert(text!=null || iconData!=null || image != null);
   // in case image isn't null, we also need the context
   if (image != null) {
@@ -57,6 +59,7 @@ Widget appBarButton({ String? text, IconData? iconData, Image? image, BuildConte
             fontSize: 14,
             fontWeight: FontWeight.w600,
           ),
+          textAlign: TextAlign.left,
         ),
         style: ButtonStyle(
           overlayColor: MaterialStateProperty.all(splashColor),
@@ -94,6 +97,7 @@ Widget appBarButton({ String? text, IconData? iconData, Image? image, BuildConte
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                   ),
+                  textAlign: TextAlign.left,
                 ),
               ],
             ),
@@ -106,6 +110,7 @@ Widget appBarButton({ String? text, IconData? iconData, Image? image, BuildConte
         child: Text(
           text,
           style: TextStyle(color: color),
+          textAlign: TextAlign.left,
         ),
         style: ButtonStyle(
           overlayColor: MaterialStateProperty.all(splashColor),
@@ -121,6 +126,7 @@ Widget appBarButton({ String? text, IconData? iconData, Image? image, BuildConte
           iconData,
           color: color,
         ),
+        tooltip: tooltip,
         highlightColor: splashColor,
         splashColor: splashColor,
         splashRadius: splashRadius,

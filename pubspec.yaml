@@ -45,6 +45,7 @@ dependencies:
   # Loading Widget
   flutter_spinkit: ^5.0.0
   fluro: ^2.0.3
+  google_fonts: ^2.1.0
 
 
 dev_dependencies:

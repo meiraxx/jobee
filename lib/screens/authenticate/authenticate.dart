@@ -120,7 +120,7 @@ class _AuthenticateState extends State<Authenticate> {
                                   ),
                                   child: Image.asset(
                                     "images/bee-logo-07.png",
-                                    semanticLabel: "Jobee app logo",
+                                    semanticLabel: "Jobee logo",
                                     width: 24.0, // default icon width
                                     height: 24.0, // default icon height
                                   ),

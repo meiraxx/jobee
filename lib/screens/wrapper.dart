@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jobee/models/app_user.dart';
+import 'package:jobee/services/database.dart';
 import 'package:provider/provider.dart';
 import 'authenticate/authenticate.dart';
 import 'home/home.dart';
@@ -20,7 +21,14 @@ class Wrapper extends StatelessWidget {
     }
     // when login is performed, allows access to the app
     else {
-      return Home();
+      // since we have an appUser at this point, we can retrieve and
+      // provide appUserData
+      return StreamProvider<AppUserData>.value(
+        initialData: AppUserData(uid: appUser.uid, email: appUser.email,
+            name: "Your Name"),
+        value: DatabaseService(uid: appUser.uid).appUserData,
+        child: Home()
+      );
     }
   }
 }
