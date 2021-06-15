@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:jobee/services/auth.dart';
 import 'package:jobee/shared/constants.dart';
 
@@ -37,11 +38,24 @@ class _RegMailPasswordState extends State<RegMailPassword> {
         }),
         backgroundColor: paletteColors["cream"],
         elevation: 1.0,
-        title: Text(
-          "Register to Jobee",
-          style: TextStyle(
-            color: Colors.black,
-          ),
+        title: Wrap(
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            Text(
+              "Register to ",
+              style: TextStyle(
+                color: Colors.black,
+              ),
+            ),
+            Text(
+              " jobee",
+              style: GoogleFonts.museoModerno().copyWith(
+                color: Colors.black,
+                fontSize: 18,
+                fontWeight: FontWeight.w700
+              ),
+            )
+          ],
         )
       ),
       body: Column(
@@ -97,9 +111,22 @@ class _RegMailPasswordState extends State<RegMailPassword> {
                     )
                     : ElevatedButton(
                       style: orangeElevatedButtonStyle,
-                      child: Text(
-                        'Register',
-                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                      child: Wrap(
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          Image.asset(
+                            "images/bee-logo-07.png",
+                            semanticLabel: "Jobee logo",
+                            width: 20.0, // default icon width
+                            height: 20.0, // default icon height
+                            color: Colors.white,
+                          ),
+                          SizedBox(width: 2.0),
+                          Text(
+                            'Register',
+                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                          ),
+                        ],
                       ),
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {

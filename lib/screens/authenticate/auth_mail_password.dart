@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:jobee/services/auth.dart';
 import 'package:jobee/shared/constants.dart';
 
@@ -37,11 +38,24 @@ class _AuthMailPasswordState extends State<AuthMailPassword> {
         }),
         backgroundColor: paletteColors["cream"],
         elevation: 1.0,
-        title: Text(
-          "Sign in to Jobee",
-          style: TextStyle(
-            color: Colors.black,
-          ),
+        title: Wrap(
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            Text(
+              "Sign in to ",
+              style: TextStyle(
+                color: Colors.black,
+              ),
+            ),
+            Text(
+              " jobee",
+              style: GoogleFonts.museoModerno().copyWith(
+                  color: Colors.black,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700
+              ),
+            )
+          ],
         )
       ),
       body: Column(
@@ -98,9 +112,16 @@ class _AuthMailPasswordState extends State<AuthMailPassword> {
                       )
                       : ElevatedButton(
                         style: orangeElevatedButtonStyle,
-                        child: Text(
-                          'Login',
-                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                        child: Wrap(
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: [
+                            Icon(Icons.login),
+                            SizedBox(width: 2.0),
+                            Text(
+                              'Login',
+                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                            ),
+                          ],
                         ),
                         onPressed: () async {
                           if (_formKey.currentState!.validate()) {

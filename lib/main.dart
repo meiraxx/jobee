@@ -22,7 +22,6 @@ class MyApp extends StatelessWidget {
       '/': (BuildContext context) => Wrapper(),
       '/authenticate': (BuildContext context) => Authenticate(),
       '/home': (BuildContext context) => Home(),
-      '/profile': (BuildContext context) => ProfileScreen(),
     };
 
     return StreamProvider<AppUser?>.value(
@@ -32,7 +31,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         initialRoute: '/',
         onGenerateRoute: (RouteSettings settings) {
-          return CupertinoPageRoute(builder: (BuildContext context) => routes[settings.name]!(context));
+          return CupertinoPageRoute(builder: (BuildContext context) => routes[settings.name]!(context), fullscreenDialog: false);
         }
       ),
     );

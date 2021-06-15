@@ -2,19 +2,26 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jobee/models/app_user.dart';
+import 'package:jobee/services/auth.dart';
 import 'package:jobee/shared/constants.dart';
 import 'package:jobee/shared/loading.dart';
 import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({Key? key}) : super(key: key);
+  final AppUserData? appUserData;
+
+  const ProfileScreen({Key? key, required this.appUserData}) : super(key: key);
 
   @override
-  _ProfileScreenState createState() => _ProfileScreenState();
+  _ProfileScreenState createState() => _ProfileScreenState(appUserData: appUserData);
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  final AppUserData? appUserData;
   AppUser? appUser;
+
+  _ProfileScreenState({required this.appUserData}) : super();
+
   int jobeeLevel = 0;
   final Map<String, Color> lightColors = {
     "AppBarBackground": Colors.grey[50]!,
@@ -27,8 +34,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    MediaQueryData queryData = MediaQuery.of(context);
+
     appUser = Provider.of<AppUser?>(context);
     if (appUser == null) {
+      // this condition is reached in case of logout
       return Loading();
     }
 
@@ -61,12 +71,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: CircleAvatar(
                     backgroundColor: paletteColors["orange"],
                     radius: 40.0,
-                    child: Text(
-                      "AH",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 30.0,
-                        fontWeight: FontWeight.bold
+                    child: Center(
+                      child: SizedBox(
+                        width: double.infinity,
+                        height: double.infinity,
+                        child: IconButton(
+                          icon: Icon(
+                            Icons.upload_rounded,
+                            color: Colors.white,
+                            size: 40.0
+                          ),
+                          onPressed: () {
+
+                          },
+                        ),
                       ),
                     ),
                   ),
@@ -79,107 +97,78 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
               ),
-              SizedBox(height: 4.0),
+              SizedBox(height: 6.0),
               Center(
                 child: Wrap(
                   crossAxisAlignment: WrapCrossAlignment.center,
                   children: <Widget>[
-                    Icon(
-                      Icons.email,
-                      color: Colors.black,
-                    ),
-                    SizedBox(width: 10.0),
+                    SizedBox(width: 4.0),
                     Text(
-                      appUser!.email,
-                      style: TextStyle(
+                      appUserData!.name!,
+                      style: GoogleFonts.pangolin().copyWith(
                         color: Colors.black,
                         fontSize: 18.0,
                         fontWeight: FontWeight.w500,
-                        letterSpacing: 1.0,
+                        letterSpacing: 1.0
                       ),
-                    )
+                    ),
                   ],
                 ),
               ),
               SizedBox(height: 4.0),
               Center(
-                child: Builder(builder: (BuildContext context) {
-                  return ElevatedButton(
-                    style: orangeElevatedButtonStyle,
-                    child: Text(
-                      'Logout',
-                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                child: Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: <Widget>[
+                    SizedBox(width: 4.0),
+                    Icon(
+                      Icons.email,
+                      color: Colors.black87,
                     ),
-                    onPressed: () async {
-                      await FirebaseAuth.instance.signOut();
-                      Navigator.pushReplacementNamed(context, "/");
-                    },
-                  );
-                })
+                    SizedBox(width: 4.0),
+                    Text(
+                      appUserData!.email,
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.w400
+                      ),
+                    ),
+                  ],
+                ),
               ),
               Divider(
                 color: Colors.black,
                 height: 50.0,
               ),
-              Text(
-                'NAME',
-                style: TextStyle(
-                  color: Colors.grey[850],
-                  letterSpacing: 2.0,
-                ),
-              ),
-              SizedBox(height: 10.0),
-              Text(
-                'name-placeholder',
-                style: TextStyle(
-                  color: paletteColors["brown"],
-                  fontWeight: FontWeight.bold,
-                  fontSize: 28.0,
-                  letterSpacing: 2.0,
-                ),
-              ),
-              SizedBox(height: 30.0),
-              Text(
-                'CITY',
-                style: TextStyle(
-                  color: Colors.grey[850],
-                  letterSpacing: 2.0,
-                ),
-              ),
-              SizedBox(height: 10.0),
-              Text(
-                'city-placeholder, country-placeholder',
-                style: TextStyle(
-                  color: paletteColors["brown"],
-                  fontWeight: FontWeight.bold,
-                  fontSize: 28.0,
-                  letterSpacing: 2.0,
-                ),
-              ),
-              SizedBox(height: 30.0),
-              Text(
-                'CURRENT JOBEE LEVEL',
-                style: TextStyle(
-                  color: Colors.grey[850],
-                  letterSpacing: 2.0,
-                ),
-              ),
-              SizedBox(height: 10.0),
-              Text(
-                '$jobeeLevel',
-                style: TextStyle(
-                  color: paletteColors["brown"],
-                  fontWeight: FontWeight.bold,
-                  fontSize: 28.0,
-                  letterSpacing: 2.0,
-                ),
-              ),
-              SizedBox(height: 30.0),
+              Align(
+                alignment: Alignment.centerRight,
+                child: Builder(builder: (BuildContext context) {
+                  return ElevatedButton(
+                    style: orangeElevatedButtonStyle,
+                    child: Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        Icon(Icons.logout),
+                        SizedBox(width: 2.0),
+                        Text(
+                          'Logout',
+                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                        ),
+                      ],
+                    ),
+                    onPressed: () async {
+                      await AuthService.signOut(context: context);
+                      Navigator.pushReplacementNamed(context, "/");
+                    },
+                  );
+                }),
+              )
             ],
           ),
         ),
       ),
-      bottomNavigationBar: bottomNavigationBar,
+      //bottomNavigationBar: bottomNavigationBar,
     );
   }
 }

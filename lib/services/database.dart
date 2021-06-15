@@ -43,7 +43,8 @@ class DatabaseService {
     return AppUserData(
       uid: uid!,
       email: snapshot.data()!['email'],
-      name: snapshot.data()!['name']??"Your Name"
+      name: snapshot.data()!['name']??"('name' not yet provided)",
+      phoneNumber: snapshot.data()!['phoneNumber']??"('phone number' not yet provided)"
     );
   }
 

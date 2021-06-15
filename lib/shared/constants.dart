@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 const Map<String, Color> paletteColors = {
@@ -138,20 +140,95 @@ Widget appBarButton({ String? text, IconData? iconData, Image? image, BuildConte
   return Container();
 }
 
-BottomNavigationBar bottomNavigationBar = BottomNavigationBar(
-  backgroundColor: Colors.grey[50],
-  items: const <BottomNavigationBarItem>[
-    BottomNavigationBarItem(
-      icon: Icon(Icons.home),
-      label: 'Home',
+
+BottomNavigationBar bottomNavigationBarGenerator({ required BuildContext context, required Function(int) onTap,
+  required int bottomNavigationCurrentIndex, required List<IconData> iconDataList,
+  Color activeColor = const Color(0xFF2196F3), Color inactiveColor = const Color(0xFF757575) }) {
+  /// Function to help generating a BottomNavigationBar for any context.
+  ///
+  /// @returns a BottomNavigationBar.
+
+  assert(iconDataList.length == 3); // verify iconDataList only has 3 elements
+
+  /*
+  final Color firstNavItemColor, secondNavItemColor, thirdNavItemColor;
+
+  if (bottomNavigationCurrentIndex == 0) {
+    firstNavItemColor = activeColor;
+    secondNavItemColor = inactiveColor;
+    thirdNavItemColor = inactiveColor;
+  } else if (bottomNavigationCurrentIndex == 1) {
+    firstNavItemColor = inactiveColor;
+    secondNavItemColor = activeColor;
+    thirdNavItemColor = inactiveColor;
+  } else if (bottomNavigationCurrentIndex == 2) {
+    firstNavItemColor = inactiveColor;
+    secondNavItemColor = inactiveColor;
+    thirdNavItemColor = activeColor;
+  } else {
+    throw(Exception("bottomNavigationBarGenerator function: bottomNavigationCurrentIndex cannot be > 2"));
+  }
+  */
+
+  return BottomNavigationBar(
+    onTap: onTap,
+    currentIndex: bottomNavigationCurrentIndex,
+    backgroundColor: Colors.grey[50],
+    items: <BottomNavigationBarItem>[
+      BottomNavigationBarItem(
+        icon: Icon(
+          iconDataList[0],
+          //color: firstNavItemColor
+        ),
+        /*title: Text(
+          'Home',
+          style: TextStyle(
+            color: firstNavItemColor
+          ),
+        ),*/
+        label: 'Home',
+        tooltip: 'Home'
+      ),
+      BottomNavigationBarItem(
+        icon: Icon(
+          iconDataList[1],
+          //color: secondNavItemColor
+        ),
+        /*title: Text(
+          'Profile',
+          style: TextStyle(
+            color: secondNavItemColor
+          ),
+        ),*/
+        label: 'Profile',
+        tooltip: 'Profile'
+      ),
+      BottomNavigationBarItem(
+        icon: Icon(
+          iconDataList[2],
+          //color: thirdNavItemColor
+        ),
+        /*title: Text(
+          'Chat',
+          style: TextStyle(
+              color: thirdNavItemColor
+          ),
+        ),*/
+        label: 'Chat',
+        tooltip: 'Chat'
+      ),
+    ],
+    unselectedLabelStyle: TextStyle(
+      color: inactiveColor,
     ),
-    BottomNavigationBarItem(
-      icon: Icon(Icons.person),
-      label: 'Profile',
+    selectedLabelStyle: TextStyle(
+      color: activeColor,
     ),
-    BottomNavigationBarItem(
-      icon: Icon(Icons.chat),
-      label: 'Chat',
-    ),
-  ],
-);
+    unselectedItemColor: inactiveColor,
+    selectedItemColor: activeColor,
+    unselectedIconTheme: IconThemeData(color: inactiveColor),
+    selectedIconTheme: IconThemeData(color: activeColor),
+  );
+}
+
+int generateRandomInteger(int min, int max) => min + Random().nextInt(max - min);
