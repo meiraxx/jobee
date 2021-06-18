@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:jobee/screens/authenticate/reg_mail_password.dart';
-import 'package:jobee/screens/authenticate/auth_mail_password.dart';
+import 'package:jobee/screens/authenticate/jobee_register.dart';
+import 'package:jobee/screens/authenticate/jobee_authenticate.dart';
 import 'package:jobee/shared/constants.dart';
 import 'google_sign_in_button.dart';
 

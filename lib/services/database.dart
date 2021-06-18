@@ -32,8 +32,10 @@ class DatabaseService {
   // profile list from snapshot
   List<Profile> _profileListFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.docs.map((doc) {
+      print(doc.data()['name']);
+      print(doc.data()['']);
       return Profile(
-          name: doc.data()['name'] ?? ''
+        name: doc.data()['name'] ?? ''
       );
     }).toList();
   }

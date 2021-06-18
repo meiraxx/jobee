@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jobee/models/app_user.dart';
+import 'package:jobee/screens/profile/register_data.dart';
 import 'package:jobee/services/database.dart';
 import 'package:provider/provider.dart';
 import 'authenticate/authenticate.dart';
@@ -27,7 +28,7 @@ class Wrapper extends StatelessWidget {
         initialData: AppUserData(uid: appUser.uid, email: appUser.email,
             name: "('name' not yet provided)", phoneNumber: "('phone number' not yet provided)"),
         value: DatabaseService(uid: appUser.uid).appUserData,
-        child: Home()
+        child: RegisterData()
       );
     }
   }

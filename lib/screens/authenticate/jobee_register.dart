@@ -42,13 +42,13 @@ class _RegMailPasswordState extends State<RegMailPassword> {
           crossAxisAlignment: WrapCrossAlignment.center,
           children: [
             Text(
-              "Register to ",
+              "Register to  ",
               style: TextStyle(
                 color: Colors.black,
               ),
             ),
             Text(
-              " jobee",
+              "jobee",
               style: GoogleFonts.museoModerno().copyWith(
                 color: Colors.black,
                 fontSize: 18,

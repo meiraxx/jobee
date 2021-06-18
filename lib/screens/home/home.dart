@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jobee/models/app_user.dart';
 import 'package:jobee/models/profile.dart';
-import 'package:jobee/screens/profile/profile_screen.dart';
+import 'package:jobee/screens/profile/profile.dart';
 import 'package:jobee/services/database.dart';
 import 'package:jobee/services/image_upload.dart';
 import 'package:provider/provider.dart';
@@ -19,7 +19,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final double _drawerMenuWidthRatio = 0.739;
-  final List<Color> logoRandomColorList = [
+  final List<Color> _logoRandomColorList = [
     // - RGB
     Colors.red,
     Colors.green,
@@ -87,13 +87,13 @@ class _HomeState extends State<Home> {
     // - WIDGETS
     GestureDetector logoPlusText = GestureDetector(
       onTap: () {
-        logoInteractions(Colors.black, 1, logoRandomColorList);
+        logoInteractions(Colors.black, 1, _logoRandomColorList);
       },
       onDoubleTap: () {
-        logoInteractions(Colors.black, 2, logoRandomColorList);
+        logoInteractions(Colors.black, 2, _logoRandomColorList);
       },
       onHorizontalDragStart: (dragStartDetails) {
-        logoInteractions(Colors.black, 3, logoRandomColorList);
+        logoInteractions(Colors.black, 3, _logoRandomColorList);
       },
       child: Tooltip(
         message: 'jobee logo!',
@@ -182,15 +182,25 @@ class _HomeState extends State<Home> {
                           width: double.infinity,
                           height: double.infinity,
                           child: (_imageFile != null)
-                          ? ClipOval(child: Image.file(_imageFile!))
+                          ? GestureDetector(
+                            onTap: () async {
+                              _imageFile = await getImage();
+                              setState( (){} ); // update image
+                            },
+                            child: ClipOval(
+                              child: Image.file(
+                                _imageFile!,
+                                fit: BoxFit.cover,
+                              )
+                            ),
+                          )
                           : IconButton(
                             icon: Icon(
-                                Icons.upload_rounded,
-                                color: Colors.white,
-                                size: 40.0
+                              Icons.upload_rounded,
+                              color: Colors.white,
+                              size: 40.0
                             ),
                             onPressed: () async {
-                              print("Hello?");
                               _imageFile = await getImage();
                               setState( (){} ); // update image
                             },

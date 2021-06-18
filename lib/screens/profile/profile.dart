@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jobee/models/app_user.dart';
 import 'package:jobee/services/auth.dart';
+import 'package:jobee/services/image_upload.dart';
 import 'package:jobee/shared/constants.dart';
 import 'package:jobee/shared/loading.dart';
 import 'package:provider/provider.dart';
+import 'dart:io';
 
 class ProfileScreen extends StatefulWidget {
   final AppUserData? appUserData;
@@ -31,6 +33,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     "CircleAvatarBorder": paletteColors["brown"]!,
     "MainDivider": Colors.grey[850]!,
   };
+  File? _imageFile;
 
   @override
   Widget build(BuildContext context) {
@@ -75,14 +78,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       child: SizedBox(
                         width: double.infinity,
                         height: double.infinity,
-                        child: IconButton(
-                          icon: Icon(
-                            Icons.upload_rounded,
-                            color: Colors.white,
-                            size: 40.0
+                        child: (_imageFile != null)
+                            ? GestureDetector(
+                          onTap: () async {
+                            _imageFile = await getImage();
+                            setState( (){} ); // update image
+                          },
+                          child: ClipOval(
+                              child: Image.file(
+                                _imageFile!,
+                                fit: BoxFit.cover,
+                              )
                           ),
-                          onPressed: () {
-
+                        )
+                            : IconButton(
+                          icon: Icon(
+                              Icons.upload_rounded,
+                              color: Colors.white,
+                              size: 40.0
+                          ),
+                          onPressed: () async {
+                            _imageFile = await getImage();
+                            setState( (){} ); // update image
                           },
                         ),
                       ),

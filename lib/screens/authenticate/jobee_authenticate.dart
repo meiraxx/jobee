@@ -42,13 +42,13 @@ class _AuthMailPasswordState extends State<AuthMailPassword> {
           crossAxisAlignment: WrapCrossAlignment.center,
           children: [
             Text(
-              "Sign in to ",
+              "Sign in to  ",
               style: TextStyle(
                 color: Colors.black,
               ),
             ),
             Text(
-              " jobee",
+              "jobee",
               style: GoogleFonts.museoModerno().copyWith(
                   color: Colors.black,
                   fontSize: 18,

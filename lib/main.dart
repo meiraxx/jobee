@@ -1,7 +1,7 @@
 import 'package:jobee/models/app_user.dart';
 import 'package:jobee/screens/authenticate/authenticate.dart';
 import 'package:jobee/screens/home/home.dart';
-import 'package:jobee/screens/profile/profile_screen.dart';
+import 'package:jobee/screens/profile/profile.dart';
 import 'package:jobee/screens/wrapper.dart';
 import 'package:jobee/services/auth.dart';
 import 'package:flutter/material.dart';
