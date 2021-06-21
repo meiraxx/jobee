@@ -345,7 +345,9 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
                 ),
               ),
             ),
-            SizedBox(height: 100.0),
+            Expanded(
+              child: Container(),
+            ),
             // - Row 3
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -361,7 +363,7 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
                   ),
                   onPressed: () async {
                     await AuthService.signOut(context: context);
-                    Navigator.pushReplacementNamed(context, "/");
+                    Navigator.pushReplacementNamed(context, '/');
                   },
                 )
               ],

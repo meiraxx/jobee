@@ -42,8 +42,8 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
             crossAxisAlignment: WrapCrossAlignment.center,
             children: <Widget>[
               SizedBox(
-                width: 30.0,
-                height: 30.0,
+                width: 32.0,
+                height: 32.0,
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(4.0),
@@ -61,8 +61,7 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
               Text(
                 "Sign in with Google",
                 style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600
+                  color: Colors.white,
                 ),
               ),
             ],
@@ -70,6 +69,8 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
         ),
       ),
     );
+
+    print(_isSigningIn);
 
     return _isSigningIn
     ? CircularProgressIndicator(

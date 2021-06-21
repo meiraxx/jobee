@@ -36,7 +36,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        leading: appBarButton(iconData: Icons.arrow_back, color: Colors.black, onPressedFunction: () {
+        leading: appBarButton(iconData: Icons.arrow_back, color: Theme.of(context).colorScheme.onBackground, onPressedFunction: () {
           Navigator.pop(context);
         }, splashColor: appbarDefaultButtonSplashColor,
         tooltip: "Back"),
@@ -164,7 +164,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     onPressed: () async {
                       await AuthService.signOut(context: context);
-                      Navigator.pushReplacementNamed(context, "/");
+                      Navigator.pushReplacementNamed(context, '/');
                     },
                   );
                 }),

@@ -21,7 +21,8 @@ class JobeeThemeData {
       colorScheme: colorScheme,
       textTheme: _textTheme,
       // Matches manifest.json colors and background color.
-      primaryColor: const Color(0xFF030303),
+      //primaryColor: const Color(0xFF030303),
+      primaryColor: colorScheme.primary,
       appBarTheme: AppBarTheme(
         textTheme: _textTheme.apply(bodyColor: colorScheme.onPrimary),
         color: colorScheme.background,
@@ -42,6 +43,9 @@ class JobeeThemeData {
         ),
         contentTextStyle: _textTheme.subtitle1!.apply(color: _darkFillColor),
       ),
+      buttonTheme: ButtonThemeData(
+        textTheme: ButtonTextTheme.primary,
+      )
     );
   }
 
@@ -103,13 +107,14 @@ class JobeeThemeData {
   static final TextTheme _textTheme = TextTheme(
     headline4: GoogleFonts.montserrat(fontWeight: _bold, fontSize: 20.0),
     caption: GoogleFonts.oswald(fontWeight: _semiBold, fontSize: 16.0),
-    headline5: GoogleFonts.oswald(fontWeight: _medium, fontSize: 16.0),
+    headline5: GoogleFonts.montserrat(fontWeight: _bold, fontSize: 16.0),
     subtitle1: GoogleFonts.montserrat(fontWeight: _medium, fontSize: 16.0),
     overline: GoogleFonts.montserrat(fontWeight: _medium, fontSize: 12.0),
     bodyText1: GoogleFonts.montserrat(fontWeight: _regular, fontSize: 14.0),
     subtitle2: GoogleFonts.montserrat(fontWeight: _medium, fontSize: 14.0),
     bodyText2: GoogleFonts.montserrat(fontWeight: _regular, fontSize: 16.0),
-    headline6: GoogleFonts.montserrat(fontWeight: _bold, fontSize: 16.0),
+    //headline6: GoogleFonts.montserrat(fontWeight: _bold, fontSize: 16.0),
+    headline6: GoogleFonts.montserrat(fontWeight: _semiBold, fontSize: 18.0),
     button: GoogleFonts.montserrat(fontWeight: _semiBold, fontSize: 14.0),
   );
 }

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:jobee/screens/authenticate/jobee_register.dart';
 import 'package:jobee/screens/authenticate/jobee_login.dart';
 import 'package:jobee/shared/constants.dart';
@@ -31,12 +33,13 @@ class _AuthenticateState extends State<Authenticate> {
 
   @override
   Widget build(BuildContext context) {
-    const double paddingLeft1 = 20.0;
-    const double paddingTop1 = 0.0;
-    const double paddingRight1 = 0.0;
-    const double paddingBottom1 = 0.0;
-    MediaQueryData queryData = MediaQuery.of(context);
+    // constants
+    const double paddingLeft = 20.0;
+    const double orSeparationWidth = 3.0;
+    const double orSeparationCorrection = 3.0;
     final Color? orRectangleColor = Colors.grey[600];
+    // query data
+    MediaQueryData queryData = MediaQuery.of(context);
 
     if (showSignIn != null) {
       return (showSignIn!)?AuthMailPassword(toggleView: toggleView):RegMailPassword(toggleView: toggleView);
@@ -49,7 +52,7 @@ class _AuthenticateState extends State<Authenticate> {
           children: [
             // - Guy Call Image
             Container(
-              color: paletteColors1["cream"],
+              color: lightPaletteColors["cream"],
               child: Image.asset(
                 "images/dude-call.png",
                 semanticLabel: "Businessman negotiating with a client",
@@ -62,7 +65,7 @@ class _AuthenticateState extends State<Authenticate> {
             ),
             SizedBox(height: 20.0),
             Container(
-              padding: const EdgeInsets.fromLTRB(paddingLeft1, paddingTop1, paddingRight1, paddingBottom1),
+              padding: const EdgeInsets.only(left: paddingLeft),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
@@ -72,147 +75,167 @@ class _AuthenticateState extends State<Authenticate> {
                     children: [
                       Text(
                         "Join our community to",
-                        style: TextStyle(
+                        style: GoogleFonts.roboto().copyWith(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 30.0,
+                          color: Colors.black
+                        ),
+                      ),
+                      Text(
+                        "start providing and hiring services in your area.",
+                        style: GoogleFonts.roboto().copyWith(
                             fontWeight: FontWeight.bold,
                             fontSize: 30.0,
                             color: Colors.black
                         ),
                       ),
-                      Text(
-                        "start providing and/or hiring services in your area.",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 30.0,
-                            color: Colors.black
-                        ),
-                      ),
                     ],
                   ),
-                  SizedBox(height: 40.0),
-                  // - Create account Button
-                  Center(
-                    child: InkWell(
-                      onTap: () {
-                        setState(() {
-                          setState(() => showSignIn = false);
-                        });
-                      },
-                      overlayColor: MaterialStateProperty.all(lightPaletteColors["yellow"]!.withAlpha(0x5F)),
-                      highlightColor: lightPaletteColors["yellow"]!.withAlpha(0x5F),
-                      child: Ink(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(4.0),
-                          color: lightPaletteColors["crispYellow"],
-                        ),
-                        child: Padding(
-                          padding: EdgeInsets.fromLTRB(4.0, 4.0, 10.0, 4.0),
-                          child: Wrap(
-                            crossAxisAlignment: WrapCrossAlignment.center,
-                            children: <Widget>[
-                              SizedBox(
-                                width: 30.0,
-                                height: 30.0,
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(4.0),
-                                    color: Colors.transparent,
-                                  ),
-                                  child: Image.asset(
-                                    "images/bee-logo-07.png",
-                                    semanticLabel: "Jobee logo",
-                                    width: 24.0, // default icon width
-                                    height: 24.0, // default icon height
-                                  ),
-                                ),
-                              ),
-                              SizedBox(width: 12.0),
-                              Text(
-                                "Create account",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w600
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 20.0),
-                  // - OR Rectangle
-                  Row(
-                    children: [
-                      DecoratedBox(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.rectangle,
-                        ),
-                        child: Container(
-                          width: queryData.size.width/2 - paddingLeft1,
-                          height: 2.0,
-                          decoration: new BoxDecoration(
-                            color: orRectangleColor,
-                            shape: BoxShape.rectangle,
-                            borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 3.0),
-                      Center(
-                        child: Text(
-                          "OR",
-                          style: TextStyle(
-                            color: orRectangleColor,
-                            fontStyle: FontStyle.italic,
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 3.0),
-                      DecoratedBox(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.rectangle,
-                        ),
-                        child: Container(
-                          width: queryData.size.width/2 - paddingLeft1*2,
-                          height: 2.0,
-                          decoration: new BoxDecoration(
-                            color: orRectangleColor,
-                            shape: BoxShape.rectangle,
-                            borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 24.0),
-                  // - Google Sign In
-                  Center(
-                    child: GoogleSignInButton(),
-                  ),
-                  SizedBox(height: 77.0),
-                  // - Sign In Text
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      Text(
-                        "Already have an account?",
-                        style: TextStyle(color: Colors.black),
-                      ),
-                      TextButton(
-                        style: ButtonStyle( overlayColor: MaterialStateProperty.all(Colors.transparent) ),
-                        child: Text(
-                          "Sign in",
-                          style: TextStyle(color: Colors.blue),
-                        ),
-                        onPressed: () {
-                          setState(() => showSignIn = true);
-                        },
-                      )
-                    ],
-                  )
+                  //SizedBox(height: 74.0),
                 ],
               ),
             ),
+            SizedBox(height: 40.0),
+            // - Create account Button
+            Center(
+              child: InkWell(
+                onTap: () {
+                  setState(() {
+                    setState(() => showSignIn = false);
+                  });
+                },
+                overlayColor: MaterialStateProperty.all(lightPaletteColors["yellow"]!.withAlpha(0x5F)),
+                highlightColor: lightPaletteColors["yellow"]!.withAlpha(0x5F),
+                child: Ink(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(4.0),
+                    color: lightPaletteColors["crispYellow"],
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(4.0, 4.0, 10.0, 4.0),
+                    child: Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: <Widget>[
+                        SizedBox(
+                          width: 32.0,
+                          height: 32.0,
+                          child: Container(
+                            padding: EdgeInsets.all(2.0),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(4.0),
+                              color: Colors.white,
+                            ),
+                            child: Image.asset(
+                              "images/bee-logo-07.png",
+                              semanticLabel: "Jobee logo",
+                              width: 24.0, // default icon width
+                              height: 24.0, // default icon height
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 12.0),
+                        Text(
+                          "Create ",
+                          style: TextStyle(
+                            //fontWeight: FontWeight.w600,
+                            color: Theme.of(context).colorScheme.onPrimary,
+                          ),
+                        ),
+                        Text(
+                          "jobee",
+                          style: GoogleFonts.museoModerno().copyWith(
+                            color: Theme.of(context).colorScheme.onPrimary,
+                            fontWeight: FontWeight.w700
+                          ),
+                        ),
+                        Text(
+                          " account",
+                          style: TextStyle(
+                            //fontWeight: FontWeight.w600,
+                            color: Theme.of(context).colorScheme.onPrimary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: 20.0),
+            // - OR Rectangle
+            Row(
+              children: <Widget>[
+                SizedBox(width: paddingLeft),
+                Expanded(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.rectangle,
+                    ),
+                    child: Container(
+                      height: 2.0,
+                      decoration: new BoxDecoration(
+                        color: orRectangleColor,
+                        shape: BoxShape.rectangle,
+                        borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(width: orSeparationWidth),
+                Center(
+                  child: Text(
+                    "OR",
+                    style: TextStyle(
+                      color: orRectangleColor,
+                    ),
+                  ),
+                ),
+                SizedBox(width: orSeparationWidth),
+                Expanded(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.rectangle,
+                    ),
+                    child: Container(
+                      height: 2.0,
+                      decoration: new BoxDecoration(
+                        color: orRectangleColor,
+                        shape: BoxShape.rectangle,
+                        borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(width: paddingLeft),
+              ],
+            ),
+            SizedBox(height: 24.0),
+            // - Google Sign In
+            Center(
+              child: GoogleSignInButton(),
+            ),
+            Expanded(
+              child: Container(),
+            ),
+            // - Sign In Text
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                Text(
+                  "Already have an account?",
+                ),
+                TextButton(
+                  style: ButtonStyle( overlayColor: MaterialStateProperty.all(Colors.transparent) ),
+                  child: Text(
+                    "Sign in",
+                    style: TextStyle(color: Colors.blue),
+                  ),
+                  onPressed: () {
+                    setState(() => showSignIn = true);
+                  },
+                )
+              ],
+            )
           ],
         ),
       ),

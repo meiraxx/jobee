@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:jobee/screens/shared/logo.dart';
 import 'package:jobee/services/auth.dart';
 import 'package:jobee/shared/constants.dart';
 
@@ -23,35 +24,29 @@ class _RegMailPasswordState extends State<RegMailPassword> {
 
   // error state
   String submissionError = '';
-  double errorSizedBoxHeight1 = 20.0;
-  double errorSizedBoxHeight2 = 20.0;
+  double errorSizedBoxHeightEmail = 0.0;
+  double errorSizedBoxHeightPassword = 0.0;
   double submissionErrorSizedBoxHeight = 12.0;
 
   @override
   Widget build(BuildContext context) {
+    // form info
+    const double defaultFormFieldSpacing = 10.0;
+    
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        leading: appBarButton(iconData: Icons.arrow_back, color: Colors.black, onPressedFunction: () {
-          Navigator.pushReplacementNamed(context, '/authenticate');
+        leading: appBarButton(iconData: Icons.arrow_back, color: Theme.of(context).colorScheme.onBackground, onPressedFunction: () {
+          Navigator.pushReplacementNamed(context, '/');
         }),
         elevation: 1.0,
         title: Wrap(
           crossAxisAlignment: WrapCrossAlignment.center,
           children: [
+            Logo(),
+            SizedBox(width: 16.0),
             Text(
-              "Register to  ",
-              style: TextStyle(
-                color: Colors.black,
-              ),
-            ),
-            Text(
-              "jobee",
-              style: GoogleFonts.museoModerno().copyWith(
-                color: Colors.black,
-                fontSize: 18,
-                fontWeight: FontWeight.w700
-              ),
+              "|   Register",
             )
           ],
         )
@@ -72,19 +67,20 @@ class _RegMailPasswordState extends State<RegMailPassword> {
                     validator: (val) {
                       if (val!.isEmpty) {
                         setState(() {
-                          errorSizedBoxHeight1 = 9.0;
+                          errorSizedBoxHeightEmail = 0.0;
                         });
                         return "Enter your email";
                       } else {
                         setState(() {
-                          errorSizedBoxHeight1 = 20.0;
+                          errorSizedBoxHeightEmail = defaultFormFieldSpacing;
                         });
                         return null;
                       }
                     },
                     onChanged: (val) { setState(() => email = val); },
                   ),
-                  SizedBox(height: errorSizedBoxHeight1),
+                  SizedBox(height: errorSizedBoxHeightEmail),
+                  SizedBox(height: defaultFormFieldSpacing),
                   TextFormField(
                     decoration: InputDecoration(labelText: 'Password'),
                     textAlignVertical: TextAlignVertical.bottom,
@@ -93,19 +89,20 @@ class _RegMailPasswordState extends State<RegMailPassword> {
                     validator: (val) {
                       if (val!.length < 8) {
                         setState(() {
-                          errorSizedBoxHeight2 = 9.0;
+                          errorSizedBoxHeightPassword = 0.0;
                         });
                         return "Enter a password with at least 8 characters";
                       } else {
                         setState(() {
-                          errorSizedBoxHeight2 = 20.0;
+                          errorSizedBoxHeightEmail = defaultFormFieldSpacing;
                         });
                         return null;
                       }
                     },
                     onChanged: (val) { setState(() => password = val); },
                   ),
-                  SizedBox(height: errorSizedBoxHeight2),
+                  SizedBox(height: errorSizedBoxHeightPassword),
+                  SizedBox(height: defaultFormFieldSpacing),
                   Builder(builder: (BuildContext context) {
                     return loading ? CircularProgressIndicator(
                       valueColor: AlwaysStoppedAnimation<Color>(lightPaletteColors["crispYellow"]!),
@@ -115,17 +112,10 @@ class _RegMailPasswordState extends State<RegMailPassword> {
                       child: Wrap(
                         crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
-                          Image.asset(
-                            "images/bee-logo-07.png",
-                            semanticLabel: "Jobee logo",
-                            width: 20.0, // default icon width
-                            height: 20.0, // default icon height
-                            color: Colors.white,
-                          ),
-                          SizedBox(width: 2.0),
+                          Icon(Icons.person),
+                          SizedBox(width: 4.0),
                           Text(
                             'Register',
-                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
                           ),
                         ],
                       ),
@@ -149,22 +139,23 @@ class _RegMailPasswordState extends State<RegMailPassword> {
                   Text(
                     submissionError,
                     style: TextStyle(
-                        color: Colors.red,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 12.0
+                      color: Colors.red,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12.0
                     ),
                   )
                 ],
               ),
             ),
           ),
-          SizedBox(height: 260.0),
+          Expanded(
+            child: Container(),
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
               Text(
                 "Already have an account?",
-                style: TextStyle(color: Colors.black),
               ),
               TextButton(
                 style: ButtonStyle( overlayColor: MaterialStateProperty.all(Colors.transparent) ),

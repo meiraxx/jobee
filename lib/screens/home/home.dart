@@ -110,9 +110,6 @@ class _HomeState extends State<Home> {
             Text(
               "jobee",
               style: GoogleFonts.museoModerno().copyWith(
-                // COOL logo font families:
-                // - MuseoModerno
-                // - Srisakdi
                 color: _currentLogoColor,
                 fontSize: 18,
                 fontWeight: FontWeight.w700
@@ -305,7 +302,7 @@ class _HomeState extends State<Home> {
                 Divider(height: 0.0),
                 Divider(height: 0.0),
                 // - ACCOUNT
-                appBarButton(text: "Account", iconData: Icons.account_circle_outlined, color: Colors.black, onPressedFunction: () async {
+                appBarButton(text: "Account", iconData: Icons.account_circle_outlined, color: Theme.of(context).colorScheme.onBackground, onPressedFunction: () async {
                   // pop the drawer menu
                   Navigator.pop(context);
                   // push the profile page
@@ -314,7 +311,7 @@ class _HomeState extends State<Home> {
                 Divider(height: 0.0),
                 Divider(height: 0.0),
                 // - SERVICES
-                appBarButton(text: "Services", iconData: Icons.pages_outlined, color: Colors.black, onPressedFunction: () async {
+                appBarButton(text: "Services", iconData: Icons.pages_outlined, color: Theme.of(context).colorScheme.onBackground, onPressedFunction: () async {
                   // pop the drawer menu
                   Navigator.pop(context);
                   // show the service panel widget
@@ -348,11 +345,11 @@ class _HomeState extends State<Home> {
           backgroundColor: Colors.white,
           elevation: 1.0,
           actions: <Widget>[
-            appBarButton(iconData: Icons.notifications_none, color: Colors.black, onPressedFunction: () async {
+            appBarButton(iconData: Icons.notifications_none, color: Theme.of(context).colorScheme.onBackground, onPressedFunction: () async {
               // TODO : show notifications
             }, splashColor: appbarDefaultButtonSplashColor,
             tooltip: "Notifications"),
-            appBarButton(iconData: Icons.search_rounded, color: Colors.black, onPressedFunction: () async {
+            appBarButton(iconData: Icons.search_rounded, color: Theme.of(context).colorScheme.onBackground, onPressedFunction: () async {
               // TODO : search through jobs (not job types)
             }, splashColor: appbarDefaultButtonSplashColor,
             tooltip: "Search"),
