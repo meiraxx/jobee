@@ -52,7 +52,6 @@ class _HomeState extends State<Home> {
     // - VARIABLES
     MediaQueryData queryData = MediaQuery.of(context);
     double maxDrawerWidth = queryData.size.width*_drawerMenuWidthRatio;
-    AppUser appUser = Provider.of<AppUser?>(context)!;
     AppUserData appUserData = Provider.of<AppUserData>(context);
 
     // - FUNCTIONS
@@ -154,7 +153,6 @@ class _HomeState extends State<Home> {
       // - THEME OF SCAFFOLD
       child: Scaffold(
         drawerEnableOpenDragGesture: true,
-        backgroundColor: paletteColors["cream"],
         drawer: Container(
           // based on experiments, 0.739 is the drawer menu default width
           // if intended, simply change the drawer_menu_width value
@@ -175,7 +173,7 @@ class _HomeState extends State<Home> {
                 Center(
                   child: Container(
                     child: CircleAvatar(
-                      backgroundColor: paletteColors["orange"],
+                      backgroundColor: lightPaletteColors["crispYellow"],
                       radius: 40.0,
                       child: Center(
                         child: SizedBox(
@@ -211,7 +209,7 @@ class _HomeState extends State<Home> {
                     decoration: new BoxDecoration(
                       shape: BoxShape.circle,
                       border: new Border.all(
-                        color: paletteColors["orange"]!,
+                        color: lightPaletteColors["crispYellow"]!,
                         width: 3.0,
                       ),
                     ),
@@ -375,7 +373,7 @@ class _HomeState extends State<Home> {
           Icons.person,
           Icons.chat
         ],
-        activeColor: paletteColors["orange"]!),
+        activeColor: lightPaletteColors["crispYellow"]!),
       ),
     );
   }

@@ -22,21 +22,19 @@ class _RegMailPasswordState extends State<RegMailPassword> {
   String password = '';
 
   // error state
-  String error = '';
+  String submissionError = '';
   double errorSizedBoxHeight1 = 20.0;
   double errorSizedBoxHeight2 = 20.0;
-  double errorSizedBoxHeight3 = 12.0;
+  double submissionErrorSizedBoxHeight = 12.0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      backgroundColor: paletteColors["cream"],
       appBar: AppBar(
         leading: appBarButton(iconData: Icons.arrow_back, color: Colors.black, onPressedFunction: () {
           Navigator.pushReplacementNamed(context, '/authenticate');
         }),
-        backgroundColor: paletteColors["cream"],
         elevation: 1.0,
         title: Wrap(
           crossAxisAlignment: WrapCrossAlignment.center,
@@ -69,13 +67,14 @@ class _RegMailPasswordState extends State<RegMailPassword> {
                 children: <Widget>[
                   SizedBox(height: 20.0),
                   TextFormField(
-                    decoration: textInputDecoration.copyWith(hintText: 'Email'),
+                    decoration: InputDecoration(labelText: 'Email'),
+                    textAlignVertical: TextAlignVertical.bottom,
                     validator: (val) {
                       if (val!.isEmpty) {
                         setState(() {
                           errorSizedBoxHeight1 = 9.0;
                         });
-                        return "Enter an email";
+                        return "Enter your email";
                       } else {
                         setState(() {
                           errorSizedBoxHeight1 = 20.0;
@@ -87,7 +86,9 @@ class _RegMailPasswordState extends State<RegMailPassword> {
                   ),
                   SizedBox(height: errorSizedBoxHeight1),
                   TextFormField(
-                    decoration: textInputDecoration.copyWith(hintText: 'Password'),
+                    decoration: InputDecoration(labelText: 'Password'),
+                    textAlignVertical: TextAlignVertical.bottom,
+                    cursorColor: lightPaletteColors["crispYellow"],
                     obscureText: true,
                     validator: (val) {
                       if (val!.length < 8) {
@@ -107,7 +108,7 @@ class _RegMailPasswordState extends State<RegMailPassword> {
                   SizedBox(height: errorSizedBoxHeight2),
                   Builder(builder: (BuildContext context) {
                     return loading ? CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(paletteColors["orange"]!),
+                      valueColor: AlwaysStoppedAnimation<Color>(lightPaletteColors["crispYellow"]!),
                     )
                     : ElevatedButton(
                       style: orangeElevatedButtonStyle,
@@ -135,18 +136,18 @@ class _RegMailPasswordState extends State<RegMailPassword> {
                             await AuthService.registerWithEmailAndPassword(email, password);
                           } on FirebaseAuthException catch (e) {
                             setState(() {
-                              error = e.message!;
+                              submissionError = e.message!;
                               loading = false;
-                              errorSizedBoxHeight3 = 0.0;
+                              submissionErrorSizedBoxHeight = 0.0;
                             });
                           }
                         }
                       },
                     );
                   }),
-                  SizedBox(height: errorSizedBoxHeight3),
+                  SizedBox(height: submissionErrorSizedBoxHeight),
                   Text(
-                    error,
+                    submissionError,
                     style: TextStyle(
                         color: Colors.red,
                         fontWeight: FontWeight.bold,

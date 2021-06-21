@@ -22,21 +22,19 @@ class _AuthMailPasswordState extends State<AuthMailPassword> {
   String password = '';
 
   // error state
-  String error = '';
+  String submissionError = '';
   double errorSizedBoxHeight1 = 20.0;
   double errorSizedBoxHeight2 = 20.0;
-  double errorSizedBoxHeight3 = 12.0;
+  double submissionErrorSizedBoxHeight = 12.0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      backgroundColor: paletteColors["cream"],
       appBar: AppBar(
         leading: appBarButton(iconData: Icons.arrow_back, color: Colors.black, onPressedFunction: () {
           Navigator.pushReplacementNamed(context, '/authenticate');
         }),
-        backgroundColor: paletteColors["cream"],
         elevation: 1.0,
         title: Wrap(
           crossAxisAlignment: WrapCrossAlignment.center,
@@ -69,13 +67,17 @@ class _AuthMailPasswordState extends State<AuthMailPassword> {
                 children: <Widget>[
                   SizedBox(height: 20.0),
                   TextFormField(
-                    decoration: textInputDecoration.copyWith(hintText: 'Email'),
-                    validator: (val) {
-                      if (val!.isEmpty) {
+                    decoration: InputDecoration(
+                      labelText: "Email",
+                    ),
+                    textAlignVertical: TextAlignVertical.bottom,
+                    cursorColor: lightPaletteColors["crispYellow"],
+                    validator: (val1) {
+                      if (val1!.isEmpty) {
                         setState(() {
                           errorSizedBoxHeight1 = 9.0;
                         });
-                        return "Enter an email";
+                        return "Enter your email";
                       } else {
                         setState(() {
                           errorSizedBoxHeight1 = 20.0;
@@ -83,14 +85,16 @@ class _AuthMailPasswordState extends State<AuthMailPassword> {
                         return null;
                       }
                     },
-                    onChanged: (val) { setState(() => email = val); },
+                    onChanged: (val1) { setState(() => email = val1); },
                   ),
                   SizedBox(height: errorSizedBoxHeight1),
                   TextFormField(
-                    decoration: textInputDecoration.copyWith(hintText: 'Password'),
+                    decoration: InputDecoration(labelText: 'Password'),
+                    textAlignVertical: TextAlignVertical.bottom,
+                    cursorColor: lightPaletteColors["crispYellow"],
                     obscureText: true,
-                    validator: (val) {
-                      if (val!.length < 8) {
+                    validator: (val2) {
+                      if (val2!.length < 8) {
                         setState(() {
                           errorSizedBoxHeight2 = 9.0;
                         });
@@ -102,13 +106,13 @@ class _AuthMailPasswordState extends State<AuthMailPassword> {
                         return null;
                       }
                     },
-                    onChanged: (val) { setState(() => password = val); },
+                    onChanged: (val2) { setState(() => password = val2); },
                   ),
                   SizedBox(height: errorSizedBoxHeight2),
                   Builder(
                     builder: (BuildContext context) {
                       return loading ? CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(paletteColors["orange"]!),
+                        valueColor: AlwaysStoppedAnimation<Color>(lightPaletteColors["crispYellow"]!),
                       )
                       : ElevatedButton(
                         style: orangeElevatedButtonStyle,
@@ -132,14 +136,14 @@ class _AuthMailPasswordState extends State<AuthMailPassword> {
                             } on FirebaseAuthException catch (e) {
                               setState(() {
                                 if (e.message == "The email address is badly formatted.") {
-                                  error = e.message!;
+                                  submissionError = e.message!;
                                 } else {
                                   // This ELSE condition merges two conditions, for security reasons:
                                   // 1 - e.message == "There is no user record corresponding to this identifier. The user may have been deleted."
                                   // 2 - e.message == "The password is invalid or the user does not have a password."
-                                  error = 'The email and/or password provided are incorrect.';
+                                  submissionError = 'The email and/or password provided are incorrect.';
                                 }
-                                errorSizedBoxHeight3 = 0.0;
+                                submissionErrorSizedBoxHeight = 0.0;
                               });
                             }
                             // after everything is done, set loading back to false
@@ -149,9 +153,9 @@ class _AuthMailPasswordState extends State<AuthMailPassword> {
                       );
                     }
                   ),
-                  SizedBox(height: errorSizedBoxHeight3),
+                  SizedBox(height: submissionErrorSizedBoxHeight),
                   Text(
-                    error,
+                    submissionError,
                     style: TextStyle(
                         color: Colors.red,
                         fontWeight: FontWeight.bold,

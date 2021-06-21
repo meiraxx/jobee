@@ -2,7 +2,8 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
-const Map<String, Color> paletteColors = {
+// plus black and white
+const Map<String, Color> paletteColors1 = {
   "cream": const Color(0xFFF5F1D4),
   "yellow1": const Color(0xFFFFCF26),
   "yellow2": const Color(0xFFFCAB15),
@@ -10,28 +11,21 @@ const Map<String, Color> paletteColors = {
   "brown": const Color(0xFFB25C36)
 };
 
+const Map<String, Color> lightPaletteColors = {
+  "yellow": const Color(0xFFFDD329), /* primary: yellow */
+  "crispYellow": const Color(0xFFF7B61C), /* primaryVariant: crispYellow */
+  "cream": const Color(0xFFFFFAD8), /* secondary: cream */
+  "orange": const Color(0xFFFFAE2A),/* secondaryVariant: orange */
+  "lightGray": const Color(0xFFF6F6F4), /* onPrimary/onError: lightGray */
+  "error": const Color(0xFFB00020), /* used for errors */
+  "white": Colors.white, /* white */
+  "black": Colors.black, /* black */
+};
+
 ButtonStyle orangeElevatedButtonStyle = ButtonStyle(
     backgroundColor: MaterialStateProperty.resolveWith<Color?>(
-            (Set<MaterialState> states) => paletteColors["orange"]),
-    overlayColor: MaterialStateProperty.all(paletteColors["yellow1"]!.withAlpha(0x5F))
-);
-
-const InputDecoration textInputDecoration = InputDecoration(
-  errorMaxLines: 1,
-  fillColor: Colors.white,
-  filled: true,
-  enabledBorder: OutlineInputBorder(
-    borderSide: BorderSide(
-        color: Colors.white,
-        width: 2.0
-    ),
-  ),
-  focusedBorder: OutlineInputBorder(
-    borderSide: BorderSide(
-        color: const Color(0xFFFF853E),
-        width: 3.0
-    ),
-  ),
+            (Set<MaterialState> states) => lightPaletteColors["crispYellow"]),
+    overlayColor: MaterialStateProperty.all(lightPaletteColors["yellow"]!.withAlpha(0x5F))
 );
 
 // appBarButton stuff

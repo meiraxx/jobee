@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jobee/models/app_user.dart';
@@ -25,20 +24,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   _ProfileScreenState({required this.appUserData}) : super();
 
   int jobeeLevel = 0;
-  final Map<String, Color> lightColors = {
-    "AppBarBackground": Colors.grey[50]!,
-    "ScaffoldBackground": paletteColors["cream"]!,
-    "ProfileFieldText": Colors.grey[850]!,
-    "ProfileValueText": paletteColors["brown"]!,
-    "CircleAvatarBorder": paletteColors["brown"]!,
-    "MainDivider": Colors.grey[850]!,
-  };
   File? _imageFile;
 
   @override
   Widget build(BuildContext context) {
-    MediaQueryData queryData = MediaQuery.of(context);
-
     appUser = Provider.of<AppUser?>(context);
     if (appUser == null) {
       // this condition is reached in case of logout
@@ -46,7 +35,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
 
     return Scaffold(
-      backgroundColor: paletteColors["cream"],
       appBar: AppBar(
         leading: appBarButton(iconData: Icons.arrow_back, color: Colors.black, onPressedFunction: () {
           Navigator.pop(context);
@@ -72,7 +60,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Center(
                 child: Container(
                   child: CircleAvatar(
-                    backgroundColor: paletteColors["orange"],
+                    backgroundColor: lightPaletteColors["crispYellow"],
                     radius: 40.0,
                     child: Center(
                       child: SizedBox(
@@ -108,7 +96,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   decoration: new BoxDecoration(
                     shape: BoxShape.circle,
                     border: new Border.all(
-                      color: paletteColors["orange"]!,
+                      color: lightPaletteColors["crispYellow"]!,
                       width: 3.0,
                     ),
                   ),

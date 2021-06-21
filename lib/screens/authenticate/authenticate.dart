@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jobee/screens/authenticate/jobee_register.dart';
-import 'package:jobee/screens/authenticate/jobee_authenticate.dart';
+import 'package:jobee/screens/authenticate/jobee_login.dart';
 import 'package:jobee/shared/constants.dart';
 import 'google_sign_in_button.dart';
 
@@ -44,13 +44,12 @@ class _AuthenticateState extends State<Authenticate> {
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      backgroundColor: paletteColors["cream"],
       body: SafeArea(
         child: Column(
           children: [
             // - Guy Call Image
             Container(
-              color: paletteColors["cream"],
+              color: paletteColors1["cream"],
               child: Image.asset(
                 "images/dude-call.png",
                 semanticLabel: "Businessman negotiating with a client",
@@ -98,12 +97,12 @@ class _AuthenticateState extends State<Authenticate> {
                           setState(() => showSignIn = false);
                         });
                       },
-                      overlayColor: MaterialStateProperty.all(paletteColors["yellow1"]!.withAlpha(0x5F)),
-                      highlightColor: paletteColors["yellow1"]!.withAlpha(0x5F),
+                      overlayColor: MaterialStateProperty.all(lightPaletteColors["yellow"]!.withAlpha(0x5F)),
+                      highlightColor: lightPaletteColors["yellow"]!.withAlpha(0x5F),
                       child: Ink(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(4.0),
-                          color: paletteColors["orange"],
+                          color: lightPaletteColors["crispYellow"],
                         ),
                         child: Padding(
                           padding: EdgeInsets.fromLTRB(4.0, 4.0, 10.0, 4.0),
