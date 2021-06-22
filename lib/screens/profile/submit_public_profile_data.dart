@@ -30,8 +30,10 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
 
   // error state
   String error = '';
-  double errorSizedBoxHeightFirstName = 0.0;
-  double errorSizedBoxHeightLastName = 0.0;
+  double errorSizedBoxSizeFirstName = 0.0;
+  double errorSizedBoxSizeLastName = 0.0;
+  double errorSizedBoxSizeGender = 0.0;
+  double errorSizedBoxSizeBirthday = 0.0;
 
   // validator
   String? _validateNotEmpty({required String text, required String field, required bool formNotSubmitted, required String? currentlyFocusedField, Function()? successFunction, Function()? errorFunction}) {
@@ -59,6 +61,44 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
     return null;
   }
 
+  // Open Dropdown
+  GlobalKey _dropdownButtonKey = GlobalKey();
+
+  void openDropdownMethod1(GlobalKey dropdownButtonKey) {
+    dropdownButtonKey.currentContext!.visitChildElements((element) {
+      if (element.widget is Semantics) {
+        element.visitChildElements((element) {
+          print("hello1");
+          print(element);
+          if (element.widget is Actions) {
+            element.visitChildElements((element) {
+              print("hello");
+              print(element);
+            });
+          }
+        });
+      }
+    });
+  }
+
+  void openDropdownMethod2(GlobalKey dropdownButtonKey) {
+    GestureDetector? detector;
+    void searchForGestureDetector(BuildContext element) {
+      element.visitChildElements((element) {
+        if (element.widget is GestureDetector) {
+          detector = element.widget as GestureDetector?;
+        } else {
+          searchForGestureDetector(element);
+        }
+      });
+    }
+
+    searchForGestureDetector(dropdownButtonKey.currentContext!);
+    assert(detector != null);
+
+    detector!.onTap!();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -74,10 +114,12 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
     double formWidth = (queryData.size.width - formHorizontalPadding*2);
     double formHeight = (queryData.size.height - formVerticalPadding*2);
 
+    // specific field info
+    const double birthdayTopPadding = 4.0;
+
+    // etc.
     DateTime today = DateTime.now();
     Locale userLocale = Localizations.localeOf(context);
-
-    //print(Theme.of(context).cursorColor);
 
     return hasRegisteredUserData
     ?Home()
@@ -134,12 +176,12 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
                                 formNotSubmitted: _formNotSubmitted,
                                 successFunction: () {
                                   setState(() {
-                                    errorSizedBoxHeightFirstName = defaultFormFieldSpacing;
+                                    errorSizedBoxSizeFirstName = defaultFormFieldSpacing;
                                   });
                                 },
                                 errorFunction: () {
                                   setState(() {
-                                    errorSizedBoxHeightFirstName = 0.0;
+                                    errorSizedBoxSizeFirstName = 0.0;
                                   });
                                 },
                                 currentlyFocusedField: _currentlyFocusedField
@@ -155,7 +197,7 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
                             onChanged: (String? firstNameVal) {setState((){}); },
                           ),
                         ),
-                        SizedBox(height: errorSizedBoxHeightFirstName),
+                        SizedBox(height: errorSizedBoxSizeFirstName),
                         SizedBox(width: defaultFormFieldSpacing),
                         // - Last name
                         Container(
@@ -171,12 +213,12 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
                                   formNotSubmitted: _formNotSubmitted,
                                   successFunction: () {
                                     setState(() {
-                                      errorSizedBoxHeightLastName = defaultFormFieldSpacing;
+                                      errorSizedBoxSizeLastName = defaultFormFieldSpacing;
                                     });
                                   },
                                   errorFunction: () {
                                     setState(() {
-                                      errorSizedBoxHeightLastName = 0.0;
+                                      errorSizedBoxSizeLastName = 0.0;
                                     });
                                   },
                                   currentlyFocusedField: _currentlyFocusedField
@@ -192,7 +234,7 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
                             onChanged: (String? lastNameVal) {setState((){}); },
                           ),
                         ),
-                        SizedBox(height: errorSizedBoxHeightLastName),
+                        SizedBox(height: errorSizedBoxSizeLastName),
                       ],
                     ),
                     SizedBox(height: defaultFormFieldSpacing),
@@ -200,108 +242,134 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
                     Row(
                       children: [
                         // - Gender
-                        Container(
-                          width: formWidth/2 - defaultFormFieldSpacing/2,
-                          height: defaultFormFieldSpacing*6,
-                          child: DropdownButtonFormField(
-                            value: _gender,
-                            decoration: InputDecoration(
-                              labelText: 'Gender',
-                              //errorText: _validateNotEmpty(text: _gender??'', field: 'gender', formNotSubmitted: _formNotSubmitted)
+                        GestureDetector(
+                          onTap: () {
+                            // print("Manually activate dropdown button");
+                            openDropdownMethod2(_dropdownButtonKey); // manually activate dropdown button
+                          },
+                          child: Container(
+                            width: formWidth/2 - defaultFormFieldSpacing/2,
+                            height: defaultFormFieldSpacing*6 + birthdayTopPadding,
+                            child: DropdownButtonFormField(
+                              key: _dropdownButtonKey,
+                              iconSize: 0.0,
+                              value: _gender,
+                              isDense: true,
+                              decoration: InputDecoration(
+                                labelText: 'Gender',
+                                errorText: _validateNotEmpty(text: _gender??'', field: 'gender', formNotSubmitted: _formNotSubmitted, currentlyFocusedField: _currentlyFocusedField,
+                                  successFunction: () {
+                                    setState(() {
+                                      errorSizedBoxSizeGender = defaultFormFieldSpacing;
+                                    });
+                                  },
+                                  errorFunction: () {
+                                    setState(() {
+                                      errorSizedBoxSizeGender = 0.0;
+                                    });
+                                  },),
+                              ),
+                              onChanged: (String? genderVal) {
+                                setState((){
+                                  _gender = genderVal;
+                                });
+                              },
+                              onTap: () {
+                                FocusManager.instance.primaryFocus?.unfocus();
+                                setState((){
+                                  _currentlyFocusedField = null;
+                                });
+                              },
+                              items: genders.map((String gender) {
+                                return DropdownMenuItem(
+                                  value: gender,
+                                  child: Row(
+                                    children: <Widget>[
+                                      Builder(
+                                          builder: (BuildContext context) {
+                                            if (gender=='Male') {
+                                              return Icon(Icons.male_outlined);
+                                            } else if (gender=='Female') {
+                                              return Icon(Icons.female_outlined);
+                                            } else if (gender=='Other') {
+                                              return Icon(Icons.star_outline);
+                                            } else {
+                                              return SizedBox();
+                                            }
+                                          }
+                                      ),
+                                      SizedBox(width: 2.0),
+                                      Text(gender),
+                                    ],
+                                  ),
+                                );
+                              }).toList(),
                             ),
-                            validator: (String? genderVal) {
-                              // TODO: display Gender error while maintaining dropdown functionality (for some unknown reason it is not working)
-                              //return _validateNotEmpty(text: genderVal??'', field: 'gender', formNotSubmitted: _formNotSubmitted, currentlyFocusedField: _currentlyFocusedField);
-                              return null;
-                              //return "Enter your gender";
-                            },
-                            onChanged: (String? genderVal) => setState((){}),
-                            onTap: () {
-                              FocusManager.instance.primaryFocus?.unfocus();
-                              setState((){
-                                _currentlyFocusedField = null;
-                              });
-                            },
-                            items: genders.map((String gender) {
-                              return DropdownMenuItem(
-                                value: gender,
-                                child: Row(
-                                  children: <Widget>[
-                                    Builder(
-                                      builder: (BuildContext context) {
-                                        if (gender=='Male') {
-                                          return Icon(Icons.male_outlined);
-                                        } else if (gender=='Female') {
-                                          return Icon(Icons.female_outlined);
-                                        } else if (gender=='Other') {
-                                          return Icon(Icons.star_outline);
-                                        } else {
-                                          return SizedBox();
-                                        }
-                                      }
-                                    ),
-                                    SizedBox(width: 2.0),
-                                    Text(gender),
-                                  ],
-                                ),
-                              );
-                            }).toList(),
                           ),
                         ),
+                        SizedBox(height: errorSizedBoxSizeGender),
                         SizedBox(width: defaultFormFieldSpacing),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             Container(
                               width: formWidth/2 - defaultFormFieldSpacing/2,
-                              height: defaultFormFieldSpacing*6,
-                              child: Theme(
-                                data: Theme.of(context).copyWith(
-                                  primaryColor: Colors.amber,
-                                ),
-                                child: GestureDetector(
-                                  onTap: () async {
-                                    // await for user to pick the date
-                                    DateTime? picked = await showDatePicker(
-                                      context: context,
-                                      initialDate: _birthday??DateTime.now(),
-                                      firstDate: DateTime(today.year-100, today.month, today.day),
-                                      lastDate: DateTime.now(),
-                                      locale: userLocale
-                                    );
-                                    /* if date isn't null and isn't the same picked before,
-                                    * build the page again with the picked value */
-                                    if(picked != null && picked != _birthday) {
-                                      setState(() {
-                                        _birthday = picked;
-                                        _birthdayController.value =
-                                          TextEditingValue(
-                                            text: "${picked.year}"
-                                                "/${picked.month>=10?picked.month:('0'+picked.month.toString())}"
-                                                "/${picked.day>=10?picked.day:('0'+picked.day.toString())}"
-                                          );
-                                      });
-                                    }
-                                    // remove focus and update focus information
-                                    FocusManager.instance.primaryFocus?.unfocus();
-                                    setState((){
-                                      _currentlyFocusedField = null;
+                              height: defaultFormFieldSpacing*6 + birthdayTopPadding,
+                              padding: const EdgeInsets.only(top: birthdayTopPadding),
+                              child: GestureDetector(
+                                onTap: () async {
+                                  // await for user to pick the date
+                                  DateTime? picked = await showDatePicker(
+                                    context: context,
+                                    initialDate: _birthday??DateTime.now(),
+                                    firstDate: DateTime(today.year-100, today.month, today.day),
+                                    lastDate: DateTime.now(),
+                                    locale: userLocale
+                                  );
+                                  /* if date isn't null and isn't the same picked before,
+                                  * build the page again with the picked value */
+                                  if(picked != null && picked != _birthday) {
+                                    setState(() {
+                                      _birthday = picked;
+                                      _birthdayController.value =
+                                        TextEditingValue(
+                                          text: "${picked.year}"
+                                              "/${picked.month>=10?picked.month:('0'+picked.month.toString())}"
+                                              "/${picked.day>=10?picked.day:('0'+picked.day.toString())}"
+                                        );
                                     });
-                                  },
-                                  child: AbsorbPointer(
-                                    child: TextFormField(
-                                      decoration: InputDecoration(
-                                        labelText: "Date of Birth",
-                                        errorText: _validateNotEmpty(text: _birthdayController.text, field: 'birthday', formNotSubmitted: _formNotSubmitted, currentlyFocusedField: _currentlyFocusedField)
-                                      ),
-                                      textAlignVertical: TextAlignVertical.bottom,
-                                      controller: _birthdayController,
-                                      keyboardType: TextInputType.datetime,
+                                  }
+                                  // remove focus and update focus information
+                                  FocusManager.instance.primaryFocus?.unfocus();
+                                  setState((){
+                                    _currentlyFocusedField = null;
+                                  });
+                                },
+                                child: AbsorbPointer(
+                                  child: TextFormField(
+                                    decoration: InputDecoration(
+                                      labelText: "Date of Birth",
+                                      errorText: _validateNotEmpty(text: _birthdayController.text, field: 'birthday', formNotSubmitted: _formNotSubmitted, currentlyFocusedField: _currentlyFocusedField,
+                                        successFunction: () {
+                                          setState(() {
+                                            errorSizedBoxSizeBirthday = 0.0;
+                                          });
+                                        },
+                                        errorFunction: () {
+                                          setState(() {
+                                            errorSizedBoxSizeBirthday = 0.0;
+                                          });
+                                        },
+                                      )
                                     ),
+                                    textAlignVertical: TextAlignVertical.bottom,
+                                    controller: _birthdayController,
+                                    keyboardType: TextInputType.datetime,
                                   ),
                                 ),
                               ),
                             ),
+                            SizedBox(height: errorSizedBoxSizeBirthday),
                           ],
                         )
                       ],
@@ -314,6 +382,7 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
                           valueColor: AlwaysStoppedAnimation<Color>(lightPaletteColors["crispYellow"]!),
                         )
                         : ElevatedButton(
+                          style: orangeElevatedButtonStyle,
                           onPressed: () async {
                             _formNotSubmitted = false;
                             setState(() {});
@@ -326,8 +395,15 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
                               setState(() => loading = false);
                             }
                           },
-                          child: Text(
-                            "Submit data",
+                          child: Wrap(
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            children: [
+                              Icon(Icons.public),
+                              SizedBox(width: 4.0),
+                              Text(
+                                "Submit data",
+                              ),
+                            ],
                           ),
                         );
                       }),

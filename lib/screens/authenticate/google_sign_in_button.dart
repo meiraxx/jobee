@@ -70,8 +70,6 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
       ),
     );
 
-    print(_isSigningIn);
-
     return _isSigningIn
     ? CircularProgressIndicator(
       valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF397AF3)),

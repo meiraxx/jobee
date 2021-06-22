@@ -49,24 +49,6 @@ class JobeeThemeData {
     );
   }
 
-  /*
-  static const ColorScheme lightColorScheme = ColorScheme(
-    primary: Color(0xFFB93C5D),
-    primaryVariant: Color(0xFF117378),
-    secondary: Color(0xFFEFF3F3),
-    secondaryVariant: Color(0xFFFAFBFB),
-    background: Color(0xFFE6EBEB),
-    surface: Color(0xFFFAFBFB),
-    onBackground: Colors.white,
-    error: _lightFillColor,
-    onError: _lightFillColor,
-    onPrimary: _lightFillColor,
-    onSecondary: Color(0xFF322942),
-    onSurface: Color(0xFF241E30),
-    brightness: Brightness.light,
-  );
-   */
-
   static const ColorScheme lightColorScheme = ColorScheme(
     primary: const Color(0xFFF7B61C), /* lightPaletteColors['crispYellow']! */
     primaryVariant: const Color(0xFFFFAE2A), /* lightPaletteColors['orange']! */
@@ -106,7 +88,8 @@ class JobeeThemeData {
 
   static final TextTheme _textTheme = TextTheme(
     headline4: GoogleFonts.montserrat(fontWeight: _bold, fontSize: 20.0),
-    caption: GoogleFonts.oswald(fontWeight: _semiBold, fontSize: 16.0),
+    //caption: GoogleFonts.oswald(fontWeight: _semiBold, fontSize: 16.0),
+    caption: GoogleFonts.roboto(fontWeight: _regular, fontSize: 13.0),
     headline5: GoogleFonts.montserrat(fontWeight: _bold, fontSize: 16.0),
     subtitle1: GoogleFonts.montserrat(fontWeight: _medium, fontSize: 16.0),
     overline: GoogleFonts.montserrat(fontWeight: _medium, fontSize: 12.0),
