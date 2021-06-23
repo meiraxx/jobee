@@ -24,30 +24,37 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
   TextEditingController _firstNameController = TextEditingController();
   TextEditingController _lastNameController = TextEditingController();
   String? _gender;
-  List<String> genders = ['Male', 'Female', 'Other', "I'd rather not say"];
-  DateTime? _birthday;
-  TextEditingController _birthdayController = new TextEditingController();
+  List<String> _genders = ['Male', 'Female', 'Other', "I'd rather not say"];
+  DateTime? _birthDay;
+  TextEditingController _birthDayController = TextEditingController();
+  TextEditingController _userNameController = TextEditingController();
 
   // error state
-  String error = '';
-  double errorSizedBoxSizeFirstName = 0.0;
-  double errorSizedBoxSizeLastName = 0.0;
-  double errorSizedBoxSizeGender = 0.0;
-  double errorSizedBoxSizeBirthday = 0.0;
+  String _error = '';
+  double _errorSizedBoxSizeFirstName = 0.0;
+  double _errorSizedBoxSizeLastName = 0.0;
+  double _errorSizedBoxSizeGender = 0.0;
+  double _errorSizedBoxSizeBirthday = 0.0;
+  double _errorSizedBoxSizeUserName = 0.0;
+  Map<String, String> _fieldErrorMap = {
+    "firstName": "Enter your first name",
+    "lastName": "Enter your last name",
+    "gender": "Enter your gender",
+    "birthDay": "Enter your birthday",
+    "userName": "Enter your username"
+  };
 
+  // error state - field padding correction
+  final double _birthDayTopPadding = 4.0;
+  final bool _spacedFormFields = false;
+  
   // validator
-  String? _validateNotEmpty({required String text, required String field, required bool formNotSubmitted, required String? currentlyFocusedField, Function()? successFunction, Function()? errorFunction}) {
+  String? _validateNotEmpty({required String text, required String field, required Map<String, String> fieldErrorMap, required bool formNotSubmitted, required String? currentlyFocusedField, Function()? successFunction, Function()? errorFunction}) {
     if (formNotSubmitted) {
       /* user did not submit form yet */
       return null;
     }
 
-    Map<String, String> fieldErrorMap = {
-      "firstName": "Enter your first name",
-      "lastName": "Enter your last name",
-      "gender": "Enter your gender",
-      "birthday": "Enter your birthday",
-    };
     assert(fieldErrorMap[field]!=null, "You must specify a correctly mapped field error");
 
     // error case
@@ -102,21 +109,20 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance!
+        .addPostFrameCallback((_) => build(context));
   }
 
   @override
   Widget build(BuildContext context) {
     MediaQueryData queryData = MediaQuery.of(context);
     // form info
-    const double defaultFormFieldSpacing = 10.0;
+    final double defaultFormFieldSpacing = Theme.of(context).textTheme.caption!.fontSize!;
     const double formVerticalPadding = 20.0;
     const double formHorizontalPadding = 30.0;
     double formWidth = (queryData.size.width - formHorizontalPadding*2);
     double formHeight = (queryData.size.height - formVerticalPadding*2);
-
-    // specific field info
-    const double birthdayTopPadding = 4.0;
-
+    
     // etc.
     DateTime today = DateTime.now();
     Locale userLocale = Localizations.localeOf(context);
@@ -159,7 +165,58 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     SizedBox(height: 20.0),
-                    // - Row 1
+                    // - userName row
+                    Row(
+                      children: <Widget>[
+                        /*SizeProviderWidget(
+                          child: Icon(
+                            Icons.info_outline,
+                            color: Colors.blueGrey[500],
+                          ),
+                          onChildSize: (size) {
+                            print(size.width);
+                          },
+                        ),
+                        SizedBox(width: 4.0),*/
+                        // - userName form field
+                        Container(
+                          width: formWidth,
+                          height: defaultFormFieldSpacing*6,
+                          child: TextFormField(
+                            controller: _userNameController,
+                            decoration: InputDecoration(
+                              labelText: "Username",
+                              errorText: _validateNotEmpty(
+                                  text: _userNameController.text,
+                                  field: 'userName',
+                                  fieldErrorMap: _fieldErrorMap,
+                                  formNotSubmitted: _formNotSubmitted,
+                                  successFunction: () {
+                                    _errorSizedBoxSizeUserName = defaultFormFieldSpacing;
+                                  },
+                                  errorFunction: () {
+                                    _errorSizedBoxSizeUserName = 0.0;
+                                  },
+                                  currentlyFocusedField: _currentlyFocusedField
+                              ),
+                            ),
+                            textAlignVertical: TextAlignVertical.bottom,
+                            onTap: () {
+                              setState((){
+                                _currentlyFocusedField = 'userName';
+                              });
+                            },
+                          ),
+                        ),
+                        SizedBox(height: _errorSizedBoxSizeUserName),
+                      ],
+                    ),
+                    Builder(
+                      builder: (BuildContext context) {
+                        return _spacedFormFields?SizedBox(height: defaultFormFieldSpacing):SizedBox(height: 0.0);
+                      }
+                    ),
+                    // - firstName+lastName row
                     Row(
                       children: <Widget>[
                         // - First name
@@ -171,33 +228,28 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
                             decoration: InputDecoration(
                               labelText: "First name",
                               errorText: _validateNotEmpty(
-                                text: _firstNameController.text,
-                                field: 'firstName',
-                                formNotSubmitted: _formNotSubmitted,
-                                successFunction: () {
-                                  setState(() {
-                                    errorSizedBoxSizeFirstName = defaultFormFieldSpacing;
-                                  });
-                                },
-                                errorFunction: () {
-                                  setState(() {
-                                    errorSizedBoxSizeFirstName = 0.0;
-                                  });
-                                },
-                                currentlyFocusedField: _currentlyFocusedField
-                              )
+                                  text: _firstNameController.text,
+                                  field: 'firstName',
+                                  fieldErrorMap: _fieldErrorMap,
+                                  formNotSubmitted: _formNotSubmitted,
+                                  successFunction: () {
+                                    _errorSizedBoxSizeFirstName = defaultFormFieldSpacing;
+                                  },
+                                  errorFunction: () {
+                                    _errorSizedBoxSizeFirstName = 0.0;
+                                  },
+                                  currentlyFocusedField: _currentlyFocusedField
+                              ) ,
                             ),
                             textAlignVertical: TextAlignVertical.bottom,
-                            cursorColor: lightPaletteColors["crispYellow"],
                             onTap: () {
                               setState((){
                                 _currentlyFocusedField = 'firstName';
                               });
                             },
-                            onChanged: (String? firstNameVal) {setState((){}); },
                           ),
                         ),
-                        SizedBox(height: errorSizedBoxSizeFirstName),
+                        SizedBox(height: _errorSizedBoxSizeFirstName),
                         SizedBox(width: defaultFormFieldSpacing),
                         // - Last name
                         Container(
@@ -206,39 +258,38 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
                           child: TextFormField(
                             controller: _lastNameController,
                             decoration: InputDecoration(
-                                labelText: "Last name",
-                                errorText: _validateNotEmpty(
+                              labelText: "Last name",
+                              errorText: _validateNotEmpty(
                                   text: _lastNameController.text,
                                   field: 'lastName',
+                                  fieldErrorMap: _fieldErrorMap,
                                   formNotSubmitted: _formNotSubmitted,
                                   successFunction: () {
-                                    setState(() {
-                                      errorSizedBoxSizeLastName = defaultFormFieldSpacing;
-                                    });
+                                    _errorSizedBoxSizeLastName = defaultFormFieldSpacing;
                                   },
                                   errorFunction: () {
-                                    setState(() {
-                                      errorSizedBoxSizeLastName = 0.0;
-                                    });
+                                    _errorSizedBoxSizeLastName = 0.0;
                                   },
                                   currentlyFocusedField: _currentlyFocusedField
-                                )
+                              ),
                             ),
                             textAlignVertical: TextAlignVertical.bottom,
-                            cursorColor: lightPaletteColors["crispYellow"],
                             onTap: () {
                               setState((){
                                 _currentlyFocusedField = 'lastName';
                               });
                             },
-                            onChanged: (String? lastNameVal) {setState((){}); },
                           ),
                         ),
-                        SizedBox(height: errorSizedBoxSizeLastName),
+                        SizedBox(height: _errorSizedBoxSizeLastName),
                       ],
                     ),
-                    SizedBox(height: defaultFormFieldSpacing),
-                    // - Row 2
+                    Builder(
+                        builder: (BuildContext context) {
+                          return _spacedFormFields?SizedBox(height: defaultFormFieldSpacing):SizedBox(height: 0.0);
+                        }
+                    ),
+                    // - gender+birthDay row
                     Row(
                       children: [
                         // - Gender
@@ -249,25 +300,26 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
                           },
                           child: Container(
                             width: formWidth/2 - defaultFormFieldSpacing/2,
-                            height: defaultFormFieldSpacing*6 + birthdayTopPadding,
+                            height: defaultFormFieldSpacing*6,
                             child: DropdownButtonFormField(
                               key: _dropdownButtonKey,
-                              iconSize: 0.0,
+                              //iconSize: 0.0,
                               value: _gender,
                               isDense: true,
                               decoration: InputDecoration(
                                 labelText: 'Gender',
-                                errorText: _validateNotEmpty(text: _gender??'', field: 'gender', formNotSubmitted: _formNotSubmitted, currentlyFocusedField: _currentlyFocusedField,
-                                  successFunction: () {
-                                    setState(() {
-                                      errorSizedBoxSizeGender = defaultFormFieldSpacing;
-                                    });
-                                  },
-                                  errorFunction: () {
-                                    setState(() {
-                                      errorSizedBoxSizeGender = 0.0;
-                                    });
-                                  },),
+                                errorText: _validateNotEmpty(
+                                    text: _gender??'',
+                                    field: 'gender',
+                                    fieldErrorMap: _fieldErrorMap,
+                                    formNotSubmitted: _formNotSubmitted, currentlyFocusedField: _currentlyFocusedField,
+                                    successFunction: () {
+                                      _errorSizedBoxSizeGender = defaultFormFieldSpacing;
+                                    },
+                                    errorFunction: () {
+                                      _errorSizedBoxSizeGender = 0.0;
+                                    }
+                                ),
                               ),
                               onChanged: (String? genderVal) {
                                 setState((){
@@ -280,58 +332,40 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
                                   _currentlyFocusedField = null;
                                 });
                               },
-                              items: genders.map((String gender) {
+                              items: _genders.map((String gender) {
                                 return DropdownMenuItem(
                                   value: gender,
-                                  child: Row(
-                                    children: <Widget>[
-                                      Builder(
-                                          builder: (BuildContext context) {
-                                            if (gender=='Male') {
-                                              return Icon(Icons.male_outlined);
-                                            } else if (gender=='Female') {
-                                              return Icon(Icons.female_outlined);
-                                            } else if (gender=='Other') {
-                                              return Icon(Icons.star_outline);
-                                            } else {
-                                              return SizedBox();
-                                            }
-                                          }
-                                      ),
-                                      SizedBox(width: 2.0),
-                                      Text(gender),
-                                    ],
-                                  ),
+                                  child: Text(gender),
                                 );
                               }).toList(),
                             ),
                           ),
                         ),
-                        SizedBox(height: errorSizedBoxSizeGender),
+                        SizedBox(height: _errorSizedBoxSizeGender),
                         SizedBox(width: defaultFormFieldSpacing),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             Container(
                               width: formWidth/2 - defaultFormFieldSpacing/2,
-                              height: defaultFormFieldSpacing*6 + birthdayTopPadding,
-                              padding: const EdgeInsets.only(top: birthdayTopPadding),
+                              height: defaultFormFieldSpacing*6 + _birthDayTopPadding,
+                              padding: EdgeInsets.only(top: _birthDayTopPadding),
                               child: GestureDetector(
                                 onTap: () async {
                                   // await for user to pick the date
                                   DateTime? picked = await showDatePicker(
                                     context: context,
-                                    initialDate: _birthday??DateTime.now(),
+                                    initialDate: _birthDay??DateTime.now(),
                                     firstDate: DateTime(today.year-100, today.month, today.day),
                                     lastDate: DateTime.now(),
                                     locale: userLocale
                                   );
                                   /* if date isn't null and isn't the same picked before,
                                   * build the page again with the picked value */
-                                  if(picked != null && picked != _birthday) {
+                                  if(picked != null && picked != _birthDay) {
                                     setState(() {
-                                      _birthday = picked;
-                                      _birthdayController.value =
+                                      _birthDay = picked;
+                                      _birthDayController.value =
                                         TextEditingValue(
                                           text: "${picked.year}"
                                               "/${picked.month>=10?picked.month:('0'+picked.month.toString())}"
@@ -348,33 +382,38 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
                                 child: AbsorbPointer(
                                   child: TextFormField(
                                     decoration: InputDecoration(
-                                      labelText: "Date of Birth",
-                                      errorText: _validateNotEmpty(text: _birthdayController.text, field: 'birthday', formNotSubmitted: _formNotSubmitted, currentlyFocusedField: _currentlyFocusedField,
+                                      labelText: "Birthday",
+                                      errorText: _validateNotEmpty(
+                                        text: _birthDayController.text,
+                                        field: 'birthDay',
+                                        fieldErrorMap: _fieldErrorMap,
+                                        formNotSubmitted: _formNotSubmitted,
+                                        currentlyFocusedField: _currentlyFocusedField,
                                         successFunction: () {
-                                          setState(() {
-                                            errorSizedBoxSizeBirthday = 0.0;
-                                          });
+                                          _errorSizedBoxSizeBirthday = 0.0;
                                         },
                                         errorFunction: () {
-                                          setState(() {
-                                            errorSizedBoxSizeBirthday = 0.0;
-                                          });
+                                          _errorSizedBoxSizeBirthday = 0.0;
                                         },
-                                      )
+                                      ),
                                     ),
                                     textAlignVertical: TextAlignVertical.bottom,
-                                    controller: _birthdayController,
+                                    controller: _birthDayController,
                                     keyboardType: TextInputType.datetime,
                                   ),
                                 ),
                               ),
                             ),
-                            SizedBox(height: errorSizedBoxSizeBirthday),
+                            SizedBox(height: _errorSizedBoxSizeBirthday),
                           ],
                         )
                       ],
                     ),
-                    SizedBox(height: defaultFormFieldSpacing),
+                    Builder(
+                        builder: (BuildContext context) {
+                          return _spacedFormFields?SizedBox(height: defaultFormFieldSpacing):SizedBox(height: 0.0);
+                        }
+                    ),
                     Center(
                       child: Builder(builder: (BuildContext context) {
                         return loading
@@ -385,11 +424,11 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
                           style: orangeElevatedButtonStyle,
                           onPressed: () async {
                             _formNotSubmitted = false;
-                            setState(() {});
+                            //setState(() {});
                             if (_formKey.currentState!.validate()) {
                               // while submitting data, set loading to true
                               setState(() => loading = true);
-                              // TODO: do stuff
+                              // TODO: Store data in Firestore
 
                               // after everything is done, set loading back to false
                               setState(() => loading = false);
@@ -410,7 +449,7 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
                     ),
                     SizedBox(height: 12.0),
                     Text(
-                      error,
+                      _error,
                       style: TextStyle(
                         color: Colors.red,
                         fontWeight: FontWeight.bold,
@@ -424,7 +463,7 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
             Expanded(
               child: Container(),
             ),
-            // - Row 3
+            // - End Row
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
@@ -454,8 +493,8 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
   void dispose() {
     _firstNameController.dispose();
     _lastNameController.dispose();
-    //_genderController.dispose();
-    //_birthdayController.dispose();
+    //_birthDayController.dispose();
+    _userNameController.dispose();
     super.dispose();
   }
 }

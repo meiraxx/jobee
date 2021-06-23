@@ -26,66 +26,6 @@ class MyApp extends StatelessWidget {
       '/home': (BuildContext context) => Home(),
     };
 
-    ThemeData lightThemeData = ThemeData(
-      colorScheme: ColorScheme(
-        primary: const Color(0xFFF7B61C), /* lightPaletteColors['crispYellow']! */
-        primaryVariant: const Color(0xFFFFAE2A), /* lightPaletteColors['orange']! */
-        secondary: const Color(0xFFFFFAD8), /* lightPaletteColors['cream']! */
-        secondaryVariant: const Color(0xFFFDD329), /* lightPaletteColors['yellow']! */
-        surface: Colors.white,
-        background: Colors.white,
-        error: const Color(0xFFB00020),
-        onPrimary: const Color(0xFFF6F6F4), /* lightPaletteColors['lightGray']! */
-        onSecondary: Colors.black,
-        onSurface: Colors.black,
-        onBackground: Colors.black,
-        onError: const Color(0xFFF6F6F4), /* lightPaletteColors['lightGray']! */
-        brightness: Brightness.light
-      ),
-      appBarTheme: AppBarTheme(
-        backgroundColor: lightPaletteColors["cream"]!,
-      ),
-      scaffoldBackgroundColor: lightPaletteColors["cream"]!,
-      inputDecorationTheme: InputDecorationTheme(
-        errorMaxLines: 1,
-        labelStyle: TextStyle(
-          color: const Color(0xFF616161), // Colors.grey[700]
-        ),
-        enabledBorder: UnderlineInputBorder(
-          borderSide: BorderSide(
-            color: Colors.white,
-            width: 2.0
-          ),
-        ),
-        fillColor: Colors.white,
-        filled: true,
-        focusedBorder: UnderlineInputBorder(
-          borderSide: BorderSide(
-            color: const Color(0xFFF7B61C),
-            width: 2.0
-          )
-        ),
-      )
-    );
-
-    ThemeData darkThemeData = ThemeData(
-      colorScheme: ColorScheme(
-        primary: const Color(0xFFBB86FC),
-        primaryVariant: const Color(0xFF3700B3),
-        secondary: const Color(0xFF03DAC6),
-        secondaryVariant: const Color(0xFF03DAC6),
-        surface: const Color(0xFF121212),
-        background: const Color(0xFF121212),
-        error: const Color(0xFFcf6679),
-        onPrimary: Colors.black,
-        onSecondary: Colors.black,
-        onSurface: Colors.white,
-        onBackground: Colors.white,
-        onError: Colors.black,
-        brightness: Brightness.dark
-      )
-    );
-
     return StreamProvider<AppUser?>.value(
       initialData: null,
       value: AuthService.user,
@@ -93,7 +33,7 @@ class MyApp extends StatelessWidget {
         /* light theme settings */
         theme: JobeeThemeData.lightThemeData,
         /* dark theme settings */
-        darkTheme: darkThemeData,
+        darkTheme: JobeeThemeData.darkThemeData,
         /*
           ThemeMode:
           - ThemeMode.system to follow system theme

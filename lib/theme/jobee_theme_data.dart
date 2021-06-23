@@ -35,6 +35,11 @@ class JobeeThemeData {
       scaffoldBackgroundColor: colorScheme.background,
       highlightColor: Colors.transparent,
       focusColor: focusColor,
+      textSelectionTheme: TextSelectionThemeData(
+        cursorColor: colorScheme.primaryVariant,
+        selectionColor: colorScheme.primaryVariant,
+        selectionHandleColor: colorScheme.primaryVariant,
+      ),
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
         backgroundColor: Color.alphaBlend(
@@ -45,6 +50,11 @@ class JobeeThemeData {
       ),
       buttonTheme: ButtonThemeData(
         textTheme: ButtonTextTheme.primary,
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        errorMaxLines: 1,
+        contentPadding: EdgeInsets.all(5.0),
+        alignLabelWithHint: true
       )
     );
   }
@@ -89,8 +99,8 @@ class JobeeThemeData {
   static final TextTheme _textTheme = TextTheme(
     headline4: GoogleFonts.montserrat(fontWeight: _bold, fontSize: 20.0),
     //caption: GoogleFonts.oswald(fontWeight: _semiBold, fontSize: 16.0),
-    caption: GoogleFonts.roboto(fontWeight: _regular, fontSize: 13.0),
-    headline5: GoogleFonts.montserrat(fontWeight: _bold, fontSize: 16.0),
+    caption: GoogleFonts.roboto(fontWeight: _regular, fontSize: 12.0),
+    headline5: GoogleFonts.montserrat(fontWeight: _bold, fontSize: 18.0),
     subtitle1: GoogleFonts.montserrat(fontWeight: _medium, fontSize: 16.0),
     overline: GoogleFonts.montserrat(fontWeight: _medium, fontSize: 12.0),
     bodyText1: GoogleFonts.montserrat(fontWeight: _regular, fontSize: 14.0),

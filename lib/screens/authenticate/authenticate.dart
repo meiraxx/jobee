@@ -36,7 +36,6 @@ class _AuthenticateState extends State<Authenticate> {
     // constants
     const double paddingLeft = 20.0;
     const double orSeparationWidth = 3.0;
-    const double orSeparationCorrection = 3.0;
     final Color? orRectangleColor = Colors.grey[600];
     // query data
     MediaQueryData queryData = MediaQuery.of(context);

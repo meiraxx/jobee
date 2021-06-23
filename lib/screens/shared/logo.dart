@@ -81,11 +81,11 @@ class _LogoState extends State<Logo> {
           crossAxisAlignment: WrapCrossAlignment.center,
           children: [
             Image.asset(
-                "images/bee-logo-07.png",
-                semanticLabel: "Jobee logo",
-                width: 32.0, // default icon width
-                height: 32.0, // default icon height
-                color: _currentLogoColor
+              "images/bee-logo-07.png",
+              semanticLabel: "Jobee logo",
+              width: 32.0, // default icon width
+              height: 32.0, // default icon height
+              color: _currentLogoColor
             ),
             SizedBox(width: 4.0),
             Text(
@@ -94,9 +94,9 @@ class _LogoState extends State<Logo> {
                 // COOL logo font families:
                 // - MuseoModerno
                 // - Srisakdi
-                  color: _currentLogoColor,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700
+                color: _currentLogoColor,
+                fontSize: 18,
+                fontWeight: FontWeight.w700
               ),
             ),
           ],

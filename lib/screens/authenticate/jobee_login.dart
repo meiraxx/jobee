@@ -66,7 +66,6 @@ class _AuthMailPasswordState extends State<AuthMailPassword> {
                       labelText: "Email",
                     ),
                     textAlignVertical: TextAlignVertical.bottom,
-                    cursorColor: lightPaletteColors["crispYellow"],
                     validator: (val1) {
                       if (val1!.isEmpty) {
                         setState(() {
@@ -87,7 +86,6 @@ class _AuthMailPasswordState extends State<AuthMailPassword> {
                   TextFormField(
                     decoration: InputDecoration(labelText: 'Password'),
                     textAlignVertical: TextAlignVertical.bottom,
-                    cursorColor: lightPaletteColors["crispYellow"],
                     obscureText: true,
                     validator: (val2) {
                       if (val2!.length < 8) {
