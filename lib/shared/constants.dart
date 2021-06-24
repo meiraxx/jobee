@@ -23,9 +23,10 @@ const Map<String, Color> lightPaletteColors = {
 };
 
 ButtonStyle orangeElevatedButtonStyle = ButtonStyle(
-    backgroundColor: MaterialStateProperty.resolveWith<Color?>(
-            (Set<MaterialState> states) => lightPaletteColors["crispYellow"]),
-    overlayColor: MaterialStateProperty.all(lightPaletteColors["yellow"]!.withAlpha(0x5F))
+  backgroundColor: MaterialStateProperty.resolveWith<Color?>(
+          (Set<MaterialState> states) => lightPaletteColors["crispYellow"]),
+  overlayColor: MaterialStateProperty.all(lightPaletteColors["yellow"]!.withAlpha(0x5F)),
+  elevation: MaterialStateProperty.all(2.0),
 );
 
 // appBarButton stuff

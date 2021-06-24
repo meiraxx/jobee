@@ -60,18 +60,26 @@ class JobeeThemeData {
   }
 
   static const ColorScheme lightColorScheme = ColorScheme(
+    /*
     primary: const Color(0xFFF7B61C), /* lightPaletteColors['crispYellow']! */
     primaryVariant: const Color(0xFFFFAE2A), /* lightPaletteColors['orange']! */
     secondary: const Color(0xFFFFFAD8), /* lightPaletteColors['cream']! */
     secondaryVariant: const Color(0xFFFDD329), /* lightPaletteColors['yellow']! */
-    surface: Colors.white,
-    background: Colors.white,
+    surface: const Color(0xFFF6F6F4), /* Colors.white or lightPaletteColors['lightGray']! */
+    background: const Color(0xFFF6F6F4), /* Colors.white or lightPaletteColors['lightGray']! */
+    */
+    primary: const Color(0xFFFDD329), /* lightPaletteColors['yellow']! */
+    primaryVariant: const Color(0xFFF7B61C), /* lightPaletteColors['crispYellow']! */
+    secondary: const Color(0xFFFFAE2A), /* lightPaletteColors['orange']! */
+    secondaryVariant: const Color(0xFFFF872A), /* lightPaletteColors['deeperOrange']! */
+    surface: const Color(0xFFFFFAD8), /* lightPaletteColors['cream']! */
+    background: const Color(0xFFFFFAD8), /* lightPaletteColors['cream']! */
     error: _lightFillColor,
-    onPrimary: _lightFillColor, /* lightPaletteColors['lightGray']! */
+    onPrimary: _lightFillColor,
     onSecondary: Colors.black,
     onSurface: Colors.black,
     onBackground: Colors.black,
-    onError: _lightFillColor, /* lightPaletteColors['lightGray']! */
+    onError: _lightFillColor,
     brightness: Brightness.light
   );
 
