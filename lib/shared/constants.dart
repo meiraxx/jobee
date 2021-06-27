@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 
 // plus black and white
@@ -225,8 +223,6 @@ BottomNavigationBar bottomNavigationBarGenerator({ required BuildContext context
     selectedIconTheme: IconThemeData(color: activeColor),
   );
 }
-
-int generateRandomInteger(int min, int max) => min + Random().nextInt(max - min);
 
 class SizeProviderWidget extends StatefulWidget {
   final Widget child;

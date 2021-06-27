@@ -18,24 +18,49 @@ class DatabaseService {
 
     await profileCollection.doc(uid).set({
       'email': email,
-      'authProvider': authProvider
+      'authProvider': authProvider,
+      'hasRegisteredPublicData': false,
+      'hasRegisteredPersonalData': false,
     });
   }
 
-  Future<void> updateUserData(String name, String gender) async {
-    await profileCollection.doc(uid).update({
-      'name': name,
-      'gender': gender
-    });
+  Future<void> updatePublicUserData({required bool hasRegisteredPublicData, String? userName, String? firstName, String? lastName,
+      String? gender, String? birthDay}) async {
+
+    Map<String, Object?> updatesMap = {
+      'hasRegisteredPublicData': hasRegisteredPublicData,
+      'userName': userName,
+      'firstName': firstName,
+      'lastName': lastName,
+      'gender': gender,
+      'birthDay': birthDay
+    };
+
+    // eliminate null values
+    updatesMap.removeWhere((key, value) => value==null);
+
+    await profileCollection.doc(uid).update(updatesMap);
+  }
+
+  Future<void> updatePersonalUserData({required bool hasRegisteredPersonalData, String? phoneCountryDialCode, String? phoneNumber}) async {
+
+    Map<String, Object?> updatesMap = {
+      'hasRegisteredPersonalData': hasRegisteredPersonalData,
+      'phoneCountryDialCode': phoneCountryDialCode,
+      'phoneNumber': phoneNumber
+    };
+
+    // eliminate null values
+    updatesMap.removeWhere((key, value) => value==null);
+
+    await profileCollection.doc(uid).update(updatesMap);
   }
 
   // profile list from snapshot
   List<Profile> _profileListFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.docs.map((doc) {
-      print(doc.data()['name']);
-      print(doc.data()['']);
       return Profile(
-        name: doc.data()['name'] ?? ''
+        userName: doc.data()['userName'] ?? ''
       );
     }).toList();
   }
@@ -45,8 +70,15 @@ class DatabaseService {
     return AppUserData(
       uid: uid!,
       email: snapshot.data()!['email'],
-      name: snapshot.data()!['name']??"('name' not yet provided)",
-      phoneNumber: snapshot.data()!['phoneNumber']??"('phone number' not yet provided)"
+      hasRegisteredPublicData: snapshot.data()!['hasRegisteredPublicData'],
+      hasRegisteredPersonalData: snapshot.data()!['hasRegisteredPersonalData'],
+      userName: snapshot.data()!['userName'],
+      firstName: snapshot.data()!['firstName'],
+      lastName: snapshot.data()!['lastName'],
+      gender: snapshot.data()!['gender'],
+      birthDay: snapshot.data()!['birthDay'],
+      phoneCountryDialCode: snapshot.data()!['phoneCountryDialCode'],
+      phoneNumber: snapshot.data()!['phoneNumber'],
     );
   }
 

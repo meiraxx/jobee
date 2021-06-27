@@ -109,7 +109,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   children: <Widget>[
                     SizedBox(width: 4.0),
                     Text(
-                      appUserData!.name!,
+                      appUserData!.userName!,
                       style: GoogleFonts.pangolin().copyWith(
                         color: Colors.black,
                         fontSize: 18.0,
@@ -158,7 +158,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         SizedBox(width: 2.0),
                         Text(
                           'Logout',
-                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
                         ),
                       ],
                     ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jobee/shared/constants.dart';
+import 'package:jobee/utils/math_utils.dart';
 
 // Logo Class
 class Logo extends StatefulWidget {

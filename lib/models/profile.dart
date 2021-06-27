@@ -1,6 +1,6 @@
 class Profile {
-  final String name;
+  final String userName;
 
-  Profile({ required this.name });
+  Profile({ required this.userName });
 
 }

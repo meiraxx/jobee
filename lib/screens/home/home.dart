@@ -6,6 +6,7 @@ import 'package:jobee/models/profile.dart';
 import 'package:jobee/screens/profile/profile.dart';
 import 'package:jobee/services/database.dart';
 import 'package:jobee/services/image_upload.dart';
+import 'package:jobee/utils/math_utils.dart';
 import 'package:provider/provider.dart';
 import 'package:jobee/shared/constants.dart';
 import 'dart:io';
@@ -219,7 +220,7 @@ class _HomeState extends State<Home> {
                     children: <Widget>[
                       SizedBox(width: 4.0),
                       Text(
-                        appUserData.name!,
+                        appUserData.userName!,
                         style: GoogleFonts.pangolin().copyWith(
                             color: Colors.black,
                             fontSize: 18.0,
@@ -263,7 +264,7 @@ class _HomeState extends State<Home> {
                     ),
                     SizedBox(width: 4.0),
                     Text(
-                      appUserData.phoneNumber!,
+                      appUserData.phoneNumber??'Phone number...',
                       style: TextStyle(
                           color: Colors.black,
                           fontSize: 13.0,
