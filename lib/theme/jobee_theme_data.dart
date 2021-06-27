@@ -13,18 +13,30 @@ class JobeeThemeData {
   static final Color _lightFocusColor = Colors.black.withOpacity(0.12);
   static final Color _darkFocusColor = Colors.white.withOpacity(0.12);
 
-  static ThemeData lightThemeData = themeData(lightColorScheme, _lightFocusColor);
-  static ThemeData darkThemeData = themeData(darkColorScheme, _darkFocusColor);
+  static ThemeData lightThemeData = themeData(_lightColorScheme, _textTheme, _lightFocusColor, _lightFillColor, _darkFillColor);
+  static ThemeData darkThemeData = themeData(_darkColorScheme, _textTheme, _darkFocusColor, _lightFillColor, _darkFillColor);
 
-  static ThemeData themeData(ColorScheme colorScheme, Color focusColor) {
+  static ThemeData themeData(ColorScheme colorScheme, TextTheme textTheme, Color focusColor, Color lightFillColor, Color darkFillColor) {
     return ThemeData(
       colorScheme: colorScheme,
-      textTheme: _textTheme,
+      // apply colorScheme colors to the default-colored textTheme
+      textTheme: textTheme.copyWith(
+        headline4: textTheme.headline4!.copyWith(color: colorScheme.onPrimary),
+        caption: textTheme.caption!.copyWith(color: colorScheme.onPrimary),
+        headline5: textTheme.headline5!.copyWith(color: colorScheme.onPrimary),
+        subtitle1: textTheme.subtitle1!.copyWith(color: colorScheme.onPrimary),
+        overline: textTheme.overline!.copyWith(color: colorScheme.onPrimary),
+        bodyText1: textTheme.bodyText1!.copyWith(color: colorScheme.onPrimary),
+        subtitle2: textTheme.subtitle2!.copyWith(color: colorScheme.onPrimary),
+        bodyText2: textTheme.bodyText2!.copyWith(color: colorScheme.onPrimary),
+        headline6: textTheme.headline6!.copyWith(color: colorScheme.onPrimary),
+        button: textTheme.button!.copyWith(color: colorScheme.onPrimary),
+      ),
       // Matches manifest.json colors and background color.
       //primaryColor: const Color(0xFF030303),
       primaryColor: colorScheme.primary,
       appBarTheme: AppBarTheme(
-        textTheme: _textTheme.apply(bodyColor: colorScheme.onPrimary),
+        textTheme: textTheme.apply(bodyColor: colorScheme.onPrimary),
         color: colorScheme.background,
         elevation: 0,
         iconTheme: IconThemeData(color: colorScheme.primary),
@@ -43,10 +55,10 @@ class JobeeThemeData {
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
         backgroundColor: Color.alphaBlend(
-          _lightFillColor.withOpacity(0.80),
-          _darkFillColor,
+          lightFillColor.withOpacity(0.80),
+          darkFillColor,
         ),
-        contentTextStyle: _textTheme.subtitle1!.apply(color: _darkFillColor),
+        contentTextStyle: textTheme.subtitle1!.apply(color: darkFillColor),
       ),
       buttonTheme: ButtonThemeData(
         textTheme: ButtonTextTheme.primary,
@@ -55,19 +67,15 @@ class JobeeThemeData {
         errorMaxLines: 1,
         contentPadding: EdgeInsets.all(5.0),
         alignLabelWithHint: true
+      ),
+      cardTheme: CardTheme(
+        color: Colors.white,
+        margin: EdgeInsets.zero,
       )
     );
   }
 
-  static const ColorScheme lightColorScheme = ColorScheme(
-    /*
-    primary: const Color(0xFFF7B61C), /* lightPaletteColors['crispYellow']! */
-    primaryVariant: const Color(0xFFFFAE2A), /* lightPaletteColors['orange']! */
-    secondary: const Color(0xFFFFFAD8), /* lightPaletteColors['cream']! */
-    secondaryVariant: const Color(0xFFFDD329), /* lightPaletteColors['yellow']! */
-    surface: const Color(0xFFF6F6F4), /* Colors.white or lightPaletteColors['lightGray']! */
-    background: const Color(0xFFF6F6F4), /* Colors.white or lightPaletteColors['lightGray']! */
-    */
+  static const ColorScheme _lightColorScheme = ColorScheme(
     primary: const Color(0xFFFDD329), /* lightPaletteColors['yellow']! */
     primaryVariant: const Color(0xFFF7B61C), /* lightPaletteColors['crispYellow']! */
     secondary: const Color(0xFFFFAE2A), /* lightPaletteColors['orange']! */
@@ -83,7 +91,7 @@ class JobeeThemeData {
     brightness: Brightness.light
   );
 
-  static const ColorScheme darkColorScheme = ColorScheme(
+  static const ColorScheme _darkColorScheme = ColorScheme(
     primary: Color(0xFFFF8383),
     primaryVariant: Color(0xFF1CDEC9),
     secondary: Color(0xFF4D1F7C),
@@ -106,15 +114,13 @@ class JobeeThemeData {
 
   static final TextTheme _textTheme = TextTheme(
     headline4: GoogleFonts.montserrat(fontWeight: _bold, fontSize: 20.0),
-    //caption: GoogleFonts.oswald(fontWeight: _semiBold, fontSize: 16.0),
     caption: GoogleFonts.roboto(fontWeight: _regular, fontSize: 12.0),
     headline5: GoogleFonts.montserrat(fontWeight: _bold, fontSize: 18.0),
-    subtitle1: GoogleFonts.montserrat(fontWeight: _medium, fontSize: 16.0),
+    subtitle1: GoogleFonts.montserrat(fontWeight: _regular, fontSize: 18.0),
     overline: GoogleFonts.montserrat(fontWeight: _medium, fontSize: 12.0),
-    bodyText1: GoogleFonts.montserrat(fontWeight: _regular, fontSize: 14.0),
+    bodyText1: GoogleFonts.montserrat(fontWeight: _regular, fontSize: 16.0),
     subtitle2: GoogleFonts.montserrat(fontWeight: _medium, fontSize: 14.0),
-    bodyText2: GoogleFonts.montserrat(fontWeight: _regular, fontSize: 16.0),
-    //headline6: GoogleFonts.montserrat(fontWeight: _bold, fontSize: 16.0),
+    bodyText2: GoogleFonts.montserrat(fontWeight: _regular, fontSize: 13.0),
     headline6: GoogleFonts.montserrat(fontWeight: _semiBold, fontSize: 18.0),
     button: GoogleFonts.montserrat(fontWeight: _semiBold, fontSize: 14.0),
   );

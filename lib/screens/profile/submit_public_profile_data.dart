@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:jobee/models/app_user.dart';
 import 'package:jobee/screens/home/home.dart';
 import 'package:jobee/screens/profile/submit_personal_profile_data.dart';
-import 'package:jobee/screens/shared/logo.dart';
+import 'package:jobee/screens/screens-shared/logo.dart';
 import 'package:jobee/services/auth.dart';
 import 'package:jobee/services/database.dart';
 import 'package:jobee/shared/constants.dart';

@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:jobee/screens/shared/logo.dart';
+import 'package:jobee/screens/screens-shared/logo.dart';
 import 'package:jobee/services/auth.dart';
 import 'package:jobee/shared/constants.dart';
 

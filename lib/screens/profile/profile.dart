@@ -59,6 +59,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
             children: <Widget>[
               Center(
                 child: Container(
+                  decoration: new BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: new Border.all(
+                      color: lightPaletteColors["crispYellow"]!,
+                      width: 3.0,
+                    ),
+                  ),
                   child: CircleAvatar(
                     backgroundColor: lightPaletteColors["crispYellow"],
                     radius: 40.0,
@@ -93,31 +100,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
                   ),
-                  decoration: new BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: new Border.all(
-                      color: lightPaletteColors["crispYellow"]!,
-                      width: 3.0,
-                    ),
-                  ),
                 ),
               ),
               SizedBox(height: 6.0),
               Center(
-                child: Wrap(
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: <Widget>[
-                    SizedBox(width: 4.0),
-                    Text(
-                      appUserData!.userName!,
-                      style: GoogleFonts.pangolin().copyWith(
-                        color: Colors.black,
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.w500,
-                        letterSpacing: 1.0
-                      ),
-                    ),
-                  ],
+                child: Text(
+                  appUserData!.userName!,
+                  style: GoogleFonts.montserrat().copyWith(
+                    color: Colors.black,
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.w500,
+                    //letterSpacing: 1.0
+                  ),
                 ),
               ),
               SizedBox(height: 4.0),

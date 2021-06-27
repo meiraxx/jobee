@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:jobee/models/app_user.dart';
 import 'package:jobee/models/profile.dart';
 import 'package:jobee/screens/profile/profile.dart';
+import 'package:jobee/screens/screens-shared/logo.dart';
 import 'package:jobee/services/database.dart';
 import 'package:jobee/services/image_upload.dart';
 import 'package:jobee/utils/math_utils.dart';
@@ -55,72 +56,6 @@ class _HomeState extends State<Home> {
     double maxDrawerWidth = queryData.size.width*_drawerMenuWidthRatio;
     AppUserData appUserData = Provider.of<AppUserData>(context);
 
-    // - FUNCTIONS
-    void logoInteractions(Color defaultLogoColor, int interaction, List<Color> logoColorList) {
-      if (interaction == 1) {
-        // - INTERACTION 1: toggle between logo's default and a random color
-
-        setState(() {
-          if (_currentLogoColor == defaultLogoColor) {
-            _currentLogoColor = logoColorList[generateRandomInteger(0, logoColorList.length - 1)];
-          } else {
-            _currentLogoColor = defaultLogoColor;
-          }
-        });
-      } else if (interaction == 2) {
-        // - INTERACTION 2: toggle between logo's random colors
-        setState(() {
-          _currentLogoColor = logoColorList[generateRandomInteger(0, logoColorList.length - 1)];
-        });
-      } else if (interaction == 3) {
-        // - INTERACTION 3: make the whole logo disappear!
-        setState(() {
-          if (_currentLogoColor == defaultLogoColor) {
-            _currentLogoColor = Colors.transparent;
-          } else {
-            _currentLogoColor = defaultLogoColor;
-          }
-        });
-      }
-    }
-
-    // - WIDGETS
-    GestureDetector logoPlusText = GestureDetector(
-      onTap: () {
-        logoInteractions(Colors.black, 1, _logoRandomColorList);
-      },
-      onDoubleTap: () {
-        logoInteractions(Colors.black, 2, _logoRandomColorList);
-      },
-      onHorizontalDragStart: (dragStartDetails) {
-        logoInteractions(Colors.black, 3, _logoRandomColorList);
-      },
-      child: Tooltip(
-        message: 'jobee logo!',
-        child: Wrap(
-          crossAxisAlignment: WrapCrossAlignment.center,
-          children: [
-            Image.asset(
-                "images/bee-logo-07.png",
-                semanticLabel: "Jobee logo",
-                width: 32.0, // default icon width
-                height: 32.0, // default icon height
-                color: _currentLogoColor
-            ),
-            SizedBox(width: 4.0),
-            Text(
-              "jobee",
-              style: GoogleFonts.museoModerno().copyWith(
-                color: _currentLogoColor,
-                fontSize: 18,
-                fontWeight: FontWeight.w700
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-
     // - BOTTOM NAVIGATION BAR LOGIC
     Widget bottomNavigationCurrentItem;
     switch (_bottomNavigationCurrentIndex) {
@@ -162,7 +97,7 @@ class _HomeState extends State<Home> {
                 // - LOGO BAR
                 Container(
                   padding: const EdgeInsets.fromLTRB(8.0, 12.0, 8.0, 12.0),
-                  child: logoPlusText
+                  child: Logo(),
                 ),
                 Divider(height: 0.0),
                 Divider(height: 0.0),
@@ -170,6 +105,13 @@ class _HomeState extends State<Home> {
                 SizedBox(height: 6.0),
                 Center(
                   child: Container(
+                    decoration: new BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: new Border.all(
+                        color: lightPaletteColors["crispYellow"]!,
+                        width: 3.0,
+                      ),
+                    ),
                     child: CircleAvatar(
                       backgroundColor: lightPaletteColors["crispYellow"],
                       radius: 40.0,
@@ -204,100 +146,108 @@ class _HomeState extends State<Home> {
                         ),
                       ),
                     ),
-                    decoration: new BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: new Border.all(
-                        color: lightPaletteColors["crispYellow"]!,
-                        width: 3.0,
-                      ),
-                    ),
                   ),
                 ),
                 SizedBox(height: 6.0),
                 Center(
-                  child: Wrap(
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    children: <Widget>[
-                      SizedBox(width: 4.0),
-                      Text(
-                        appUserData.userName!,
-                        style: GoogleFonts.pangolin().copyWith(
-                            color: Colors.black,
-                            fontSize: 18.0,
-                            fontWeight: FontWeight.w500,
-                            letterSpacing: 1.0
-                        ),
-                      ),
-                    ],
+                  child: Text(
+                    "${appUserData.firstName!} ${appUserData.lastName!}",
+                    style: Theme.of(context).textTheme.subtitle1!.copyWith(
+                      fontSize: 20.0,
+                    ),
                   ),
                 ),
                 SizedBox(height: 6.0),
-                Wrap(
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: <Widget>[
-                    SizedBox(width: maxDrawerWidth/8),
-                    Icon(
-                      Icons.email,
-                      color: Colors.black,
-                      size: 14.0
-                    ),
-                    SizedBox(width: 4.0),
-                    Text(
-                      appUserData.email,
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 13.0,
-                          fontWeight: FontWeight.w400
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 4.0),
-                Wrap(
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: <Widget>[
-                    SizedBox(width: maxDrawerWidth/8),
-                    Icon(
-                        Icons.phone_android_rounded,
-                        color: Colors.black,
-                        size: 14.0
-                    ),
-                    SizedBox(width: 4.0),
-                    Text(
-                      appUserData.phoneNumber??'Phone number...',
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 13.0,
-                          fontWeight: FontWeight.w400
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 4.0),
-                Wrap(
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: <Widget>[
-                    SizedBox(width: maxDrawerWidth/8),
-                    Wrap(
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      children: <Widget>[
-                        Icon(
-                          Icons.circle,
-                          color: Colors.redAccent[700],
-                          size: 13.0,
+                Card(
+                  margin: EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 0.0),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              "@",
+                              style: Theme.of(context).textTheme.subtitle2!.copyWith(
+                                fontSize: 13.0,
+                              ),
+                            ),
+                            SizedBox(width: 4.0),
+                            Expanded(
+                              child: Text(
+                                appUserData.userName!,
+                                style: Theme.of(context).textTheme.subtitle2!.copyWith(
+                                  fontSize: 13.0,
+                                ),
+                              ),
+                            ),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 2.0),
+                                  child: Icon(
+                                    Icons.phone_android_rounded,
+                                    size: 13.0,
+                                  ),
+                                ),
+                                SizedBox(width: 4.0),
+                                Text(
+                                  appUserData.phoneCountryDialCode! + " " + appUserData.phoneNumber!,
+                                  style: Theme.of(context).textTheme.bodyText2,
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
-                        SizedBox(width: 4.0),
-                        Text(
-                          "Busy",
-                          style: TextStyle(
-                              color: Colors.redAccent[700],
-                              fontSize: 12.0,
-                              fontWeight: FontWeight.w500
-                          ),
+                        SizedBox(height: 4.0),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.only(top: 2.0),
+                              child: Icon(
+                                Icons.email,
+                                size: 13.0,
+                              ),
+                            ),
+                            SizedBox(width: 4.0),
+                            Expanded(
+                              child: Text(
+                                appUserData.email,
+                                style: Theme.of(context).textTheme.bodyText2,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 4.0),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.only(top: 1.5),
+                              child: Icon(
+                                Icons.circle,
+                                color: Colors.redAccent[700],
+                                size: 13.0,
+                              ),
+                            ),
+                            SizedBox(width: 4.0),
+                            Text(
+                              "Busy",
+                              style: TextStyle(
+                                  color: Colors.redAccent[700],
+                                  fontSize: 12.0,
+                                  fontWeight: FontWeight.w500
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                  ],
+                  ),
                 ),
                 SizedBox(height: 12.0),
                 Divider(height: 0.0),
@@ -342,7 +292,7 @@ class _HomeState extends State<Home> {
               );
             },
           ),
-          title: logoPlusText,
+          title: Logo(),
           backgroundColor: Colors.white,
           elevation: 1.0,
           actions: <Widget>[

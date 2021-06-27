@@ -171,7 +171,7 @@ class _AuthenticateState extends State<Authenticate> {
                       shape: BoxShape.rectangle,
                     ),
                     child: Container(
-                      height: 2.0,
+                      height: 1.0,
                       decoration: new BoxDecoration(
                         color: orRectangleColor,
                         shape: BoxShape.rectangle,
@@ -196,7 +196,7 @@ class _AuthenticateState extends State<Authenticate> {
                       shape: BoxShape.rectangle,
                     ),
                     child: Container(
-                      height: 2.0,
+                      height: 1.0,
                       decoration: new BoxDecoration(
                         color: orRectangleColor,
                         shape: BoxShape.rectangle,

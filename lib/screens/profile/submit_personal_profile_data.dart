@@ -3,7 +3,7 @@ import 'package:jobee/external-libs/intl_phone_field-2.0.0/intl_phone_field.dart
 import 'package:jobee/external-libs/intl_phone_field-2.0.0/phone_number.dart';
 import 'package:jobee/models/app_user.dart';
 import 'package:jobee/screens/home/home.dart';
-import 'package:jobee/screens/shared/logo.dart';
+import 'package:jobee/screens/screens-shared/logo.dart';
 import 'package:jobee/screens/wrapper.dart';
 import 'package:jobee/services/auth.dart';
 import 'package:jobee/services/database.dart';
