@@ -254,7 +254,7 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
                                 height: defaultFormFieldSpacing*6,
                                 child: DropdownButtonFormField(
                                   key: _dropdownButtonKey,
-                                  //iconSize: 0.0,
+                                  iconSize: 0.0,
                                   value: _gender,
                                   isDense: true,
                                   decoration: InputDecoration(

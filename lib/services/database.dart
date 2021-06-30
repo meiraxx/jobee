@@ -59,26 +59,28 @@ class DatabaseService {
   // profile list from snapshot
   List<Profile> _profileListFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.docs.map((doc) {
+      Map docDataMap = doc.data() as Map;
       return Profile(
-        userName: doc.data()['userName'] ?? ''
+        userName: docDataMap['userName'] ?? ''
       );
     }).toList();
   }
 
   // userData from snapshot
   AppUserData _appUserDataFromSnapshot(DocumentSnapshot snapshot) {
+    Map snapshotDataMap = snapshot.data() as Map;
     return AppUserData(
       uid: uid!,
-      email: snapshot.data()!['email'],
-      hasRegisteredPublicData: snapshot.data()!['hasRegisteredPublicData'],
-      hasRegisteredPersonalData: snapshot.data()!['hasRegisteredPersonalData'],
-      userName: snapshot.data()!['userName'],
-      firstName: snapshot.data()!['firstName'],
-      lastName: snapshot.data()!['lastName'],
-      gender: snapshot.data()!['gender'],
-      birthDay: snapshot.data()!['birthDay'],
-      phoneCountryDialCode: snapshot.data()!['phoneCountryDialCode'],
-      phoneNumber: snapshot.data()!['phoneNumber'],
+      email: snapshotDataMap['email'],
+      hasRegisteredPublicData: snapshotDataMap['hasRegisteredPublicData'],
+      hasRegisteredPersonalData: snapshotDataMap['hasRegisteredPersonalData'],
+      userName: snapshotDataMap['userName'],
+      firstName: snapshotDataMap['firstName'],
+      lastName: snapshotDataMap['lastName'],
+      gender: snapshotDataMap['gender'],
+      birthDay: snapshotDataMap['birthDay'],
+      phoneCountryDialCode: snapshotDataMap['phoneCountryDialCode'],
+      phoneNumber: snapshotDataMap['phoneNumber'],
     );
   }
 

@@ -1,3 +1,4 @@
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:jobee/models/app_user.dart';
 import 'package:jobee/screens/authenticate/authenticate.dart';
@@ -5,14 +6,15 @@ import 'package:jobee/screens/home/home.dart';
 import 'package:jobee/screens/wrapper.dart';
 import 'package:jobee/services/auth.dart';
 import 'package:flutter/material.dart';
-import 'package:jobee/shared/constants.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:jobee/theme/jobee_theme_data.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await AuthService.initializeFirebaseApp();
+  await FirebaseStorage.instance.useStorageEmulator('localhost', 5000);
   runApp(MyApp());
 }
 
