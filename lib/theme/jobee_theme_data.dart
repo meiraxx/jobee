@@ -33,8 +33,8 @@ class JobeeThemeData {
         button: textTheme.button!.copyWith(color: colorScheme.onPrimary),
       ),
       // Matches manifest.json colors and background color.
-      //primaryColor: const Color(0xFF030303),
       primaryColor: colorScheme.primary,
+      backgroundColor: colorScheme.background,
       appBarTheme: AppBarTheme(
         textTheme: textTheme.apply(bodyColor: colorScheme.onPrimary),
         color: colorScheme.background,

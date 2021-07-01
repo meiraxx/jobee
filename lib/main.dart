@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:jobee/theme/jobee_theme_data.dart';
-import 'package:cloud_functions/cloud_functions.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

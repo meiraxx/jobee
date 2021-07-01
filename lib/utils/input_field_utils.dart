@@ -5,18 +5,18 @@ import 'math_utils.dart';
 /* --------------------------
 |         Validators        |
 -------------------------- */
-String? validateNotEmpty({required String text, required String field, required Map<String, String> fieldErrorMap, required bool formNotSubmitted, required String? currentlyFocusedField, Function()? successFunction, Function()? errorFunction}) {
+String? validateNotEmpty({required String text, required String field, required String errorMessage, required bool formNotSubmitted, String? currentlyFocusedField, Function()? successFunction, Function()? errorFunction}) {
   if (formNotSubmitted) {
     /* user did not submit form yet */
     return null;
   }
 
-  assert(fieldErrorMap[field]!=null, "You must specify a correctly mapped field error");
-
   // error case
-  if (text.isEmpty && currentlyFocusedField!=field) {
+  /*&& currentlyFocusedField!=field*/
+  if (text.isEmpty) {
     if (errorFunction!=null) errorFunction();
-    return fieldErrorMap[field]!;
+    //if (currentlyFocusedField != null && currentlyFocusedField!=field) return errorMessage;
+    return errorMessage;
   }
 
   // normal submission
@@ -36,9 +36,9 @@ List<Object> validatePhoneNumber({required String phoneCountryDialCode, required
 
   // country code is not supported
   if (!phoneCountryDialCodePropertiesMap.containsKey(phoneCountryDialCode)) {
-    String phoneCountryDialCodePropertiesMapKeysString = phoneCountryDialCodePropertiesMap.keys.toString();
-    return [false, "Dial code '$phoneCountryDialCode' not yet supported. Supported country codes: "
-      "${phoneCountryDialCodePropertiesMapKeysString.substring(1, phoneCountryDialCodePropertiesMapKeysString.length-1)}"];
+    //String phoneCountryDialCodePropertiesMapKeysString = phoneCountryDialCodePropertiesMap.keys.toString();
+    //String supportedPhoneCountryDialCodes = phoneCountryDialCodePropertiesMapKeysString.substring(1, phoneCountryDialCodePropertiesMapKeysString.length-1);
+    return [false, "Dial code '$phoneCountryDialCode' not yet supported"];
   }
 
   // since the country code is supported, we select its map

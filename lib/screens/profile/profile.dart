@@ -1,11 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jobee/models/app_user.dart';
 import 'package:jobee/services/auth.dart';
 import 'package:jobee/services/image_upload.dart';
 import 'package:jobee/shared/constants.dart';
-import 'package:jobee/shared/loading.dart';
-import 'package:provider/provider.dart';
 import 'dart:io';
 
 class ProfileScreen extends StatefulWidget {
@@ -19,21 +18,19 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   final AppUserData? appUserData;
-  AppUser? appUser;
 
-  _ProfileScreenState({required this.appUserData}) : super();
+  _ProfileScreenState({required this.appUserData}) {
+    this._userName = appUserData!.userName!;
+    this._email = appUserData!.email;
+  }
 
   int jobeeLevel = 0;
   File? _imageFile;
+  String? _email;
+  String? _userName;
 
   @override
   Widget build(BuildContext context) {
-    appUser = Provider.of<AppUser?>(context);
-    if (appUser == null) {
-      // this condition is reached in case of logout
-      return Loading();
-    }
-
     return Scaffold(
       appBar: AppBar(
         leading: appBarButton(iconData: Icons.arrow_back, color: Theme.of(context).colorScheme.onBackground, onPressedFunction: () {
@@ -74,7 +71,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         width: double.infinity,
                         height: double.infinity,
                         child: (_imageFile != null)
-                            ? GestureDetector(
+                        ? GestureDetector(
                           onTap: () async {
                             _imageFile = await getImage();
                             setState( (){} ); // update image
@@ -86,7 +83,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               )
                           ),
                         )
-                            : IconButton(
+                        : IconButton(
                           icon: Icon(
                               Icons.upload_rounded,
                               color: Colors.white,
@@ -105,7 +102,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               SizedBox(height: 6.0),
               Center(
                 child: Text(
-                  appUserData!.userName!,
+                  _userName!,
                   style: GoogleFonts.montserrat().copyWith(
                     color: Colors.black,
                     fontSize: 18.0,
@@ -126,7 +123,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     SizedBox(width: 4.0),
                     Text(
-                      appUserData!.email,
+                      _email!,
                       style: TextStyle(
                           color: Colors.black,
                           fontSize: 16.0,
@@ -150,12 +147,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       children: [
                         Icon(Icons.logout),
                         SizedBox(width: 2.0),
-                        Text(
-                          'Logout',
-                        ),
+                        Text('Logout'),
                       ],
                     ),
                     onPressed: () async {
+                      //await FirebaseAuth.instance.signOut();
                       await AuthService.signOut(context: context);
                       Navigator.pushReplacementNamed(context, '/');
                     },
@@ -168,5 +164,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
       //bottomNavigationBar: bottomNavigationBar,
     );
+  }
+
+  @override
+  void dispose() {
+    //FirebaseFirestore.instance.terminate();
+    super.dispose();
   }
 }

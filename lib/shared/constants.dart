@@ -25,6 +25,7 @@ ButtonStyle orangeElevatedButtonStyle = ButtonStyle(
           (Set<MaterialState> states) => lightPaletteColors["crispYellow"]),
   overlayColor: MaterialStateProperty.all(lightPaletteColors["yellow"]!.withAlpha(0x5F)),
   elevation: MaterialStateProperty.all(2.0),
+  padding: MaterialStateProperty.all(EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0)),
 );
 
 // appBarButton stuff
@@ -133,6 +134,30 @@ Widget appBarButton({ String? text, IconData? iconData, Image? image, BuildConte
   return Container();
 }
 
+class InPlaceLoader extends StatelessWidget {
+  final Size replacedWidgetSize;
+  final double submissionErrorHeight;
+
+  const InPlaceLoader({Key? key, required this.replacedWidgetSize, required this.submissionErrorHeight}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(top: submissionErrorHeight),
+      child: SizedBox(
+        height: replacedWidgetSize.height - submissionErrorHeight*2,
+        width: replacedWidgetSize.width - submissionErrorHeight*2,
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(lightPaletteColors["crispYellow"]!),
+        ),
+      ),
+    );
+  }
+
+  // waiting 1-3 seconds showing the loading widget animation is recommended because
+  // it looks neater than an almost-instant animation
+  static Future<void> minimumLoadingSleep(Duration duration) async => await Future.delayed(duration);
+}
 
 BottomNavigationBar bottomNavigationBarGenerator({ required BuildContext context, required Function(int) onTap,
   required int bottomNavigationCurrentIndex, required List<IconData> iconDataList,
@@ -142,26 +167,6 @@ BottomNavigationBar bottomNavigationBarGenerator({ required BuildContext context
   /// @returns a BottomNavigationBar.
 
   assert(iconDataList.length == 3); // verify iconDataList only has 3 elements
-
-  /*
-  final Color firstNavItemColor, secondNavItemColor, thirdNavItemColor;
-
-  if (bottomNavigationCurrentIndex == 0) {
-    firstNavItemColor = activeColor;
-    secondNavItemColor = inactiveColor;
-    thirdNavItemColor = inactiveColor;
-  } else if (bottomNavigationCurrentIndex == 1) {
-    firstNavItemColor = inactiveColor;
-    secondNavItemColor = activeColor;
-    thirdNavItemColor = inactiveColor;
-  } else if (bottomNavigationCurrentIndex == 2) {
-    firstNavItemColor = inactiveColor;
-    secondNavItemColor = inactiveColor;
-    thirdNavItemColor = activeColor;
-  } else {
-    throw(Exception("bottomNavigationBarGenerator function: bottomNavigationCurrentIndex cannot be > 2"));
-  }
-  */
 
   return BottomNavigationBar(
     onTap: onTap,

@@ -14,7 +14,8 @@ class Network {
     request.headers.set('content-type', 'application/x-www-form-urlencoded');
     request.add(utf8.encode(json.encode(jsonMap)));
     HttpClientResponse response = await request.close();
-    // todo - you should check the response.statusCode
+    print(response.statusCode);
+    // TODO: should check the response.statusCode and throw an error
     String reply = await response.transform(utf8.decoder).join();
     httpClient.close();
     return reply;

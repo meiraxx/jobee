@@ -7,6 +7,7 @@ import 'package:jobee/screens/profile/profile.dart';
 import 'package:jobee/screens/screens-shared/logo.dart';
 import 'package:jobee/services/database.dart';
 import 'package:jobee/services/image_upload.dart';
+import 'package:jobee/shared/loader.dart';
 import 'package:jobee/utils/math_utils.dart';
 import 'package:provider/provider.dart';
 import 'package:jobee/shared/constants.dart';
@@ -54,7 +55,10 @@ class _HomeState extends State<Home> {
     // - VARIABLES
     MediaQueryData queryData = MediaQuery.of(context);
     double maxDrawerWidth = queryData.size.width*_drawerMenuWidthRatio;
-    AppUserData appUserData = Provider.of<AppUserData>(context);
+
+    // app user data
+    AppUserData? appUserData = Provider.of<AppUserData?>(context);
+    if (appUserData==null) return TextLoader(text: "Fetching user data...");
 
     // - BOTTOM NAVIGATION BAR LOGIC
     Widget bottomNavigationCurrentItem;
@@ -297,11 +301,11 @@ class _HomeState extends State<Home> {
           elevation: 1.0,
           actions: <Widget>[
             appBarButton(iconData: Icons.notifications_none, color: Theme.of(context).colorScheme.onBackground, onPressedFunction: () async {
-              // TODO : show notifications
+              // TODO: show notifications
             }, splashColor: appbarDefaultButtonSplashColor,
             tooltip: "Notifications"),
             appBarButton(iconData: Icons.search_rounded, color: Theme.of(context).colorScheme.onBackground, onPressedFunction: () async {
-              // TODO : search through jobs (not job types)
+              // TODO: search through jobs (not job types)
             }, splashColor: appbarDefaultButtonSplashColor,
             tooltip: "Search"),
           ],

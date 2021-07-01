@@ -24,15 +24,10 @@ class Wrapper extends StatelessWidget {
     else {
       // since we have an appUser at this point, we can retrieve and
       // provide appUserData
-      return StreamProvider<AppUserData>.value(
-        initialData: AppUserData(
-          uid: appUser.uid,
-          email: appUser.email,
-          hasRegisteredPublicData: false,
-          hasRegisteredPersonalData: false
-        ),
+      return StreamProvider<AppUserData?>.value(
+        initialData: null,
         value: DatabaseService(uid: appUser.uid).appUserData,
-        child: SubmitPublicProfileData()
+        child: SubmitPublicProfileData(),
       );
     }
   }
