@@ -178,12 +178,6 @@ BottomNavigationBar bottomNavigationBarGenerator({ required BuildContext context
           iconDataList[0],
           //color: firstNavItemColor
         ),
-        /*title: Text(
-          'Home',
-          style: TextStyle(
-            color: firstNavItemColor
-          ),
-        ),*/
         label: 'Home',
         tooltip: 'Home'
       ),
@@ -192,12 +186,6 @@ BottomNavigationBar bottomNavigationBarGenerator({ required BuildContext context
           iconDataList[1],
           //color: secondNavItemColor
         ),
-        /*title: Text(
-          'Profile',
-          style: TextStyle(
-            color: secondNavItemColor
-          ),
-        ),*/
         label: 'Profile',
         tooltip: 'Profile'
       ),
@@ -206,12 +194,6 @@ BottomNavigationBar bottomNavigationBarGenerator({ required BuildContext context
           iconDataList[2],
           //color: thirdNavItemColor
         ),
-        /*title: Text(
-          'Chat',
-          style: TextStyle(
-              color: thirdNavItemColor
-          ),
-        ),*/
         label: 'Chat',
         tooltip: 'Chat'
       ),

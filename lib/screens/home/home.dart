@@ -112,12 +112,12 @@ class _HomeState extends State<Home> {
                     decoration: new BoxDecoration(
                       shape: BoxShape.circle,
                       border: new Border.all(
-                        color: lightPaletteColors["crispYellow"]!,
+                        color: Theme.of(context).colorScheme.primaryVariant,
                         width: 3.0,
                       ),
                     ),
                     child: CircleAvatar(
-                      backgroundColor: lightPaletteColors["crispYellow"],
+                      backgroundColor: Theme.of(context).colorScheme.primaryVariant,
                       radius: 40.0,
                       child: Center(
                         child: SizedBox(
@@ -315,17 +315,20 @@ class _HomeState extends State<Home> {
             // TODO: HOME BODY
           ),
         ),
-        bottomNavigationBar: bottomNavigationBarGenerator(context: context, onTap: (int newIndex) {
+        bottomNavigationBar: bottomNavigationBarGenerator(
+        context: context,
+        onTap: (int newIndex) {
           setState(() {
             _bottomNavigationCurrentIndex = newIndex;
           });
-        }, bottomNavigationCurrentIndex: _bottomNavigationCurrentIndex,
+        },
+        bottomNavigationCurrentIndex: _bottomNavigationCurrentIndex,
         iconDataList: [
           Icons.home,
           Icons.person,
-          Icons.chat
+          Icons.chat,
         ],
-        activeColor: lightPaletteColors["crispYellow"]!),
+        activeColor: Theme.of(context).colorScheme.primary),
       ),
     );
   }

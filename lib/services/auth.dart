@@ -18,8 +18,8 @@ class AuthService {
   }
 
   // Create User object based on UserCredential
-  static AppUser _appUserFromFirebaseUser(User? user) {
-    return AppUser(uid: user!.uid, email: user.email!);
+  static AppUser _appUserFromFirebaseUser(User user) {
+    return AppUser(uid: user.uid, email: user.email!);
   }
 
   // Auth change user stream
@@ -162,7 +162,7 @@ class AuthService {
       }
     }
 
-    return _appUserFromFirebaseUser(user);
+    return (user!=null)?_appUserFromFirebaseUser(user):null;
   }
 
   static SnackBar customSnackBar({required String content}) {

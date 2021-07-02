@@ -5,18 +5,31 @@ import 'math_utils.dart';
 /* --------------------------
 |         Validators        |
 -------------------------- */
-String? validateNotEmpty({required String text, required String field, required String errorMessage, required bool formNotSubmitted, String? currentlyFocusedField, Function()? successFunction, Function()? errorFunction}) {
+String? validateNotEmpty({required String text, required String field, required String errorMessage, bool formNotSubmitted = false, String? currentlyFocusedField, Function()? successFunction, Function()? errorFunction}) {
+  // formNotSubmitted must be used when using errorText instead of validator
+  // formNotSubmitted defaults to false, so it is not needed when using validator
   if (formNotSubmitted) {
-    /* user did not submit form yet */
+    /* if user did not submit form yet */
     return null;
   }
 
   // error case
-  /*&& currentlyFocusedField!=field*/
   if (text.isEmpty) {
     if (errorFunction!=null) errorFunction();
     //if (currentlyFocusedField != null && currentlyFocusedField!=field) return errorMessage;
     return errorMessage;
+  }
+
+  // normal submission
+  if (successFunction!=null) successFunction();
+  return null;
+}
+
+String? validatePassword({required String password, required int minLength, Function()? successFunction, Function()? errorFunction}) {
+  // error case
+  if (password.length < minLength) {
+    if (errorFunction!=null) errorFunction();
+    return "Enter a password with at least $minLength characters";
   }
 
   // normal submission

@@ -130,6 +130,7 @@ class _SubmitPersonalProfileDataState extends State<SubmitPersonalProfileData> {
                                         decoration: InputDecoration(
                                           labelText: 'Phone Number',
                                         ),
+                                        textAlignVertical: TextAlignVertical.center,
                                         // initialCountryCode obtained using _infoByIP
                                         initialCountryCode: futureSnapshot.data!["countryCode"],
                                         onChanged: (PhoneNumber phone) {

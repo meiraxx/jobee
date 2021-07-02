@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:jobee/models/app_user.dart';
 import 'package:jobee/services/auth.dart';
 import 'package:jobee/services/database.dart';
@@ -18,15 +19,22 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
       onTap: () async {
         try {
           setState(() => _isSigningIn = true );
-          
+
           AppUser? appUser = await AuthService.signInWithGoogle(context: context);
 
-          // if the user does not exist yet, we need to create
-          // a new document for the user with the returned uid
-          await DatabaseService(uid: appUser!.uid).createUserData(appUser.email, 'Google');
-        } catch(e){
-          setState(() => _isSigningIn = false );
-          print(e);
+          // if the user did not login
+          if (appUser==null) {
+            // stop loading widget and return
+            setState(() => _isSigningIn = false);
+            return;
+          }
+
+          // else, if the user logged in:
+          // - if the user does not exist yet, we need to create a new document for the user with the returned uid
+          await DatabaseService(uid: appUser.uid).createUserData(appUser.email, 'Google');
+        } catch(e) {
+          // this is usually not reached. if it is, print error to the console
+          print("An unknown error on the GoogleSignInButton widget occurred. Error message: '$e'.");
         }
       },
       overlayColor: MaterialStateProperty.all(Colors.lightBlueAccent.withAlpha(0x5F)),
@@ -60,7 +68,10 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
               SizedBox(width: 12.0),
               Text(
                 "Sign in with Google",
-                style: TextStyle(
+                style: GoogleFonts.montserrat(
+                  //fontFamily: Theme.of(context).textTheme.button!.fontFamily,
+                  fontSize: Theme.of(context).textTheme.button!.fontSize,
+                  fontWeight: FontWeight.w400,
                   color: Colors.white,
                 ),
               ),

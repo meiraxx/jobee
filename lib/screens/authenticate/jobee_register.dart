@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:jobee/screens/screens-shared/logo.dart';
 import 'package:jobee/services/auth.dart';
 import 'package:jobee/shared/constants.dart';
+import 'package:jobee/utils/input_field_utils.dart';
 
 class RegMailPassword extends StatefulWidget {
   final Function toggleView;
@@ -16,14 +17,20 @@ class RegMailPassword extends StatefulWidget {
 class _RegMailPasswordState extends State<RegMailPassword> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _loading = false;
+  bool _passwordVisible = false;
+  bool _confirmPasswordVisible = false;
 
   // text field state
   String _email = '';
   String _password = '';
+  int _passwordMinLength = 8;
+  String _confirmPassword = '';
 
   // error state
   double _errorSizedBoxHeightEmail = 0.0;
   double _errorSizedBoxHeightPassword = 0.0;
+  double _errorSizedBoxHeightConfirmPassword = 0.0;
+
   String _submissionError = '';
   double _submissionErrorSizedBoxHeight = 0.0;
 
@@ -69,44 +76,84 @@ class _RegMailPasswordState extends State<RegMailPassword> {
                     SizedBox(height: 20.0),
                     TextFormField(
                       decoration: InputDecoration(labelText: 'Email'),
-                      textAlignVertical: TextAlignVertical.bottom,
-                      validator: (val) {
-                        if (val!.isEmpty) {
-                          setState(() {
-                            _errorSizedBoxHeightEmail = 0.0;
-                          });
-                          return "Enter your email";
-                        } else {
-                          setState(() {
-                            _errorSizedBoxHeightEmail = defaultFormFieldSpacing;
-                          });
-                          return null;
-                        }
+                      textAlignVertical: TextAlignVertical.center,
+                      autofillHints: [AutofillHints.email],
+                      validator: (String? emailVal) {
+                        setState(() => _errorSizedBoxHeightEmail = defaultFormFieldSpacing);
+                        return validateNotEmpty(
+                          text: emailVal!,
+                          field: 'Email',
+                          errorMessage: "Enter 4your email",
+                          successFunction: () {
+                            setState(() => _errorSizedBoxHeightConfirmPassword = defaultFormFieldSpacing);
+                          },
+                          errorFunction: () {
+                            setState(() => _errorSizedBoxHeightConfirmPassword = 0.0);
+                          },
+                        );
                       },
                       onChanged: (val) { setState(() => _email = val); },
                     ),
                     SizedBox(height: _errorSizedBoxHeightEmail),
                     SizedBox(height: defaultFormFieldSpacing),
                     TextFormField(
-                      decoration: InputDecoration(labelText: 'Password'),
-                      textAlignVertical: TextAlignVertical.bottom,
-                      obscureText: true,
-                      validator: (val) {
-                        if (val!.length < 8) {
-                          setState(() {
-                            _errorSizedBoxHeightPassword = 0.0;
-                          });
-                          return "Enter a password with at least 8 characters";
-                        } else {
-                          setState(() {
-                            _errorSizedBoxHeightPassword = defaultFormFieldSpacing;
-                          });
-                          return null;
-                        }
+                      decoration: InputDecoration(
+                        labelText: 'Password',
+                        counterText: (_password.length<_passwordMinLength) ? "${_password.length} / $_passwordMinLength characters required minimum" : '',
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _passwordVisible?Icons.visibility:Icons.visibility_off,
+                          ),
+                          onPressed: () {
+                            // Update the state, i.e., toggle the state of _passwordVisible variable
+                            setState(() => _passwordVisible = !_passwordVisible);
+                          },
+                        ),
+                      ),
+                      textAlignVertical: TextAlignVertical.center,
+                      autofillHints: [AutofillHints.password],
+                      obscureText: !_passwordVisible,
+                      validator: (String? passwordVal) {
+                        String? passwordCheck = validatePassword(
+                          password: passwordVal!,
+                          minLength: _passwordMinLength,
+                          successFunction: () {
+                            setState(() => _errorSizedBoxHeightPassword = defaultFormFieldSpacing);
+                          },
+                          errorFunction: () {
+                            setState(() => _errorSizedBoxHeightPassword = 0.0);
+                          },
+                        );
+
+                        // if the password does not check the requirements
+                        if (passwordCheck!=null) return passwordCheck;
                       },
                       onChanged: (val) { setState(() => _password = val); },
                     ),
                     SizedBox(height: _errorSizedBoxHeightPassword),
+                    SizedBox(height: defaultFormFieldSpacing),
+                    TextFormField(
+                      decoration: InputDecoration(
+                        labelText: "Confirm Password",
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _confirmPasswordVisible?Icons.visibility:Icons.visibility_off,
+                          ),
+                          onPressed: () {
+                            // Update the state, i.e., toggle the state of _confirmPasswordVisible variable
+                            setState(() => _confirmPasswordVisible = !_confirmPasswordVisible);
+                          },
+                        ),
+                      ),
+                      textAlignVertical: TextAlignVertical.center,
+                      obscureText: !_confirmPasswordVisible,
+                      validator: (String? confirmPasswordVal) {
+                        /* simply need to check if it's equal to the password */
+                        if (_password!=confirmPasswordVal) return "Passwords do not match";
+                      },
+                      onChanged: (val) { setState(() => _confirmPassword = val); },
+                    ),
+                    SizedBox(height: _errorSizedBoxHeightConfirmPassword),
                     SizedBox(height: defaultFormFieldSpacing),
                     Builder(builder: (BuildContext context) {
                       return _loading ? InPlaceLoader(replacedWidgetSize: Size(48.0, 48.0), submissionErrorHeight: defaultSubmissionErrorHeight)

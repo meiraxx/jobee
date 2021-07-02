@@ -32,8 +32,10 @@ class JobeeThemeData {
         headline6: textTheme.headline6!.copyWith(color: colorScheme.onPrimary),
         button: textTheme.button!.copyWith(color: colorScheme.onPrimary),
       ),
+      // TODO: validate if primaryTextTheme or accentTextTheme are needed.
       // Matches manifest.json colors and background color.
       primaryColor: colorScheme.primary,
+      accentColor: colorScheme.primary,
       backgroundColor: colorScheme.background,
       appBarTheme: AppBarTheme(
         textTheme: textTheme.apply(bodyColor: colorScheme.onPrimary),
@@ -48,9 +50,9 @@ class JobeeThemeData {
       highlightColor: Colors.transparent,
       focusColor: focusColor,
       textSelectionTheme: TextSelectionThemeData(
-        cursorColor: colorScheme.primaryVariant,
-        selectionColor: colorScheme.primaryVariant,
-        selectionHandleColor: colorScheme.primaryVariant,
+        cursorColor: colorScheme.primary,
+        selectionColor: colorScheme.primary,
+        selectionHandleColor: colorScheme.primary,
       ),
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
@@ -64,9 +66,12 @@ class JobeeThemeData {
         textTheme: ButtonTextTheme.primary,
       ),
       inputDecorationTheme: InputDecorationTheme(
-        errorMaxLines: 1,
+        errorMaxLines: 3,
         contentPadding: EdgeInsets.all(5.0),
-        alignLabelWithHint: true
+        alignLabelWithHint: true,
+        border: UnderlineInputBorder(),
+        filled: true,
+        fillColor: Colors.white,
       ),
       cardTheme: CardTheme(
         color: Colors.white,
@@ -76,12 +81,23 @@ class JobeeThemeData {
   }
 
   static const ColorScheme _lightColorScheme = ColorScheme(
-    primary: const Color(0xFFFDD329), /* lightPaletteColors['yellow']! */
-    primaryVariant: const Color(0xFFF7B61C), /* lightPaletteColors['crispYellow']! */
-    secondary: const Color(0xFFFFAE2A), /* lightPaletteColors['orange']! */
-    secondaryVariant: const Color(0xFFFF872A), /* lightPaletteColors['deeperOrange']! */
-    surface: const Color(0xFFFFFAD8), /* lightPaletteColors['cream']! */
-    background: const Color(0xFFFFFAD8), /* lightPaletteColors['cream']! */
+    /*
+    // ORIGINAL PRIMARY COLORS, BASED ON THE FACT THAT AN EXAMPLE I FOUND OF A LIGHT THEME
+    // USED DARKER SECONDARY COLORS
+    primary: const Color(0xFFFDD329), // lightPaletteColors['yellow']!
+    primaryVariant: const Color(0xFFF7B61C), // lightPaletteColors['crispYellow']!
+    secondary: const Color(0xFFFFAE2A), // lightPaletteColors['orange']!
+    secondaryVariant: const Color(0xFFFF872A), // lightPaletteColors['deeperOrange']!
+    */
+    // NEW TESTING PRIMARY COLORS, BASED ON THE FACT THAT A PRIMARY YELLOW ON CREAM IS NOT
+    // VERY FRIENDLY, SO WE'LL ONLY USE YELLOWS WHEN WE NEED TO ACCENT SOMETHING DARKER
+    // (from what I've tested until now, this looks a lot better than the other version)
+    primary: const Color(0xFFFFAE2A), // lightPaletteColors['orange']!
+    primaryVariant: const Color(0xFFFF872A), // lightPaletteColors['deeperOrange']!
+    secondary: const Color(0xFFFDD329), // lightPaletteColors['yellow']!
+    secondaryVariant: const Color(0xFFF7B61C), // lightPaletteColors['crispYellow']!
+    surface: const Color(0xFFFFFAD8), // lightPaletteColors['cream']!
+    background: const Color(0xFFFFFAD8), // lightPaletteColors['cream']!
     error: _lightFillColor,
     onPrimary: _lightFillColor,
     onSecondary: Colors.black,

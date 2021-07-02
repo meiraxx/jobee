@@ -16,6 +16,7 @@ class AuthMailPassword extends StatefulWidget {
 class _AuthMailPasswordState extends State<AuthMailPassword> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _loading = false;
+  bool _passwordVisible = false;
 
   // text field state
   String _email = '';
@@ -71,17 +72,14 @@ class _AuthMailPasswordState extends State<AuthMailPassword> {
                       decoration: InputDecoration(
                         labelText: "Email",
                       ),
-                      textAlignVertical: TextAlignVertical.bottom,
+                      textAlignVertical: TextAlignVertical.center,
+                      autofillHints: [AutofillHints.password],
                       validator: (val1) {
                         if (val1!.isEmpty) {
-                          setState(() {
-                            _errorSizedBoxHeightEmail = 0.0;
-                          });
+                          setState(() => _errorSizedBoxHeightEmail = 0.0);
                           return "Enter your email";
                         } else {
-                          setState(() {
-                            _errorSizedBoxHeightEmail = defaultFormFieldSpacing;
-                          });
+                          setState(() => _errorSizedBoxHeightEmail = defaultFormFieldSpacing);
                           return null;
                         }
                       },
@@ -90,19 +88,25 @@ class _AuthMailPasswordState extends State<AuthMailPassword> {
                     SizedBox(height: _errorSizedBoxHeightEmail),
                     SizedBox(height: defaultFormFieldSpacing),
                     TextFormField(
-                      decoration: InputDecoration(labelText: 'Password'),
-                      textAlignVertical: TextAlignVertical.bottom,
-                      obscureText: true,
+                      decoration: InputDecoration(
+                        labelText: 'Password',
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _passwordVisible?Icons.visibility:Icons.visibility_off,
+                          ),
+                          onPressed: () {
+                            // Update the state, i.e., toggle the state of _passwordVisible variable
+                            setState(() => _passwordVisible = !_passwordVisible);
+                          },
+                        ),
+                      ),
+                      obscureText: !_passwordVisible,
                       validator: (val2) {
                         if (val2!.length < 8) {
-                          setState(() {
-                            _errorSizedBoxHeightPassword = 0.0;
-                          });
+                          setState(() => _errorSizedBoxHeightPassword = 0.0);
                           return "Enter a password with at least 8 characters";
                         } else {
-                          setState(() {
-                            _errorSizedBoxHeightPassword = defaultFormFieldSpacing;
-                          });
+                          setState(() => _errorSizedBoxHeightPassword = defaultFormFieldSpacing);
                           return null;
                         }
                       },

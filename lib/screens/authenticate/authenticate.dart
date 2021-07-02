@@ -135,23 +135,28 @@ class _AuthenticateState extends State<Authenticate> {
                         SizedBox(width: 12.0),
                         Text(
                           "Create ",
-                          style: TextStyle(
-                            //fontWeight: FontWeight.w600,
-                            color: Theme.of(context).colorScheme.onPrimary,
+                          style: GoogleFonts.montserrat(
+                            //fontFamily: Theme.of(context).textTheme.button!.fontFamily,
+                            fontSize: Theme.of(context).textTheme.button!.fontSize,
+                            fontWeight: FontWeight.w400,
+                            color: Theme.of(context).textTheme.button!.color,
                           ),
                         ),
                         Text(
                           "jobee",
                           style: GoogleFonts.museoModerno().copyWith(
-                            color: Theme.of(context).colorScheme.onPrimary,
-                            fontWeight: FontWeight.w700
+                            fontSize: Theme.of(context).textTheme.button!.fontSize,
+                            color: Theme.of(context).textTheme.button!.color,
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
                         Text(
                           " account",
-                          style: TextStyle(
-                            //fontWeight: FontWeight.w600,
-                            color: Theme.of(context).colorScheme.onPrimary,
+                          style: GoogleFonts.montserrat(
+                            //fontFamily: Theme.of(context).textTheme.button!.fontFamily,
+                            fontSize: Theme.of(context).textTheme.button!.fontSize,
+                            fontWeight: FontWeight.w400,
+                            color: Theme.of(context).textTheme.button!.color,
                           ),
                         ),
                       ],
