@@ -103,8 +103,8 @@ class _AuthenticateState extends State<Authenticate> {
                     setState(() => showSignIn = false);
                   });
                 },
-                overlayColor: MaterialStateProperty.all(lightPaletteColors["yellow"]!.withAlpha(0x5F)),
-                highlightColor: lightPaletteColors["yellow"]!.withAlpha(0x5F),
+                overlayColor: MaterialStateProperty.all(lightPaletteColors["yellow"]!.withAlpha(0x7F)),
+                highlightColor: lightPaletteColors["yellow"]!.withAlpha(0x7F),
                 child: Ink(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(4.0),
@@ -229,7 +229,6 @@ class _AuthenticateState extends State<Authenticate> {
                   "Already have an account?",
                 ),
                 TextButton(
-                  style: ButtonStyle( overlayColor: MaterialStateProperty.all(Colors.transparent) ),
                   child: Text(
                     "Sign in",
                     style: TextStyle(color: Colors.blue),
@@ -237,9 +236,9 @@ class _AuthenticateState extends State<Authenticate> {
                   onPressed: () {
                     setState(() => showSignIn = true);
                   },
-                )
+                ),
               ],
-            )
+            ),
           ],
         ),
       ),

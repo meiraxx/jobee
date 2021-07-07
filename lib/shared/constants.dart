@@ -26,13 +26,11 @@ const Map<String, Color> lightPaletteColors = {
 ButtonStyle orangeElevatedButtonStyle = ButtonStyle(
   backgroundColor: MaterialStateProperty.resolveWith<Color?>(
           (Set<MaterialState> states) => lightPaletteColors["orange"]),
-  overlayColor: MaterialStateProperty.all(lightPaletteColors["yellow"]!.withAlpha(0x5F)),
+  overlayColor: MaterialStateProperty.all(lightPaletteColors["yellow"]!.withAlpha(0x7F)),
   elevation: MaterialStateProperty.all(2.0),
   padding: MaterialStateProperty.all(EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0)),
+  animationDuration: Duration(milliseconds: 300),
 );
-
-// appBarButton stuff
-final Color appbarDefaultButtonSplashColor = const Color(0xFFFDD329).withAlpha(0x1F);
 
 Widget appBarButton({ String? text, IconData? iconData, Image? image, BuildContext? context,
   String? tooltip, required Function() onPressedFunction }) {

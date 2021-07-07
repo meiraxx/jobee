@@ -37,8 +37,8 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
           print("An unknown error on the GoogleSignInButton widget occurred. Error message: '$e'.");
         }
       },
-      overlayColor: MaterialStateProperty.all(Colors.lightBlueAccent.withAlpha(0x5F)),
-      highlightColor: Colors.lightBlueAccent.withAlpha(0x5F),
+      overlayColor: MaterialStateProperty.all(Colors.lightBlueAccent.withAlpha(0x7F)),
+      highlightColor: Colors.lightBlueAccent.withAlpha(0x7F),
       child: Ink(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(4.0),

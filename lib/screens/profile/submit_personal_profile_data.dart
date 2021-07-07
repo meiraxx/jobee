@@ -192,7 +192,6 @@ class _SubmitPersonalProfileDataState extends State<SubmitPersonalProfileData> {
                                   return _loading
                                   ? InPlaceLoader(replacedWidgetSize: Size(48.0, 48.0), submissionErrorHeight: defaultSubmissionErrorHeight)
                                   : ElevatedButton(
-                                    style: orangeElevatedButtonStyle,
                                     onPressed: () async {
                                       _formNotSubmitted = false;
                                       if (_formKey.currentState!.validate()) {
@@ -255,7 +254,6 @@ class _SubmitPersonalProfileDataState extends State<SubmitPersonalProfileData> {
                         children: <Widget>[
                           Text("Want to switch account?"),
                           TextButton(
-                            style: ButtonStyle( overlayColor: MaterialStateProperty.all(Colors.transparent) ),
                             child: Text(
                               "Sign out",
                               style: TextStyle(color: Colors.blue),

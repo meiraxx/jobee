@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart' show CupertinoPageRoute;
 import 'package:jobee/models/app_user.dart' show AppUserData;
 import 'package:jobee/models/profile.dart' show Profile;
 import 'package:jobee/screens/profile/profile.dart' show ProfileScreen;
+import 'package:jobee/screens/profile/profile_avatar.dart';
 import 'package:jobee/screens/screens-shared/logo.dart' show Logo;
 import 'package:jobee/services/database.dart' show DatabaseService;
 import 'package:jobee/services/storage/storage.dart' show StorageService;
@@ -15,7 +16,6 @@ import 'package:jobee/widgets/navigation_bar.dart' show bottomNavigationBarGener
 import 'package:image_picker/image_picker.dart' show PickedFile;
 import 'dart:io' show File;
 import 'dart:typed_data' show Uint8List;
-import 'package:jobee/screens/wrapper.dart' show Wrapper;
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -25,35 +25,54 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  PickedFile? pickedImageFile;
-  File? _userImageFile;
-  Uint8List? _userImageBytes;
+  ProfileAvatar? _profileAvatar;
+  /*
+  Uint8List? _profileAvatarBytes;
+  bool _forceProfileAvatarDownloadAndUpdate = true;
+  */
 
   final double _drawerMenuWidthRatio = 0.739;
   int _bottomNavigationCurrentIndex = 0;
-  
-  // resources state
-  Future<File?>? _profilePictureDownloadFuture;
-  bool _downloadProfilePictureFlag = true;
-  bool _updateProfilePictureFlag = true;
 
-  @override
-  void initState() {
-    super.initState();
-    /*
-    () async {
-      await Future.delayed(Duration.zero);
+  /*
+  // Auxiliary functions
+  void _downloadAndUpdateProfileAvatar(StorageService storageService) async {
+    // download the image file and halt thread execution until we have a File object
+    File? downloadedFile = await StorageService.downloadFile(
+      remoteFileRef: storageService.userDirRemoteRef!.child('remote-profile-picture.jpg'),
+      localFileName: 'local-profile-picture.jpg',
+    );
 
-      // storage service
-      StorageService storageService = StorageService(uid: "uNFdGO667AZJY6kNmqdeFlzqveU2");
+    // if the user hasn't yet uploaded a picture, simply return null
+    if (downloadedFile==null) return null;
 
-      // user profile picture download future
-      _profilePictureDownloadFuture = StorageService.downloadFile(
-        remoteRef: storageService.userDirRemoteRef!.child('remote-profile-picture.jpg'),
-        localFileName: 'local-profile-picture.jpg',
+    // else...
+    // set _userImageFile as the downloaded file
+    _profileAvatarBytes = downloadedFile.readAsBytesSync();
+    // asynchronously update UI with new profile avatar
+    setState(() {});
+  }
+
+  void _handleProfileAvatarClick(BuildContext context, StorageService storageService) async {
+    PickedFile? pickedImageFile = await showImageSourceActionSheet(context);
+    UploadTask? uploadTask = await storageService.uploadUserFile(context: context, pickedFile: pickedImageFile, remoteFileName: 'remote-profile-picture.jpg');
+    if (uploadTask == null) return null;
+
+    // when upload is complete
+    uploadTask.whenComplete(() {
+      // Force re-download and update UI
+      setState( () => _forceProfileAvatarDownloadAndUpdate = true );
+    });
+  }
+  */
+
+  void _showServicePanel(BuildContext context) {
+    showModalBottomSheet(context: context, builder: (context) {
+      return Container(
+        padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 60.0),
+        child: Container(),
       );
-    }();
-    */
+    });
   }
 
   // BUILD
@@ -67,9 +86,18 @@ class _HomeState extends State<Home> {
     AppUserData? appUserData = Provider.of<AppUserData?>(context);
     if (appUserData==null) return TextLoader(text: "Fetching user data...");
 
+    // Profile Avatar
+    _profileAvatar = ProfileAvatar(appUserData: appUserData);
+
+    /*
     // storage service
     StorageService storageService = StorageService(uid: appUserData.uid);
-
+    // if the flag _forceProfileAvatarDownloadAndUpdate is set (default: true)
+    if (_forceProfileAvatarDownloadAndUpdate) {
+      _downloadAndUpdateProfileAvatar(storageService);
+      // Turn off further downloads and updates
+      _forceProfileAvatarDownloadAndUpdate = false;
+    }*/
 
     // - BOTTOM NAVIGATION BAR LOGIC
     Widget bottomNavigationCurrentItem;
@@ -84,68 +112,6 @@ class _HomeState extends State<Home> {
         bottomNavigationCurrentItem = FlutterLogo();
         break;
     }
-
-    // AUXILIARY LAMBDAS
-    void _showServicePanel() {
-      showModalBottomSheet(context: context, builder: (context) {
-        return Container(
-          padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 60.0),
-          child: Container(),
-        );
-      });
-    }
-    
-    void _downloadProfilePicture() {
-      // download the image file and store a future
-      _profilePictureDownloadFuture = StorageService.downloadFile(
-        remoteFileRef: storageService.userDirRemoteRef!.child('remote-profile-picture.jpg'),
-        localFileName: 'local-profile-picture.jpg',
-      );
-    }
-
-    void _updateProfilePicture() {
-      _profilePictureDownloadFuture!.then((File? downloadedFile) {
-        if (downloadedFile==null) return null;
-        // set _userImageFile as the downloaded file
-        _userImageFile = downloadedFile;
-        _userImageBytes = downloadedFile.readAsBytesSync();
-        // update UI
-        setState(() {
-          // set _updateProfilePictureFlag to false, to turn off further updates
-          _updateProfilePictureFlag = false;
-          // set _downloadProfilePictureFlag to false, to turn off further downloads
-          _downloadProfilePictureFlag = false;
-        });
-      });
-    }
-
-    void _handleProfilePictureClick() async {
-      pickedImageFile = await showImageSourceActionSheet(context);
-      UploadTask? uploadTask = await storageService.uploadUserFile(context: context, pickedFile: pickedImageFile, remoteFileName: 'remote-profile-picture.jpg');
-      // when upload is complete
-      uploadTask!.whenComplete(() {
-        // Force re-download and update
-        _downloadProfilePicture();
-        _updateProfilePicture();
-        // update UI
-        setState( () {
-          // stop new downloads
-          _downloadProfilePictureFlag = false;
-          // stop new updates
-          _updateProfilePictureFlag = false;
-        } );
-      });
-    }
-
-    // if the flag _downloadProfilePictureFlag is set (default: true)
-    if (_downloadProfilePictureFlag) {
-      _downloadProfilePicture();
-      // no need to perform a download multiple times, so turn off the flag
-      _downloadProfilePictureFlag = false;
-    }
-
-    // if the flag _updateProfilePictureFlag is set (default: true)
-    if (_updateProfilePictureFlag) _updateProfilePicture();
 
     // else, return all
     return StreamProvider<List<Profile>>.value(
@@ -172,47 +138,7 @@ class _HomeState extends State<Home> {
                 // - SUMMARIZED PROFILE
                 SizedBox(height: 6.0),
                 Center(
-                  child: Container(
-                    decoration: new BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: new Border.all(
-                        color: Theme.of(context).colorScheme.primaryVariant,
-                        width: 3.0,
-                      ),
-                    ),
-                    child: CircleAvatar(
-                      backgroundColor: Theme.of(context).colorScheme.primaryVariant,
-                      radius: 40.0,
-                      child: Center(
-                        child: SizedBox(
-                          width: double.infinity,
-                          height: double.infinity,
-                          child: (_userImageFile != null)
-                          ? GestureDetector(
-                            onTap: () async {
-                              _handleProfilePictureClick();
-                            },
-                            child: ClipOval(
-                              child: Image.memory(
-                                _userImageBytes!,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          )
-                          : IconButton(
-                            icon: Icon(
-                              Icons.upload_rounded,
-                              color: Colors.white,
-                              size: 40.0,
-                            ),
-                            onPressed: () async {
-                              _handleProfilePictureClick();
-                            },
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+                  child: _profileAvatar,
                 ),
                 SizedBox(height: 6.0),
                 Center(
@@ -332,7 +258,7 @@ class _HomeState extends State<Home> {
                   // pop the drawer menu
                   Navigator.pop(context);
                   // show the service panel widget
-                  _showServicePanel();
+                  _showServicePanel(context);
                 }),
                 Divider(height: 0.0),
                 Divider(height: 0.0)

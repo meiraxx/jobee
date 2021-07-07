@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart' show FirebaseAuthException;
 import 'package:jobee/screens/screens-shared/logo.dart' show Logo;
 import 'package:jobee/services/auth.dart' show AuthService;
-import 'package:jobee/shared/constants.dart' show appBarButton, orangeElevatedButtonStyle;
+import 'package:jobee/shared/constants.dart' show appBarButton;
 import 'package:jobee/widgets/loaders.dart' show InPlaceLoader;
 import 'package:jobee/utils/input_field_utils.dart' show validateNotEmpty;
 
@@ -130,7 +130,6 @@ class _AuthMailPasswordState extends State<AuthMailPassword> {
                       builder: (BuildContext context) {
                         return _loading ? InPlaceLoader(replacedWidgetSize: Size(48.0, 48.0), submissionErrorHeight: defaultSubmissionErrorHeight)
                         : ElevatedButton(
-                          style: orangeElevatedButtonStyle,
                           child: Wrap(
                             crossAxisAlignment: WrapCrossAlignment.center,
                             children: [
@@ -190,7 +189,6 @@ class _AuthMailPasswordState extends State<AuthMailPassword> {
               children: <Widget>[
                 Text("Still don't have an account?"),
                 TextButton(
-                  style: ButtonStyle( overlayColor: MaterialStateProperty.all(Colors.transparent) ),
                   child: Text(
                     'Register',
                     style: TextStyle(color: Colors.blue),
