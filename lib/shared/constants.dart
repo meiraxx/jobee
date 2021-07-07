@@ -10,11 +10,14 @@ const Map<String, Color> paletteColors1 = {
 };
 
 const Map<String, Color> lightPaletteColors = {
-  "yellow": const Color(0xFFFDD329), /* primary: yellow */
-  "crispYellow": const Color(0xFFF7B61C), /* primaryVariant: crispYellow */
-  "cream": const Color(0xFFFFFAD8), /* secondary: cream */
-  "orange": const Color(0xFFFFAE2A),/* secondaryVariant: orange */
-  "lightGray": const Color(0xFFF6F6F4), /* onPrimary/onError: lightGray */
+  // Palette Colors
+  "cream": const Color(0xFFFFFAD8),
+  "orange": const Color(0xFFFFAE2A),
+  "deeperOrange": const Color(0xFFFF872A),
+  "yellow": const Color(0xFFFDD329),
+  "crispYellow": const Color(0xFFF7B61C),
+  "lightGray": const Color(0xFFF6F6F4),
+  // More Colors
   "error": const Color(0xFFB00020), /* used for errors */
   "white": Colors.white, /* white */
   "black": Colors.black, /* black */
@@ -22,21 +25,20 @@ const Map<String, Color> lightPaletteColors = {
 
 ButtonStyle orangeElevatedButtonStyle = ButtonStyle(
   backgroundColor: MaterialStateProperty.resolveWith<Color?>(
-          (Set<MaterialState> states) => lightPaletteColors["crispYellow"]),
+          (Set<MaterialState> states) => lightPaletteColors["orange"]),
   overlayColor: MaterialStateProperty.all(lightPaletteColors["yellow"]!.withAlpha(0x5F)),
   elevation: MaterialStateProperty.all(2.0),
   padding: MaterialStateProperty.all(EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0)),
 );
 
 // appBarButton stuff
-final Color appbarDefaultButtonSplashColor = const Color(0xFFB25C36).withAlpha(0x1F);
+final Color appbarDefaultButtonSplashColor = const Color(0xFFFDD329).withAlpha(0x1F);
 
 Widget appBarButton({ String? text, IconData? iconData, Image? image, BuildContext? context,
-  Color splashColor = Colors.transparent, double splashRadius = Material.defaultSplashRadius - 5.0,
-  String? tooltip, required Color color, required Function() onPressedFunction }) {
+  String? tooltip, required Function() onPressedFunction }) {
   assert(text!=null || iconData!=null || image != null);
   // in case image isn't null, we also need the context
-  if (image != null) {
+  if (image != null || (text!=null && iconData!=null)) {
     assert(context!=null);
   }
 
@@ -46,19 +48,16 @@ Widget appBarButton({ String? text, IconData? iconData, Image? image, BuildConte
       return TextButton.icon(
         icon: Icon(
           iconData,
-          color: color,
+          color: Theme.of(context!).colorScheme.onPrimary,
         ),
         label: Text(
           text,
           style: TextStyle(
-            color: color,
+            color: Theme.of(context).colorScheme.onPrimary,
             fontSize: 14,
             fontWeight: FontWeight.w600,
           ),
           textAlign: TextAlign.left,
-        ),
-        style: ButtonStyle(
-          overlayColor: MaterialStateProperty.all(splashColor),
         ),
         onPressed: onPressedFunction,
       );
@@ -69,8 +68,6 @@ Widget appBarButton({ String? text, IconData? iconData, Image? image, BuildConte
           onTap: () {
             onPressedFunction();
           },
-          overlayColor: MaterialStateProperty.all(splashColor),
-          highlightColor: splashColor,
           borderRadius: BorderRadius.circular(4.0),
           child: Padding(
             padding: EdgeInsets.symmetric(
@@ -89,7 +86,6 @@ Widget appBarButton({ String? text, IconData? iconData, Image? image, BuildConte
                 Text(
                   text,
                   style: TextStyle(
-                    color: color,
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                   ),
@@ -105,11 +101,7 @@ Widget appBarButton({ String? text, IconData? iconData, Image? image, BuildConte
       return TextButton(
         child: Text(
           text,
-          style: TextStyle(color: color),
           textAlign: TextAlign.left,
-        ),
-        style: ButtonStyle(
-          overlayColor: MaterialStateProperty.all(splashColor),
         ),
         onPressed: onPressedFunction,
       );
@@ -120,12 +112,8 @@ Widget appBarButton({ String? text, IconData? iconData, Image? image, BuildConte
       return IconButton(
         icon: Icon(
           iconData,
-          color: color,
         ),
         tooltip: tooltip,
-        highlightColor: splashColor,
-        splashColor: splashColor,
-        splashRadius: splashRadius,
         onPressed: onPressedFunction,
       );
     }
@@ -134,111 +122,3 @@ Widget appBarButton({ String? text, IconData? iconData, Image? image, BuildConte
   return Container();
 }
 
-class InPlaceLoader extends StatelessWidget {
-  final Size replacedWidgetSize;
-  final double submissionErrorHeight;
-
-  const InPlaceLoader({Key? key, required this.replacedWidgetSize, required this.submissionErrorHeight}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(top: submissionErrorHeight),
-      child: SizedBox(
-        height: replacedWidgetSize.height - submissionErrorHeight*2,
-        width: replacedWidgetSize.width - submissionErrorHeight*2,
-        child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>(lightPaletteColors["crispYellow"]!),
-        ),
-      ),
-    );
-  }
-
-  // waiting 1-3 seconds showing the loading widget animation is recommended because
-  // it looks neater than an almost-instant animation
-  static Future<void> minimumLoadingSleep(Duration duration) async => await Future.delayed(duration);
-}
-
-BottomNavigationBar bottomNavigationBarGenerator({ required BuildContext context, required Function(int) onTap,
-  required int bottomNavigationCurrentIndex, required List<IconData> iconDataList,
-  Color activeColor = const Color(0xFF2196F3), Color inactiveColor = const Color(0xFF757575) }) {
-  /// Function to help generating a BottomNavigationBar for any context.
-  ///
-  /// @returns a BottomNavigationBar.
-
-  assert(iconDataList.length == 3); // verify iconDataList only has 3 elements
-
-  return BottomNavigationBar(
-    onTap: onTap,
-    currentIndex: bottomNavigationCurrentIndex,
-    backgroundColor: Colors.grey[50],
-    items: <BottomNavigationBarItem>[
-      BottomNavigationBarItem(
-        icon: Icon(
-          iconDataList[0],
-          //color: firstNavItemColor
-        ),
-        label: 'Home',
-        tooltip: 'Home'
-      ),
-      BottomNavigationBarItem(
-        icon: Icon(
-          iconDataList[1],
-          //color: secondNavItemColor
-        ),
-        label: 'Profile',
-        tooltip: 'Profile'
-      ),
-      BottomNavigationBarItem(
-        icon: Icon(
-          iconDataList[2],
-          //color: thirdNavItemColor
-        ),
-        label: 'Chat',
-        tooltip: 'Chat'
-      ),
-    ],
-    unselectedLabelStyle: TextStyle(
-      color: inactiveColor,
-    ),
-    selectedLabelStyle: TextStyle(
-      color: activeColor,
-    ),
-    unselectedItemColor: inactiveColor,
-    selectedItemColor: activeColor,
-    unselectedIconTheme: IconThemeData(color: inactiveColor),
-    selectedIconTheme: IconThemeData(color: activeColor),
-  );
-}
-
-class SizeProviderWidget extends StatefulWidget {
-  final Widget child;
-  final Function(Size) onChildSize;
-
-  const SizeProviderWidget({Key? key, required this.onChildSize, required this.child})
-      : super(key: key);
-  @override
-  _SizeProviderWidgetState createState() => _SizeProviderWidgetState();
-}
-
-class _SizeProviderWidgetState extends State<SizeProviderWidget> {
-  /// Class to be used for retrieving widget sizes:
-  /// - Useful for debugging sizes
-  /// - Useful for calculating new sizes
-  ///
-  /// Note: if needed, wrap the SizeProviderWidget with an OrientationBuilder widget
-  /// to make it respect the orientation of the device
-
-  @override
-  void initState() {
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
-      widget.onChildSize(context.size!);
-    });
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return widget.child;
-  }
-}

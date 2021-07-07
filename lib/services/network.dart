@@ -1,15 +1,14 @@
-import 'dart:convert';
-import 'dart:io';
+import 'package:http/http.dart' show Response, post;
+import 'dart:io' show HttpClient, HttpClientRequest, HttpClientResponse;
+import 'dart:convert' show utf8, json, jsonEncode, jsonDecode;
 
-import 'package:http/http.dart' as http;
-
-class Network {
+class NetworkService {
   final String url;
 
-  Network(this.url);
+  NetworkService(this.url);
 
   Future<String> apiRequest(Map jsonMap) async {
-    HttpClient httpClient = new HttpClient();
+    HttpClient httpClient = HttpClient();
     HttpClientRequest request = await httpClient.postUrl(Uri.parse(url));
     request.headers.set('content-type', 'application/x-www-form-urlencoded');
     request.add(utf8.encode(json.encode(jsonMap)));
@@ -22,7 +21,7 @@ class Network {
   }
 
   Future<String> sendData(Map data) async {
-    http.Response response = await http.post(Uri.parse(url),
+    Response response = await post(Uri.parse(url),
         headers: {'Content-Type': 'application/json; charset=UTF-8'},
         body: jsonEncode(data));
     if (response.statusCode == 200)
@@ -32,7 +31,7 @@ class Network {
   }
 
   Future<String> getData() async {
-    http.Response response = await http.post(Uri.parse(url),
+    Response response = await post(Uri.parse(url),
         headers: {'Content-Type': 'application/x-www-form-urlencoded'});
     if (response.statusCode == 200)
       return (response.body);
@@ -41,9 +40,16 @@ class Network {
   }
 
   static Future<Map<String, dynamic>>? getInfoByIP() async {
-    Network n = new Network("http://ip-api.com/json");
+    NetworkService n = new NetworkService("http://ip-api.com/json");
     String locationSTR = (await n.getData());
     Map<String, dynamic> ipLocation = jsonDecode(locationSTR) as Map<String, dynamic>;
     return ipLocation;
+  }
+
+  Future<int>? checkStatus() async {
+    HttpClient httpClient = HttpClient();
+    HttpClientRequest request = await httpClient.postUrl(Uri.parse(url));
+    HttpClientResponse response = await request.close();
+    return response.statusCode;
   }
 }

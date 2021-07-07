@@ -1,9 +1,10 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:jobee/screens/screens-shared/logo.dart';
-import 'package:jobee/services/auth.dart';
-import 'package:jobee/shared/constants.dart';
-import 'package:jobee/utils/input_field_utils.dart';
+import 'package:firebase_auth/firebase_auth.dart' show FirebaseAuthException;
+import 'package:jobee/screens/screens-shared/logo.dart' show Logo;
+import 'package:jobee/services/auth.dart' show AuthService;
+import 'package:jobee/shared/constants.dart' show appBarButton, orangeElevatedButtonStyle;
+import 'package:jobee/widgets/loaders.dart' show InPlaceLoader;
+import 'package:jobee/utils/input_field_utils.dart' show validateNotEmpty, validatePassword;
 
 class RegMailPassword extends StatefulWidget {
   final Function toggleView;
@@ -24,7 +25,6 @@ class _RegMailPasswordState extends State<RegMailPassword> {
   String _email = '';
   String _password = '';
   int _passwordMinLength = 8;
-  String _confirmPassword = '';
 
   // error state
   double _errorSizedBoxHeightEmail = 0.0;
@@ -49,10 +49,9 @@ class _RegMailPasswordState extends State<RegMailPassword> {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          leading: appBarButton(iconData: Icons.arrow_back, color: Theme.of(context).colorScheme.onBackground, onPressedFunction: () {
+          leading: appBarButton(iconData: Icons.arrow_back, onPressedFunction: () {
             Navigator.pushReplacementNamed(context, '/');
           }),
-          elevation: 1.0,
           title: Wrap(
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
@@ -79,16 +78,15 @@ class _RegMailPasswordState extends State<RegMailPassword> {
                       textAlignVertical: TextAlignVertical.center,
                       autofillHints: [AutofillHints.email],
                       validator: (String? emailVal) {
-                        setState(() => _errorSizedBoxHeightEmail = defaultFormFieldSpacing);
                         return validateNotEmpty(
                           text: emailVal!,
                           field: 'Email',
-                          errorMessage: "Enter 4your email",
+                          errorMessage: "Enter your email",
                           successFunction: () {
-                            setState(() => _errorSizedBoxHeightConfirmPassword = defaultFormFieldSpacing);
+                            setState(() => _errorSizedBoxHeightEmail = defaultFormFieldSpacing);
                           },
                           errorFunction: () {
-                            setState(() => _errorSizedBoxHeightConfirmPassword = 0.0);
+                            setState(() => _errorSizedBoxHeightEmail = 0.0);
                           },
                         );
                       },
@@ -146,12 +144,18 @@ class _RegMailPasswordState extends State<RegMailPassword> {
                         ),
                       ),
                       textAlignVertical: TextAlignVertical.center,
+                      autofillHints: [AutofillHints.password],
                       obscureText: !_confirmPasswordVisible,
                       validator: (String? confirmPasswordVal) {
                         /* simply need to check if it's equal to the password */
-                        if (_password!=confirmPasswordVal) return "Passwords do not match";
+                        if (_password!=confirmPasswordVal) {
+                          setState(() => _errorSizedBoxHeightConfirmPassword = defaultFormFieldSpacing);
+                          return "Passwords do not match";
+                        } else {
+                          setState(() => _errorSizedBoxHeightConfirmPassword = 0.0);
+                          return null;
+                        }
                       },
-                      onChanged: (val) { setState(() => _confirmPassword = val); },
                     ),
                     SizedBox(height: _errorSizedBoxHeightConfirmPassword),
                     SizedBox(height: defaultFormFieldSpacing),

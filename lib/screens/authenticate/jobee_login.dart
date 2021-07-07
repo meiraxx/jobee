@@ -1,8 +1,10 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:jobee/screens/screens-shared/logo.dart';
-import 'package:jobee/services/auth.dart';
-import 'package:jobee/shared/constants.dart';
+import 'package:firebase_auth/firebase_auth.dart' show FirebaseAuthException;
+import 'package:jobee/screens/screens-shared/logo.dart' show Logo;
+import 'package:jobee/services/auth.dart' show AuthService;
+import 'package:jobee/shared/constants.dart' show appBarButton, orangeElevatedButtonStyle;
+import 'package:jobee/widgets/loaders.dart' show InPlaceLoader;
+import 'package:jobee/utils/input_field_utils.dart' show validateNotEmpty;
 
 class AuthMailPassword extends StatefulWidget {
   final Function toggleView;
@@ -43,10 +45,9 @@ class _AuthMailPasswordState extends State<AuthMailPassword> {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          leading: appBarButton(iconData: Icons.arrow_back, color: Theme.of(context).colorScheme.onBackground, onPressedFunction: () {
+          leading: appBarButton(iconData: Icons.arrow_back, onPressedFunction: () {
             Navigator.pushReplacementNamed(context, '/');
           }),
-          elevation: 1.0,
           title: Wrap(
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
@@ -73,15 +74,20 @@ class _AuthMailPasswordState extends State<AuthMailPassword> {
                         labelText: "Email",
                       ),
                       textAlignVertical: TextAlignVertical.center,
-                      autofillHints: [AutofillHints.password],
-                      validator: (val1) {
-                        if (val1!.isEmpty) {
-                          setState(() => _errorSizedBoxHeightEmail = 0.0);
-                          return "Enter your email";
-                        } else {
-                          setState(() => _errorSizedBoxHeightEmail = defaultFormFieldSpacing);
-                          return null;
-                        }
+                      autofillHints: [AutofillHints.email],
+                      validator: (String? emailVal) {
+                        setState(() => _errorSizedBoxHeightEmail = defaultFormFieldSpacing);
+                        return validateNotEmpty(
+                          text: emailVal!,
+                          field: 'Email',
+                          errorMessage: "Enter your email",
+                          successFunction: () {
+                            setState(() => _errorSizedBoxHeightEmail = defaultFormFieldSpacing);
+                          },
+                          errorFunction: () {
+                            setState(() => _errorSizedBoxHeightEmail = 0.0);
+                          },
+                        );
                       },
                       onChanged: (val1) { setState(() => _email = val1); },
                     ),
@@ -101,14 +107,20 @@ class _AuthMailPasswordState extends State<AuthMailPassword> {
                         ),
                       ),
                       obscureText: !_passwordVisible,
-                      validator: (val2) {
-                        if (val2!.length < 8) {
-                          setState(() => _errorSizedBoxHeightPassword = 0.0);
-                          return "Enter a password with at least 8 characters";
-                        } else {
-                          setState(() => _errorSizedBoxHeightPassword = defaultFormFieldSpacing);
-                          return null;
-                        }
+                      textAlignVertical: TextAlignVertical.center,
+                      autofillHints: [AutofillHints.password],
+                      validator: (String? passwordVal) {
+                        return validateNotEmpty(
+                          text: passwordVal!,
+                          field: 'Password',
+                          errorMessage: "Enter your password",
+                          successFunction: () {
+                            setState(() => _errorSizedBoxHeightPassword = defaultFormFieldSpacing);
+                          },
+                          errorFunction: () {
+                            setState(() => _errorSizedBoxHeightPassword = 0.0);
+                          },
+                        );
                       },
                       onChanged: (val2) { setState(() => _password = val2); },
                     ),

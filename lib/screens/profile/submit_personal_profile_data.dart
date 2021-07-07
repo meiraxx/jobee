@@ -10,7 +10,7 @@ import 'package:jobee/services/database.dart';
 import 'package:jobee/services/network.dart';
 import 'package:jobee/shared/constants.dart';
 import 'package:jobee/utils/input_field_utils.dart';
-import 'package:jobee/shared/loader.dart';
+import 'package:jobee/widgets/loaders.dart';
 import 'package:provider/provider.dart';
 
 class SubmitPersonalProfileData extends StatefulWidget {
@@ -43,7 +43,7 @@ class _SubmitPersonalProfileDataState extends State<SubmitPersonalProfileData> {
   final bool _spacedFormFields = false;
 
   // user info
-  Future<Map<String, dynamic>> _infoByIP = Network.getInfoByIP() as Future<Map<String, dynamic>>;
+  Future<Map<String, dynamic>> _infoByIP = NetworkService.getInfoByIP() as Future<Map<String, dynamic>>;
 
   @override
   void initState() {
@@ -76,203 +76,201 @@ class _SubmitPersonalProfileDataState extends State<SubmitPersonalProfileData> {
             default:
               if (futureSnapshot.hasError)
                 return Text('Error: ${futureSnapshot.error}');
-              else {
-                // condition to validate that we received the expected data from the external API
-                if ( futureSnapshot.data==null || !(futureSnapshot.data!.containsKey("countryCode")) ) {
-                  // return to wrapper to retry connection
-                  return Wrapper();
-                }
 
-                // else, return the personal information page
-                return GestureDetector(
-                  onTap: () {
-                    /* removes focus from focused node when
-                      * the AppBar or Scaffold are touched */
-                    FocusManager.instance.primaryFocus?.unfocus();
-                    _currentlyFocusedField = null;
-                  },
-                  child: Scaffold(
-                    resizeToAvoidBottomInset: false,
-                    appBar: AppBar(
-                      elevation: 1.0,
-                      title: Wrap(
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        children: [
-                          Logo(),
-                          SizedBox(width: 16.0),
-                          Text(
-                            "|   Personal information",
-                            style: TextStyle(
-                              color: Colors.black,
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                    body: Column(
+              // else, condition to validate that we received the expected data from the external API
+              if ( futureSnapshot.data==null || !(futureSnapshot.data!.containsKey("countryCode")) ) {
+                // return to wrapper to retry connection
+                return Wrapper();
+              }
+
+              // else, return the personal information page
+              return GestureDetector(
+                onTap: () {
+                  /* removes focus from focused node when
+                    * the AppBar or Scaffold are touched */
+                  FocusManager.instance.primaryFocus?.unfocus();
+                  _currentlyFocusedField = null;
+                },
+                child: Scaffold(
+                  resizeToAvoidBottomInset: false,
+                  appBar: AppBar(
+                    title: Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.center,
                       children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(vertical: formVerticalPadding, horizontal: formHorizontalPadding),
-                          child: Form(
-                            key: _formKey,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                SizedBox(height: 20.0),
-                                // - phoneNumber row
-                                Row(
-                                  children: <Widget>[
-                                    Container(
-                                      width: formWidth,
-                                      //height: defaultFormFieldSpacing*6,
-                                      child: IntlPhoneField(
-                                        decoration: InputDecoration(
-                                          labelText: 'Phone Number',
-                                        ),
-                                        textAlignVertical: TextAlignVertical.center,
-                                        // initialCountryCode obtained using _infoByIP
-                                        initialCountryCode: futureSnapshot.data!["countryCode"],
-                                        onChanged: (PhoneNumber phone) {
-                                          _phoneNumber = phone.number;
-                                        },
-                                        onCountryChanged: (PhoneNumber phone) {
-                                          _phoneCountryDialCode = phone.countryCode!;
-                                        },
-                                        validator: (String? phoneNumber){
-                                          String? emptyMessage = validateNotEmpty(
-                                            text: phoneNumber??'',
-                                            field: 'phoneNumber',
-                                            errorMessage: "Enter your phone number",
-                                            formNotSubmitted: _formNotSubmitted,
-                                            currentlyFocusedField: _currentlyFocusedField,
-                                            successFunction: () {
-                                              _errorSizedBoxSizePhoneNumber = defaultFormFieldSpacing;
-                                            },
-                                            errorFunction: () {
-                                              _errorSizedBoxSizePhoneNumber = 0.0;
-                                            },
-                                          );
-
-                                          if (emptyMessage != null) {
-                                            // empty validation error
-                                            return emptyMessage;
-                                          }
-
-                                          // else, logically validate phone number
-                                          List<Object> phoneNumberValidationInfo = validatePhoneNumber(
-                                            phoneCountryDialCode: _phoneCountryDialCode,
-                                            phoneNumber: phoneNumber??'',
-                                          );
-                                          bool phoneNumberValidated = phoneNumberValidationInfo[0] as bool;
-                                          String validationMessage = phoneNumberValidationInfo[1] as String;
-
-                                          if (!phoneNumberValidated) {
-                                            // phone validation error
-                                            _errorSizedBoxSizePhoneNumber = 0.0;
-                                            return validationMessage;
-                                          }
-
-                                          // success
-                                          _errorSizedBoxSizePhoneNumber = defaultFormFieldSpacing;
-                                          return null;
-                                        },
-                                        autoValidate: false,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: _errorSizedBoxSizePhoneNumber),
-                                if (_spacedFormFields) ...[
-                                  SizedBox(height: defaultFormFieldSpacing)
-                                ] else ...[
-                                  SizedBox(height: 0.0)
-                                ],
-                                Center(
-                                  child: Builder(builder: (BuildContext context) {
-                                    return _loading
-                                    ? InPlaceLoader(replacedWidgetSize: Size(48.0, 48.0), submissionErrorHeight: defaultSubmissionErrorHeight)
-                                    : ElevatedButton(
-                                      style: orangeElevatedButtonStyle,
-                                      onPressed: () async {
-                                        _formNotSubmitted = false;
-                                        if (_formKey.currentState!.validate()) {
-                                          setState(() {
-                                            // while submitting data, set loading to true
-                                            _loading = true;
-                                            _submissionErrorSizedBoxHeight = defaultFormFieldSpacing;
-                                          });
-                                          await InPlaceLoader.minimumLoadingSleep(const Duration(seconds: 1));
-                                          try {
-                                            await DatabaseService(uid: appUserData.uid).updatePersonalUserData(
-                                              hasRegisteredPersonalData: true,
-                                              phoneCountryDialCode: _phoneCountryDialCode,
-                                              phoneNumber: _phoneNumber,
-                                            );
-                                          } on Exception catch(e) {
-                                            // grab the exception message and remove
-                                            // the "Exception: " extra text
-                                            _submissionError = e.toString().replaceFirst("Exception: ", '');
-                                            _submissionErrorSizedBoxHeight = defaultSubmissionErrorHeight;
-                                          }
-                                          // after everything is done, set _loading back to false
-                                          setState(() => _loading = false);
-                                        }
-                                        // rebuild page on submit
-                                        setState(() {});
-                                      },
-                                      child: Wrap(
-                                        crossAxisAlignment: WrapCrossAlignment.center,
-                                        children: [
-                                          Icon(Icons.lock),
-                                          SizedBox(width: 4.0),
-                                          Text(
-                                            "Submit data",
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  }),
-                                ),
-                                SizedBox(height: _submissionErrorSizedBoxHeight),
-                                Text(
-                                  _submissionError,
-                                  style: TextStyle(
-                                    color: Colors.red,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 12.0,
-                                  ),
-                                ),
-                              ],
-                            ),
+                        Logo(),
+                        SizedBox(width: 16.0),
+                        Text(
+                          "|   Personal information",
+                          style: TextStyle(
+                            color: Colors.black,
                           ),
-                        ),
-                        Expanded(
-                          child: Container(),
-                        ),
-                        // - End Row
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: <Widget>[
-                            Text("Want to switch account?"),
-                            TextButton(
-                              style: ButtonStyle( overlayColor: MaterialStateProperty.all(Colors.transparent) ),
-                              child: Text(
-                                "Sign out",
-                                style: TextStyle(color: Colors.blue),
-                              ),
-                              onPressed: () async {
-                                await AuthService.signOut(context: context);
-                                Navigator.pushReplacementNamed(context, '/');
-                              },
-                            )
-                          ],
                         )
                       ],
                     ),
                   ),
-                );
-              }
+                  body: Column(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(vertical: formVerticalPadding, horizontal: formHorizontalPadding),
+                        child: Form(
+                          key: _formKey,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              SizedBox(height: 20.0),
+                              // - phoneNumber row
+                              Row(
+                                children: <Widget>[
+                                  Container(
+                                    width: formWidth,
+                                    //height: defaultFormFieldSpacing*6,
+                                    child: IntlPhoneField(
+                                      decoration: InputDecoration(
+                                        labelText: 'Phone Number',
+                                      ),
+                                      textAlignVertical: TextAlignVertical.center,
+                                      // initialCountryCode obtained using _infoByIP
+                                      initialCountryCode: futureSnapshot.data!["countryCode"],
+                                      onChanged: (PhoneNumber phone) {
+                                        _phoneNumber = phone.number;
+                                      },
+                                      onCountryChanged: (PhoneNumber phone) {
+                                        _phoneCountryDialCode = phone.countryCode!;
+                                      },
+                                      validator: (String? phoneNumber){
+                                        String? emptyMessage = validateNotEmpty(
+                                          text: phoneNumber??'',
+                                          field: 'phoneNumber',
+                                          errorMessage: "Enter your phone number",
+                                          formNotSubmitted: _formNotSubmitted,
+                                          currentlyFocusedField: _currentlyFocusedField,
+                                          successFunction: () {
+                                            _errorSizedBoxSizePhoneNumber = defaultFormFieldSpacing;
+                                          },
+                                          errorFunction: () {
+                                            _errorSizedBoxSizePhoneNumber = 0.0;
+                                          },
+                                        );
+
+                                        if (emptyMessage != null) {
+                                          // empty validation error
+                                          return emptyMessage;
+                                        }
+
+                                        // else, logically validate phone number
+                                        List<Object> phoneNumberValidationInfo = validatePhoneNumber(
+                                          phoneCountryDialCode: _phoneCountryDialCode,
+                                          phoneNumber: phoneNumber??'',
+                                        );
+                                        bool phoneNumberValidated = phoneNumberValidationInfo[0] as bool;
+                                        String validationMessage = phoneNumberValidationInfo[1] as String;
+
+                                        if (!phoneNumberValidated) {
+                                          // phone validation error
+                                          _errorSizedBoxSizePhoneNumber = 0.0;
+                                          return validationMessage;
+                                        }
+
+                                        // success
+                                        _errorSizedBoxSizePhoneNumber = defaultFormFieldSpacing;
+                                        return null;
+                                      },
+                                      autoValidate: false,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: _errorSizedBoxSizePhoneNumber),
+                              if (_spacedFormFields) ...[
+                                SizedBox(height: defaultFormFieldSpacing)
+                              ] else ...[
+                                SizedBox(height: 0.0)
+                              ],
+                              Center(
+                                child: Builder(builder: (BuildContext context) {
+                                  return _loading
+                                  ? InPlaceLoader(replacedWidgetSize: Size(48.0, 48.0), submissionErrorHeight: defaultSubmissionErrorHeight)
+                                  : ElevatedButton(
+                                    style: orangeElevatedButtonStyle,
+                                    onPressed: () async {
+                                      _formNotSubmitted = false;
+                                      if (_formKey.currentState!.validate()) {
+                                        setState(() {
+                                          // while submitting data, set loading to true
+                                          _loading = true;
+                                          _submissionErrorSizedBoxHeight = defaultFormFieldSpacing;
+                                        });
+                                        await InPlaceLoader.minimumLoadingSleep(const Duration(seconds: 1));
+                                        try {
+                                          await DatabaseService(uid: appUserData.uid).updatePersonalUserData(
+                                            hasRegisteredPersonalData: true,
+                                            phoneCountryDialCode: _phoneCountryDialCode,
+                                            phoneNumber: _phoneNumber,
+                                          );
+                                        } on Exception catch(e) {
+                                          // grab the exception message and remove
+                                          // the "Exception: " extra text
+                                          _submissionError = e.toString().replaceFirst("Exception: ", '');
+                                          _submissionErrorSizedBoxHeight = defaultSubmissionErrorHeight;
+                                        }
+                                        // after everything is done, set _loading back to false
+                                        setState(() => _loading = false);
+                                      }
+                                      // rebuild page on submit
+                                      setState(() {});
+                                    },
+                                    child: Wrap(
+                                      crossAxisAlignment: WrapCrossAlignment.center,
+                                      children: [
+                                        Icon(Icons.lock),
+                                        SizedBox(width: 4.0),
+                                        Text(
+                                          "Submit data",
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                }),
+                              ),
+                              SizedBox(height: _submissionErrorSizedBoxHeight),
+                              Text(
+                                _submissionError,
+                                style: TextStyle(
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12.0,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Container(),
+                      ),
+                      // - End Row
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: <Widget>[
+                          Text("Want to switch account?"),
+                          TextButton(
+                            style: ButtonStyle( overlayColor: MaterialStateProperty.all(Colors.transparent) ),
+                            child: Text(
+                              "Sign out",
+                              style: TextStyle(color: Colors.blue),
+                            ),
+                            onPressed: () async {
+                              await AuthService.signOut(context: context);
+                              Navigator.pushReplacementNamed(context, '/');
+                            },
+                          )
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              );
           }
         }
     );

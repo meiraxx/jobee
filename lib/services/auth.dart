@@ -1,21 +1,11 @@
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:jobee/models/app_user.dart';
-import 'database.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart' show GoogleSignIn, GoogleSignInAccount, GoogleSignInAuthentication;
+import 'package:jobee/models/app_user.dart' show AppUser;
+import 'database.dart' show DatabaseService;
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 class AuthService {
-
-  static Future<FirebaseApp> initializeFirebaseApp() async {
-    FirebaseApp firebaseApp = await Firebase.initializeApp();
-
-    // TODO: Add auto login logic
-
-    return firebaseApp;
-  }
 
   // Create User object based on UserCredential
   static AppUser _appUserFromFirebaseUser(User user) {

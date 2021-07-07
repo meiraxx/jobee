@@ -1,6 +1,6 @@
-import 'package:jobee/models/app_user.dart';
-import 'package:jobee/models/profile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:jobee/models/app_user.dart' show AppUserData;
+import 'package:jobee/models/profile.dart' show Profile;
 
 class DatabaseService {
   // uid
@@ -10,10 +10,12 @@ class DatabaseService {
 
   DatabaseService({ this.uid });
 
+  // TODO-BackEnd: Firestore must throw an error when a document not owned by the user is write-accessed
   Future<void> createUserData(String email, String authProvider) async {
     DocumentSnapshot ds = await profileCollection.doc(uid).get();
     if (ds.exists) return null;
 
+    // TODO-BackEnd: Firestore must expect these same exact fields, along with two false values upfront ("hasRegisteredPublicData" and "hasRegisteredPersonalData")
     await profileCollection.doc(uid).set({
       'email': email,
       'authProvider': authProvider,
@@ -22,21 +24,24 @@ class DatabaseService {
     });
   }
 
+  // TODO-BackEnd: Firestore must throw an error when a document not owned by the user is write-accessed
   Future<void> updatePublicUserData({required bool hasRegisteredPublicData, String? userName, String? firstName, String? lastName,
       String? gender, String? birthDay}) async {
 
+    // TODO-BackEnd: Firestore must expect these same exact fields, with the "hasRegisteredPublicData" true value
     Map<String, Object?> updatesMap = {
       'hasRegisteredPublicData': hasRegisteredPublicData,
       'userName': userName,
       'firstName': firstName,
       'lastName': lastName,
       'gender': gender,
-      'birthDay': birthDay
+      'birthDay': birthDay,
     };
 
     // eliminate null values
     updatesMap.removeWhere((key, value) => value==null);
 
+    // TODO-BackEnd: Firestore must disallow the creation of a non-unique username
     if (userName!=null) {
       bool userNameAvailable = await _isUserNameAvailable(userName);
       if (!userNameAvailable) throw Exception("The username '$userName' has already been taken. Please choose another one.");
@@ -45,8 +50,10 @@ class DatabaseService {
     await profileCollection.doc(uid).update(updatesMap);
   }
 
+  // TODO-BackEnd: Firestore must throw an error when a document not owned by the user is write-accessed
   Future<void> updatePersonalUserData({required bool hasRegisteredPersonalData, String? phoneCountryDialCode, String? phoneNumber}) async {
 
+    // TODO-BackEnd: Firestore must expect these same exact fields, with the "hasRegisteredPersonalData" true value
     Map<String, Object?> updatesMap = {
       'hasRegisteredPersonalData': hasRegisteredPersonalData,
       'phoneCountryDialCode': phoneCountryDialCode,
@@ -56,6 +63,7 @@ class DatabaseService {
     // eliminate null values
     updatesMap.removeWhere((key, value) => value==null);
 
+    // TODO-BackEnd: Firestore must disallow the creation of a non-unique phone complete number (phone country dial code + phone number)
     if (phoneCountryDialCode!=null && phoneNumber!=null) {
       bool phoneCompleteNumberAvailable = await _isPhoneCompleteNumberAvailable(phoneCountryDialCode, phoneNumber);
       if (!phoneCompleteNumberAvailable)
@@ -68,12 +76,10 @@ class DatabaseService {
 
   /* STATIC METHODS */
   static Future<bool> _isUserNameAvailable(String userName) async {
-    // TODO-BackEnd: Firestore must throw an error on duplicate username creation
     return (await FirebaseFirestore.instance.collection("profiles").where("userName", isEqualTo: userName).get()).docs.length == 0;
   }
 
   static Future<bool> _isPhoneCompleteNumberAvailable(String phoneCountryDialCode, String phoneNumber) async {
-    // TODO-BackEnd: Firestore must throw an error on duplicate phone number creation
     return (await FirebaseFirestore.instance.collection("profiles")
       .where("phoneCountryDialCode", isEqualTo: phoneCountryDialCode)
       .where("phoneNumber", isEqualTo: phoneNumber).get())
@@ -96,37 +102,21 @@ class DatabaseService {
     Map? snapshotDataMap = snapshot.data() as Map?;
     if (snapshotDataMap==null) {
       return null;
-    } else {
-      return AppUserData(
-        uid: uid!,
-        email: snapshotDataMap['email'],
-        hasRegisteredPublicData: snapshotDataMap['hasRegisteredPublicData'],
-        hasRegisteredPersonalData: snapshotDataMap['hasRegisteredPersonalData'],
-        userName: snapshotDataMap['userName'],
-        firstName: snapshotDataMap['firstName'],
-        lastName: snapshotDataMap['lastName'],
-        gender: snapshotDataMap['gender'],
-        birthDay: snapshotDataMap['birthDay'],
-        phoneCountryDialCode: snapshotDataMap['phoneCountryDialCode'],
-        phoneNumber: snapshotDataMap['phoneNumber'],
-      );
     }
-    /*return (snapshotDataMap==null)
-      ?null
-      :AppUserData(
-        uid: uid!,
-        email: snapshotDataMap['email'],
-        hasRegisteredPublicData: snapshotDataMap['hasRegisteredPublicData'],
-        hasRegisteredPersonalData: snapshotDataMap['hasRegisteredPersonalData'],
-        userName: snapshotDataMap['userName'],
-        firstName: snapshotDataMap['firstName'],
-        lastName: snapshotDataMap['lastName'],
-        gender: snapshotDataMap['gender'],
-        birthDay: snapshotDataMap['birthDay'],
-        phoneCountryDialCode: snapshotDataMap['phoneCountryDialCode'],
-        phoneNumber: snapshotDataMap['phoneNumber'],
-      )
-    ;*/
+
+    return AppUserData(
+      uid: uid!,
+      email: snapshotDataMap['email'],
+      hasRegisteredPublicData: snapshotDataMap['hasRegisteredPublicData'],
+      hasRegisteredPersonalData: snapshotDataMap['hasRegisteredPersonalData'],
+      userName: snapshotDataMap['userName'],
+      firstName: snapshotDataMap['firstName'],
+      lastName: snapshotDataMap['lastName'],
+      gender: snapshotDataMap['gender'],
+      birthDay: snapshotDataMap['birthDay'],
+      phoneCountryDialCode: snapshotDataMap['phoneCountryDialCode'],
+      phoneNumber: snapshotDataMap['phoneNumber'],
+    );
   }
 
   /* GETTERS */

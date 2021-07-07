@@ -40,6 +40,21 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+	    <key>NSExceptionDomains</key>
+	    <dict>
+	        <key>localhost</key>
+	        <dict>
+	            <key>NSExceptionAllowsInsecureHTTPLoads</key>
+	            <true/>
+	        </dict>
+	    </dict>
+	</dict>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>To choose a profile image from the photo library</string>
+	<key>NSCameraUsageDescription</key>
+    <string>To take a profile photo using the camera</string>
 	<false/>
 </dict>
 </plist>

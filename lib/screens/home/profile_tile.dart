@@ -16,7 +16,7 @@ class ProfileTile extends StatelessWidget {
         child: ListTile(
           leading: CircleAvatar(
             radius: 25.0,
-            backgroundImage: AssetImage('assets/coffee_icon.png'),
+            //backgroundImage: AssetImage('assets/coffee_icon.png'),
           ),
           title: Text(job!.userName),
           subtitle: Text('This job, located in ..., consists on ...'),

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jobee/models/app_user.dart';
 import 'package:jobee/services/auth.dart';
-import 'package:jobee/services/image_upload.dart';
 import 'package:jobee/shared/constants.dart';
 import 'dart:io';
 
@@ -13,40 +12,23 @@ class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key, required this.appUserData}) : super(key: key);
 
   @override
-  _ProfileScreenState createState() => _ProfileScreenState(appUserData: appUserData);
+  _ProfileScreenState createState() => _ProfileScreenState();
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  final AppUserData? appUserData;
-
-  _ProfileScreenState({required this.appUserData}) {
-    this._userName = appUserData!.userName!;
-    this._email = appUserData!.email;
-  }
-
   int jobeeLevel = 0;
   File? _imageFile;
-  String? _email;
-  String? _userName;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: appBarButton(iconData: Icons.arrow_back, color: Theme.of(context).colorScheme.onBackground, onPressedFunction: () {
+        leading: appBarButton(iconData: Icons.arrow_back, onPressedFunction: () {
           Navigator.pop(context);
-        }, splashColor: appbarDefaultButtonSplashColor,
-        tooltip: "Back"),
-        title: Text(
-          "Profile",
-          style: TextStyle(
-            color: Colors.black
-          ),
-        ),
+        }),
+        title: Text("Profile"),
         //titleSpacing: 8.0,
         centerTitle: false,
-        backgroundColor: Colors.grey[50],
-        elevation: 1.0,
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -56,9 +38,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             children: <Widget>[
               Center(
                 child: Container(
-                  decoration: new BoxDecoration(
+                  decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    border: new Border.all(
+                    border: Border.all(
                       color: lightPaletteColors["crispYellow"]!,
                       width: 3.0,
                     ),
@@ -73,7 +55,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         child: (_imageFile != null)
                         ? GestureDetector(
                           onTap: () async {
-                            _imageFile = await getImage();
+                            //_imageFile = await getImage();
                             setState( (){} ); // update image
                           },
                           child: ClipOval(
@@ -90,7 +72,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               size: 40.0
                           ),
                           onPressed: () async {
-                            _imageFile = await getImage();
+                            //_imageFile = await getImage();
                             setState( (){} ); // update image
                           },
                         ),
@@ -102,7 +84,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               SizedBox(height: 6.0),
               Center(
                 child: Text(
-                  _userName!,
+                  widget.appUserData!.userName!,
                   style: GoogleFonts.montserrat().copyWith(
                     color: Colors.black,
                     fontSize: 18.0,
@@ -123,7 +105,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     SizedBox(width: 4.0),
                     Text(
-                      _email!,
+                      widget.appUserData!.email,
                       style: TextStyle(
                           color: Colors.black,
                           fontSize: 16.0,

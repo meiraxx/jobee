@@ -1,19 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
+class InPlaceLoader extends StatelessWidget {
+  final Size replacedWidgetSize;
+  final double submissionErrorHeight;
+
+  const InPlaceLoader({Key? key, required this.replacedWidgetSize, required this.submissionErrorHeight}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(top: submissionErrorHeight),
+      child: SizedBox(
+        height: replacedWidgetSize.height - submissionErrorHeight*2,
+        width: replacedWidgetSize.width - submissionErrorHeight*2,
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.primary),
+        ),
+      ),
+    );
+  }
+
+  // waiting 1-3 seconds showing the loading widget animation is recommended because
+  // it looks neater than an almost-instant animation
+  static Future<void> minimumLoadingSleep(Duration duration) async => await Future.delayed(duration);
+}
+
 class TextLoader extends StatefulWidget {
   final String? text;
 
   const TextLoader({Key? key, required String this.text}) : super(key: key);
 
   @override
-  _TextLoaderState createState() => _TextLoaderState(text: text);
+  _TextLoaderState createState() => _TextLoaderState();
 }
 
 class _TextLoaderState extends State<TextLoader> {
-  final String? text;
-
-  _TextLoaderState({required this.text}) : super();
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +60,7 @@ class _TextLoaderState extends State<TextLoader> {
           ),
           SizedBox(height: spacing),
           Text(
-            text!,
+            widget.text!,
             style: loadingTextStyle,
           ),
         ],

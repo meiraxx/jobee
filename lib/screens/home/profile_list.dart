@@ -3,13 +3,13 @@ import 'package:jobee/screens/home/profile_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class JobList extends StatefulWidget {
+class ProfileList extends StatefulWidget {
 
   @override
-  _JobListState createState() => _JobListState();
+  _ProfileListState createState() => _ProfileListState();
 }
 
-class _JobListState extends State<JobList> {
+class _ProfileListState extends State<ProfileList> {
   @override
   Widget build(BuildContext context) {
 

@@ -1,17 +1,21 @@
-import 'package:flutter/cupertino.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:jobee/models/app_user.dart';
-import 'package:jobee/models/profile.dart';
-import 'package:jobee/screens/profile/profile.dart';
-import 'package:jobee/screens/screens-shared/logo.dart';
-import 'package:jobee/services/database.dart';
-import 'package:jobee/services/image_upload.dart';
-import 'package:jobee/shared/loader.dart';
-import 'package:jobee/utils/math_utils.dart';
-import 'package:provider/provider.dart';
-import 'package:jobee/shared/constants.dart';
-import 'dart:io';
+import 'package:flutter/cupertino.dart' show CupertinoPageRoute;
+import 'package:jobee/models/app_user.dart' show AppUserData;
+import 'package:jobee/models/profile.dart' show Profile;
+import 'package:jobee/screens/profile/profile.dart' show ProfileScreen;
+import 'package:jobee/screens/screens-shared/logo.dart' show Logo;
+import 'package:jobee/services/database.dart' show DatabaseService;
+import 'package:jobee/services/storage/storage.dart' show StorageService;
+import 'package:jobee/widgets/loaders.dart' show TextLoader;
+import 'package:jobee/widgets/media_files.dart' show showImageSourceActionSheet;
+import 'package:provider/provider.dart' show Provider, StreamProvider;
+import 'package:jobee/shared/constants.dart' show appBarButton;
+import 'package:jobee/widgets/navigation_bar.dart' show bottomNavigationBarGenerator;
+import 'package:image_picker/image_picker.dart' show PickedFile;
+import 'dart:io' show File;
+import 'dart:typed_data' show Uint8List;
+import 'package:jobee/screens/wrapper.dart' show Wrapper;
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -21,33 +25,36 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  PickedFile? pickedImageFile;
+  File? _userImageFile;
+  Uint8List? _userImageBytes;
+
   final double _drawerMenuWidthRatio = 0.739;
-  final List<Color> _logoRandomColorList = [
-    // - RGB
-    Colors.red,
-    Colors.green,
-    Colors.blue,
-    // - Others, ordered on material.io/design/color
-    Colors.pink,
-    Colors.purple,
-    Colors.deepPurple,
-    Colors.indigo,
-    Colors.lightBlue,
-    Colors.cyan,
-    Colors.teal,
-    Colors.lightGreen,
-    Colors.lime,
-    Colors.yellow,
-    Colors.amber,
-    Colors.orange,
-    Colors.deepOrange,
-    Colors.brown,
-    Colors.grey,
-    Colors.blueGrey,
-  ];
-  File? _imageFile;
   int _bottomNavigationCurrentIndex = 0;
-  Color _currentLogoColor = Colors.black;
+  
+  // resources state
+  Future<File?>? _profilePictureDownloadFuture;
+  bool _downloadProfilePictureFlag = true;
+  bool _updateProfilePictureFlag = true;
+
+  @override
+  void initState() {
+    super.initState();
+    /*
+    () async {
+      await Future.delayed(Duration.zero);
+
+      // storage service
+      StorageService storageService = StorageService(uid: "uNFdGO667AZJY6kNmqdeFlzqveU2");
+
+      // user profile picture download future
+      _profilePictureDownloadFuture = StorageService.downloadFile(
+        remoteRef: storageService.userDirRemoteRef!.child('remote-profile-picture.jpg'),
+        localFileName: 'local-profile-picture.jpg',
+      );
+    }();
+    */
+  }
 
   // BUILD
   @override
@@ -56,9 +63,13 @@ class _HomeState extends State<Home> {
     MediaQueryData queryData = MediaQuery.of(context);
     double maxDrawerWidth = queryData.size.width*_drawerMenuWidthRatio;
 
-    // app user data
+    // database service - app user data
     AppUserData? appUserData = Provider.of<AppUserData?>(context);
     if (appUserData==null) return TextLoader(text: "Fetching user data...");
+
+    // storage service
+    StorageService storageService = StorageService(uid: appUserData.uid);
+
 
     // - BOTTOM NAVIGATION BAR LOGIC
     Widget bottomNavigationCurrentItem;
@@ -74,7 +85,7 @@ class _HomeState extends State<Home> {
         break;
     }
 
-
+    // AUXILIARY LAMBDAS
     void _showServicePanel() {
       showModalBottomSheet(context: context, builder: (context) {
         return Container(
@@ -83,7 +94,60 @@ class _HomeState extends State<Home> {
         );
       });
     }
+    
+    void _downloadProfilePicture() {
+      // download the image file and store a future
+      _profilePictureDownloadFuture = StorageService.downloadFile(
+        remoteFileRef: storageService.userDirRemoteRef!.child('remote-profile-picture.jpg'),
+        localFileName: 'local-profile-picture.jpg',
+      );
+    }
 
+    void _updateProfilePicture() {
+      _profilePictureDownloadFuture!.then((File? downloadedFile) {
+        if (downloadedFile==null) return null;
+        // set _userImageFile as the downloaded file
+        _userImageFile = downloadedFile;
+        _userImageBytes = downloadedFile.readAsBytesSync();
+        // update UI
+        setState(() {
+          // set _updateProfilePictureFlag to false, to turn off further updates
+          _updateProfilePictureFlag = false;
+          // set _downloadProfilePictureFlag to false, to turn off further downloads
+          _downloadProfilePictureFlag = false;
+        });
+      });
+    }
+
+    void _handleProfilePictureClick() async {
+      pickedImageFile = await showImageSourceActionSheet(context);
+      UploadTask? uploadTask = await storageService.uploadUserFile(context: context, pickedFile: pickedImageFile, remoteFileName: 'remote-profile-picture.jpg');
+      // when upload is complete
+      uploadTask!.whenComplete(() {
+        // Force re-download and update
+        _downloadProfilePicture();
+        _updateProfilePicture();
+        // update UI
+        setState( () {
+          // stop new downloads
+          _downloadProfilePictureFlag = false;
+          // stop new updates
+          _updateProfilePictureFlag = false;
+        } );
+      });
+    }
+
+    // if the flag _downloadProfilePictureFlag is set (default: true)
+    if (_downloadProfilePictureFlag) {
+      _downloadProfilePicture();
+      // no need to perform a download multiple times, so turn off the flag
+      _downloadProfilePictureFlag = false;
+    }
+
+    // if the flag _updateProfilePictureFlag is set (default: true)
+    if (_updateProfilePictureFlag) _updateProfilePicture();
+
+    // else, return all
     return StreamProvider<List<Profile>>.value(
       initialData: [],
       value: DatabaseService().profiles,
@@ -123,28 +187,26 @@ class _HomeState extends State<Home> {
                         child: SizedBox(
                           width: double.infinity,
                           height: double.infinity,
-                          child: (_imageFile != null)
+                          child: (_userImageFile != null)
                           ? GestureDetector(
                             onTap: () async {
-                              _imageFile = await getImage();
-                              setState( (){} ); // update image
+                              _handleProfilePictureClick();
                             },
                             child: ClipOval(
-                              child: Image.file(
-                                _imageFile!,
+                              child: Image.memory(
+                                _userImageBytes!,
                                 fit: BoxFit.cover,
-                              )
+                              ),
                             ),
                           )
                           : IconButton(
                             icon: Icon(
                               Icons.upload_rounded,
                               color: Colors.white,
-                              size: 40.0
+                              size: 40.0,
                             ),
                             onPressed: () async {
-                              _imageFile = await getImage();
-                              setState( (){} ); // update image
+                              _handleProfilePictureClick();
                             },
                           ),
                         ),
@@ -199,7 +261,7 @@ class _HomeState extends State<Home> {
                                 ),
                                 SizedBox(width: 4.0),
                                 Text(
-                                  appUserData.phoneCountryDialCode! + " " + appUserData.phoneNumber!,
+                                  "(${appUserData.phoneCountryDialCode!}) ${appUserData.phoneNumber!}",
                                   style: Theme.of(context).textTheme.bodyText2,
                                 ),
                               ],
@@ -257,21 +319,21 @@ class _HomeState extends State<Home> {
                 Divider(height: 0.0),
                 Divider(height: 0.0),
                 // - ACCOUNT
-                appBarButton(text: "Account", iconData: Icons.account_circle_outlined, color: Theme.of(context).colorScheme.onBackground, onPressedFunction: () async {
+                appBarButton(text: "Account", iconData: Icons.account_circle_outlined, context: context, onPressedFunction: () async {
                   // pop the drawer menu
                   Navigator.pop(context);
                   // push the profile page
                   Navigator.push(context, CupertinoPageRoute(builder: (context) => ProfileScreen(appUserData: appUserData), fullscreenDialog: false));
-                }, splashColor: appbarDefaultButtonSplashColor),
+                }),
                 Divider(height: 0.0),
                 Divider(height: 0.0),
                 // - SERVICES
-                appBarButton(text: "Services", iconData: Icons.pages_outlined, color: Theme.of(context).colorScheme.onBackground, onPressedFunction: () async {
+                appBarButton(text: "Services", iconData: Icons.pages_outlined, context: context, onPressedFunction: () async {
                   // pop the drawer menu
                   Navigator.pop(context);
                   // show the service panel widget
                   _showServicePanel();
-                }, splashColor: appbarDefaultButtonSplashColor),
+                }),
                 Divider(height: 0.0),
                 Divider(height: 0.0)
               ],
@@ -289,46 +351,44 @@ class _HomeState extends State<Home> {
                 onPressed: () {
                   Scaffold.of(context).openDrawer();
                 },
-                tooltip: "Menu",
-                highlightColor: Colors.transparent,
-                splashColor: Colors.transparent,
-                splashRadius: Material.defaultSplashRadius - 5.0,
               );
             },
           ),
           title: Logo(),
-          backgroundColor: Colors.white,
-          elevation: 1.0,
           actions: <Widget>[
-            appBarButton(iconData: Icons.notifications_none, color: Theme.of(context).colorScheme.onBackground, onPressedFunction: () async {
+            appBarButton(iconData: Icons.notifications_none, onPressedFunction: () async {
               // TODO: show notifications
-            }, splashColor: appbarDefaultButtonSplashColor,
-            tooltip: "Notifications"),
-            appBarButton(iconData: Icons.search_rounded, color: Theme.of(context).colorScheme.onBackground, onPressedFunction: () async {
+            }),
+            appBarButton(iconData: Icons.search_rounded, onPressedFunction: () async {
               // TODO: search through jobs (not job types)
-            }, splashColor: appbarDefaultButtonSplashColor,
-            tooltip: "Search"),
+            }),
           ],
         ),
         body: Container(
           child: Container(
             // TODO: HOME BODY
+            child: Container(),
           ),
         ),
         bottomNavigationBar: bottomNavigationBarGenerator(
-        context: context,
-        onTap: (int newIndex) {
-          setState(() {
-            _bottomNavigationCurrentIndex = newIndex;
-          });
-        },
-        bottomNavigationCurrentIndex: _bottomNavigationCurrentIndex,
-        iconDataList: [
-          Icons.home,
-          Icons.person,
-          Icons.chat,
-        ],
-        activeColor: Theme.of(context).colorScheme.primary),
+          context: context,
+          onTap: (int newIndex) {
+            setState(() {
+              _bottomNavigationCurrentIndex = newIndex;
+            });
+          },
+          bottomNavigationCurrentIndex: _bottomNavigationCurrentIndex,
+          inactiveIconDataList: [
+            Icons.home_outlined,
+            Icons.person_outline_sharp,
+            Icons.chat_outlined,
+          ],
+          activeIconDataList: [
+            Icons.home,
+            Icons.person_sharp,
+            Icons.chat,
+          ],
+        ),
       ),
     );
   }

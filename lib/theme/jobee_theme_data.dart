@@ -34,21 +34,25 @@ class JobeeThemeData {
       ),
       // TODO: validate if primaryTextTheme or accentTextTheme are needed.
       // Matches manifest.json colors and background color.
-      primaryColor: colorScheme.primary,
-      accentColor: colorScheme.primary,
+      primaryColor: colorScheme.primary, // this is not the "primary color", but the color used above the primary
+      accentColor: colorScheme.secondary, // this is the color used for accents, i.e., the secondary color
       backgroundColor: colorScheme.background,
       appBarTheme: AppBarTheme(
         textTheme: textTheme.apply(bodyColor: colorScheme.onPrimary),
         color: colorScheme.background,
-        elevation: 0,
-        iconTheme: IconThemeData(color: colorScheme.primary),
+        elevation: 0.5,
+        iconTheme: IconThemeData(color: colorScheme.onPrimary),
+        actionsIconTheme: IconThemeData(color: colorScheme.onPrimary),
         brightness: colorScheme.brightness,
       ),
-      iconTheme: IconThemeData(color: colorScheme.onPrimary),
+      bottomNavigationBarTheme: BottomNavigationBarThemeData(
+        elevation: 5.0,
+      ),
+      iconTheme: IconThemeData(
+        color: colorScheme.onPrimary,
+      ),
       canvasColor: colorScheme.background,
       scaffoldBackgroundColor: colorScheme.background,
-      highlightColor: Colors.transparent,
-      focusColor: focusColor,
       textSelectionTheme: TextSelectionThemeData(
         cursorColor: colorScheme.primary,
         selectionColor: colorScheme.primary,
@@ -63,8 +67,13 @@ class JobeeThemeData {
         contentTextStyle: textTheme.subtitle1!.apply(color: darkFillColor),
       ),
       buttonTheme: ButtonThemeData(
-        textTheme: ButtonTextTheme.primary,
+        textTheme: ButtonTextTheme.normal,
+        splashColor: colorScheme.secondary.withAlpha(0x1F),
+        highlightColor: colorScheme.secondary.withAlpha(0x1F),
       ),
+      splashColor: colorScheme.secondary.withAlpha(0x1F),
+      highlightColor: colorScheme.secondary.withAlpha(0x1F),
+      focusColor: focusColor,
       inputDecorationTheme: InputDecorationTheme(
         errorMaxLines: 3,
         contentPadding: EdgeInsets.all(5.0),
@@ -76,7 +85,7 @@ class JobeeThemeData {
       cardTheme: CardTheme(
         color: Colors.white,
         margin: EdgeInsets.zero,
-      )
+      ),
     );
   }
 
@@ -96,13 +105,13 @@ class JobeeThemeData {
     primaryVariant: const Color(0xFFFF872A), // lightPaletteColors['deeperOrange']!
     secondary: const Color(0xFFFDD329), // lightPaletteColors['yellow']!
     secondaryVariant: const Color(0xFFF7B61C), // lightPaletteColors['crispYellow']!
-    surface: const Color(0xFFFFFAD8), // lightPaletteColors['cream']!
-    background: const Color(0xFFFFFAD8), // lightPaletteColors['cream']!
+    surface: _darkFillColor, // lightPaletteColors['cream']! = const Color(0xFFFFFAD8)
+    background: _darkFillColor, // lightPaletteColors['cream']! = const Color(0xFFFFFAD8)
     error: _lightFillColor,
     onPrimary: _lightFillColor,
-    onSecondary: Colors.black,
-    onSurface: Colors.black,
-    onBackground: Colors.black,
+    onSecondary: _lightFillColor,
+    onSurface: _lightFillColor,
+    onBackground: _lightFillColor,
     onError: _lightFillColor,
     brightness: Brightness.light
   );

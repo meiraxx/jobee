@@ -6,7 +6,7 @@ import 'package:jobee/services/auth.dart';
 import 'package:jobee/services/database.dart';
 import 'package:jobee/shared/constants.dart';
 import 'package:jobee/utils/input_field_utils.dart';
-import 'package:jobee/shared/loader.dart';
+import 'package:jobee/widgets/loaders.dart';
 import 'package:provider/provider.dart';
 
 class SubmitPublicProfileData extends StatefulWidget {
@@ -156,7 +156,6 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-            elevation: 1.0,
             title: Wrap(
               crossAxisAlignment: WrapCrossAlignment.center,
               children: [

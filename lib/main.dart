@@ -1,19 +1,36 @@
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:jobee/models/app_user.dart';
-import 'package:jobee/screens/authenticate/authenticate.dart';
-import 'package:jobee/screens/home/home.dart';
-import 'package:jobee/screens/wrapper.dart';
-import 'package:jobee/services/auth.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:jobee/theme/jobee_theme_data.dart';
+import 'package:flutter/cupertino.dart' show CupertinoPageRoute;
+import 'package:firebase_core/firebase_core.dart' show Firebase;
+import 'package:firebase_auth/firebase_auth.dart' show FirebaseAuth;
+import 'package:cloud_firestore/cloud_firestore.dart' show FirebaseFirestore;
+import 'package:cloud_functions/cloud_functions.dart' show FirebaseFunctions;
+import 'package:firebase_storage/firebase_storage.dart' show FirebaseStorage;
+import 'package:flutter_localizations/flutter_localizations.dart' show GlobalMaterialLocalizations, GlobalWidgetsLocalizations;
+import 'package:jobee/models/app_user.dart' show AppUser;
+import 'package:jobee/screens/authenticate/authenticate.dart' show Authenticate;
+import 'package:jobee/screens/home/home.dart' show Home;
+import 'package:jobee/screens/wrapper.dart' show Wrapper;
+import 'package:jobee/services/auth.dart' show AuthService;
+import 'package:provider/provider.dart' show StreamProvider;
+import 'package:jobee/theme/jobee_theme_data.dart' show JobeeThemeData;
 
 void main() async {
+  // note: set to true when deploying
+  bool useProductionBackend = true;
+
   WidgetsFlutterBinding.ensureInitialized();
-  await AuthService.initializeFirebaseApp();
-  await FirebaseStorage.instance.useStorageEmulator('localhost', 5000);
+
+  // initialize firebase app
+  await Firebase.initializeApp();
+
+  // use emulators rather than real firebase for testing purposes,
+  if (!useProductionBackend) {
+    await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
+    FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
+    FirebaseFunctions.instance.useFunctionsEmulator('localhost', 5001);
+    await FirebaseStorage.instance.useStorageEmulator('localhost', 9199);
+  }
+
   runApp(MyApp());
 }
 
@@ -49,7 +66,7 @@ class MyApp extends StatelessWidget {
         },
         localizationsDelegates: [
           GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate
+          GlobalWidgetsLocalizations.delegate,
         ],
         supportedLocales: [
           Locale('pt', 'PT'),

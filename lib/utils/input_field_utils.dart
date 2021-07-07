@@ -1,6 +1,5 @@
-import 'package:flutter/cupertino.dart';
-
-import 'math_utils.dart';
+import 'package:flutter/material.dart';
+import 'math_utils.dart' show generateRandomInteger;
 
 /* --------------------------
 |         Validators        |
