@@ -87,9 +87,8 @@ class _TaskManagerState extends State<TaskManager> {
   Future<void> handleUploadType(UploadType type) async {
     switch (type) {
       case UploadType.string:
-        setState(() {
-          _uploadTasks = [..._uploadTasks, uploadString()];
-        });
+        _uploadTasks = [..._uploadTasks, uploadString()];
+        if (this.mounted) setState(() {});
         break;
       case UploadType.file:
         PickedFile? file = await ImagePicker().getImage(source: ImageSource.gallery);
@@ -97,9 +96,8 @@ class _TaskManagerState extends State<TaskManager> {
         UploadTask? task = await uploadFile(file);
 
         if (task==null) break;
-        setState(() {
-          _uploadTasks = [..._uploadTasks, task];
-        });
+        _uploadTasks = [..._uploadTasks, task];
+        if (this.mounted) setState(() {});
         break;
       case UploadType.clear:
         setState(() {

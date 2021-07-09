@@ -90,14 +90,12 @@ class JobeeThemeData {
             color: Colors.grey,
             width: 1.0,
           ),
-          animationDuration: Duration(milliseconds: 300),
         ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           elevation: 2.0,
           padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-          animationDuration: Duration(milliseconds: 300),
         ).copyWith(
           overlayColor: MaterialStateProperty.all(colorScheme.secondary.withAlpha(0x7F)),
         ),

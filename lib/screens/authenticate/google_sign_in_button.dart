@@ -18,14 +18,16 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
     Widget button = InkWell(
       onTap: () async {
         try {
-          setState(() => _isSigningIn = true );
+          _isSigningIn = true;
+          if (this.mounted) setState(() {});
 
           AppUser? appUser = await AuthService.signInWithGoogle(context: context);
 
           // if the user did not login
           if (appUser==null) {
+            _isSigningIn = false;
             // stop loading widget and return
-            setState(() => _isSigningIn = false);
+            if (this.mounted) setState((){});
             return;
           }
 

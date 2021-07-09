@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart' show FirebaseAuthException;
+import 'package:flutter/services.dart' show TextInput;
 import 'package:jobee/screens/screens-shared/logo.dart' show Logo;
 import 'package:jobee/services/auth.dart' show AuthService;
 import 'package:jobee/shared/constants.dart' show appBarButton;
@@ -63,167 +64,191 @@ class _RegMailPasswordState extends State<RegMailPassword> {
             ],
           )
         ),
-        body: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    SizedBox(height: 20.0),
-                    TextFormField(
-                      decoration: InputDecoration(labelText: 'Email'),
-                      textAlignVertical: TextAlignVertical.center,
-                      autofillHints: [AutofillHints.email],
-                      validator: (String? emailVal) {
-                        return validateNotEmpty(
-                          text: emailVal!,
-                          field: 'Email',
-                          errorMessage: "Enter your email",
-                          successFunction: () {
-                            setState(() => _errorSizedBoxHeightEmail = defaultFormFieldSpacing);
-                          },
-                          errorFunction: () {
-                            setState(() => _errorSizedBoxHeightEmail = 0.0);
-                          },
-                        );
-                      },
-                      onChanged: (val) { setState(() => _email = val); },
-                    ),
-                    SizedBox(height: _errorSizedBoxHeightEmail),
-                    SizedBox(height: defaultFormFieldSpacing),
-                    TextFormField(
-                      decoration: InputDecoration(
-                        labelText: 'Password',
-                        counterText: (_password.length<_passwordMinLength) ? "${_password.length} / $_passwordMinLength characters required minimum" : '',
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            _passwordVisible?Icons.visibility:Icons.visibility_off,
-                          ),
-                          onPressed: () {
-                            // Update the state, i.e., toggle the state of _passwordVisible variable
-                            setState(() => _passwordVisible = !_passwordVisible);
-                          },
-                        ),
+        body: AutofillGroup(
+          child: Column(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      SizedBox(height: 20.0),
+                      TextFormField(
+                        decoration: InputDecoration(labelText: 'Email'),
+                        textAlignVertical: TextAlignVertical.center,
+                        autofillHints: [AutofillHints.email],
+                        keyboardType: TextInputType.emailAddress,
+                        validator: (String? emailVal) {
+                          return validateNotEmpty(
+                            text: emailVal!,
+                            field: 'Email',
+                            errorMessage: "Enter your email",
+                            successFunction: () {
+                              setState(() => _errorSizedBoxHeightEmail = defaultFormFieldSpacing);
+                            },
+                            errorFunction: () {
+                              setState(() => _errorSizedBoxHeightEmail = 0.0);
+                            },
+                          );
+                        },
+                        // cleanse errors by rebuilding widget on... :
+                        onTap: () {
+                          setState(() {});
+                        },
+                        onChanged: (String emailVal) {
+                          setState(() => _email = emailVal);
+                        },
                       ),
-                      textAlignVertical: TextAlignVertical.center,
-                      autofillHints: [AutofillHints.password],
-                      obscureText: !_passwordVisible,
-                      validator: (String? passwordVal) {
-                        String? passwordCheck = validatePassword(
-                          password: passwordVal!,
-                          minLength: _passwordMinLength,
-                          successFunction: () {
-                            setState(() => _errorSizedBoxHeightPassword = defaultFormFieldSpacing);
-                          },
-                          errorFunction: () {
-                            setState(() => _errorSizedBoxHeightPassword = 0.0);
-                          },
-                        );
+                      SizedBox(height: _errorSizedBoxHeightEmail),
+                      SizedBox(height: defaultFormFieldSpacing),
+                      TextFormField(
+                        decoration: InputDecoration(
+                          labelText: 'Password',
+                          counterText: (_password.length<_passwordMinLength) ? "${_password.length} / $_passwordMinLength characters required minimum" : '',
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _passwordVisible?Icons.visibility:Icons.visibility_off,
+                            ),
+                            onPressed: () {
+                              // Update the state, i.e., toggle the state of _passwordVisible variable
+                              setState(() => _passwordVisible = !_passwordVisible);
+                            },
+                          ),
+                        ),
+                        textAlignVertical: TextAlignVertical.center,
+                        autofillHints: [AutofillHints.password],
+                        keyboardType: TextInputType.text,
+                        onEditingComplete: () => TextInput.finishAutofillContext(),
+                        obscureText: !_passwordVisible,
+                        validator: (String? passwordVal) {
+                          String? passwordCheck = validatePassword(
+                            password: passwordVal!,
+                            minLength: _passwordMinLength,
+                            successFunction: () {
+                              setState(() => _errorSizedBoxHeightPassword = defaultFormFieldSpacing);
+                            },
+                            errorFunction: () {
+                              setState(() => _errorSizedBoxHeightPassword = 0.0);
+                            },
+                          );
 
-                        // if the password does not check the requirements
-                        if (passwordCheck!=null) return passwordCheck;
-                      },
-                      onChanged: (val) { setState(() => _password = val); },
-                    ),
-                    SizedBox(height: _errorSizedBoxHeightPassword),
-                    SizedBox(height: defaultFormFieldSpacing),
-                    TextFormField(
-                      decoration: InputDecoration(
-                        labelText: "Confirm Password",
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            _confirmPasswordVisible?Icons.visibility:Icons.visibility_off,
-                          ),
-                          onPressed: () {
-                            // Update the state, i.e., toggle the state of _confirmPasswordVisible variable
-                            setState(() => _confirmPasswordVisible = !_confirmPasswordVisible);
-                          },
-                        ),
+                          // if the password does not check the requirements
+                          if (passwordCheck!=null) return passwordCheck;
+                        },
+                        // cleanse errors by rebuilding widget on... :
+                        onTap: () {
+                          setState(() {});
+                        },
+                        onChanged: (String passwordVal) {
+                          setState(() => _password = passwordVal);
+                        },
                       ),
-                      textAlignVertical: TextAlignVertical.center,
-                      autofillHints: [AutofillHints.password],
-                      obscureText: !_confirmPasswordVisible,
-                      validator: (String? confirmPasswordVal) {
-                        /* simply need to check if it's equal to the password */
-                        if (_password!=confirmPasswordVal) {
-                          setState(() => _errorSizedBoxHeightConfirmPassword = defaultFormFieldSpacing);
-                          return "Passwords do not match";
-                        } else {
-                          setState(() => _errorSizedBoxHeightConfirmPassword = 0.0);
-                          return null;
-                        }
-                      },
-                    ),
-                    SizedBox(height: _errorSizedBoxHeightConfirmPassword),
-                    SizedBox(height: defaultFormFieldSpacing),
-                    Builder(builder: (BuildContext context) {
-                      return _loading ? InPlaceLoader(replacedWidgetSize: Size(48.0, 48.0), submissionErrorHeight: defaultSubmissionErrorHeight)
-                      : ElevatedButton(
-                        child: Wrap(
-                          crossAxisAlignment: WrapCrossAlignment.center,
-                          children: [
-                            Icon(Icons.person),
-                            SizedBox(width: 4.0),
-                            Text('Register'),
-                          ],
+                      SizedBox(height: _errorSizedBoxHeightPassword),
+                      SizedBox(height: defaultFormFieldSpacing),
+                      TextFormField(
+                        decoration: InputDecoration(
+                          labelText: "Confirm Password",
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _confirmPasswordVisible?Icons.visibility:Icons.visibility_off,
+                            ),
+                            onPressed: () {
+                              // Update the state, i.e., toggle the state of _confirmPasswordVisible variable
+                              setState(() => _confirmPasswordVisible = !_confirmPasswordVisible);
+                            },
+                          ),
                         ),
-                        onPressed: () async {
-                          if (_formKey.currentState!.validate()) {
-                            setState(() {
+                        textAlignVertical: TextAlignVertical.center,
+                        autofillHints: [AutofillHints.password],
+                        keyboardType: TextInputType.text,
+                        obscureText: !_confirmPasswordVisible,
+                        validator: (String? confirmPasswordVal) {
+                          /* simply need to check if it's equal to the password */
+                          if (_password!=confirmPasswordVal) {
+                            setState(() => _errorSizedBoxHeightConfirmPassword = defaultFormFieldSpacing);
+                            return "Passwords do not match";
+                          } else {
+                            setState(() => _errorSizedBoxHeightConfirmPassword = 0.0);
+                            return null;
+                          }
+                        },
+                        // cleanse errors by rebuilding widget on... :
+                        onTap: () {
+                          setState(() {});
+                        },
+                        onChanged: (String confirmPasswordVal) {
+                          setState(() {});
+                        },
+                      ),
+                      SizedBox(height: _errorSizedBoxHeightConfirmPassword),
+                      SizedBox(height: defaultFormFieldSpacing),
+                      Builder(builder: (BuildContext context) {
+                        return _loading ? InPlaceLoader(replacedWidgetSize: Size(48.0, 48.0), submissionErrorHeight: defaultSubmissionErrorHeight)
+                        : ElevatedButton(
+                          child: Wrap(
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            children: [
+                              Icon(Icons.person),
+                              SizedBox(width: 4.0),
+                              Text('Register'),
+                            ],
+                          ),
+                          onPressed: () async {
+                            if (_formKey.currentState!.validate()) {
                               // while registering, set _loading to true
                               _loading = true;
                               _submissionErrorSizedBoxHeight = defaultFormFieldSpacing;
-                            });
-                            await InPlaceLoader.minimumLoadingSleep(const Duration(seconds: 1));
-                            try {
-                              await AuthService.registerWithEmailAndPassword(_email, _password);
-                            } on FirebaseAuthException catch (e) {
-                              setState(() {
+                              if (this.mounted) setState(() {});
+
+                              await InPlaceLoader.minimumLoadingSleep(const Duration(seconds: 1));
+                              try {
+                                await AuthService.registerWithEmailAndPassword(_email, _password);
+                              } on FirebaseAuthException catch (e) {
                                 _submissionError = e.message!;
                                 _submissionErrorSizedBoxHeight = defaultSubmissionErrorHeight;
                                 // if there was an error, set _loading back to false
                                 _loading = false;
-                              });
+                                if (this.mounted) setState(() {});
+                              }
                             }
-                          }
-                        },
-                      );
-                    }),
-                    SizedBox(height: _submissionErrorSizedBoxHeight),
-                    Text(
-                      _submissionError,
-                      style: TextStyle(
-                        color: Colors.red,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 12.0,
-                      ),
-                    )
-                  ],
+                          },
+                        );
+                      }),
+                      SizedBox(height: _submissionErrorSizedBoxHeight),
+                      Text(
+                        _submissionError,
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12.0,
+                        ),
+                      )
+                    ],
+                  ),
                 ),
               ),
-            ),
-            Expanded(
-              child: Container(),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                Text("Already have an account?"),
-                TextButton(
-                  child: Text(
-                    "Sign in",
-                    style: TextStyle(color: Colors.blue),
-                  ),
-                  onPressed: () {
-                    widget.toggleView();
-                  },
-                )
-              ],
-            )
-          ],
+              Expanded(
+                child: Container(),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  Text("Already have an account?"),
+                  TextButton(
+                    child: Text(
+                      "Sign in",
+                      style: TextStyle(color: Colors.blue),
+                    ),
+                    onPressed: () {
+                      widget.toggleView();
+                    },
+                  )
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );

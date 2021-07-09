@@ -16,6 +16,8 @@ class DatabaseService {
     if (ds.exists) return null;
 
     // TODO-BackEnd: Firestore must expect these same exact fields, along with two false values upfront ("hasRegisteredPublicData" and "hasRegisteredPersonalData")
+    // TODO-BackEnd: Firestore must keep track of the values of "hasRegisteredPublicData" and "hasRegisteredPersonalData" to enforce that they change only once to true,
+    //  and only with the expected set fields, as explained in the updatePublicUserData() and updatePersonalUserData() back-end to do list
     await profileCollection.doc(uid).set({
       'email': email,
       'authProvider': authProvider,

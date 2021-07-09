@@ -17,7 +17,7 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
 
   // Auxiliary functions
-  void _handleLogout(BuildContext context) async {
+  Future<void> _handleLogout(BuildContext context) async {
     bool? choice = await _showBoolAlertDialog(context);
     if (choice == null || choice == false) return null;
 

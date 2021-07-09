@@ -226,13 +226,12 @@ class _IntlPhoneFieldState extends State<IntlPhoneField> {
                     labelText: widget.searchText,
                   ),
                   onChanged: (value) {
-                    setState(() {
-                      filteredCountries = _countryList
-                          .where((country) => country['name']!
-                              .toLowerCase()
-                              .contains(value.toLowerCase()))
-                          .toList();
-                    });
+                    filteredCountries = _countryList
+                      .where((country) => country['name']!
+                      .toLowerCase()
+                      .contains(value.toLowerCase()))
+                      .toList();
+                    if (this.mounted) setState(() {});
                   },
                 ),
                 SizedBox(height: 20),
@@ -284,7 +283,7 @@ class _IntlPhoneFieldState extends State<IntlPhoneField> {
         ),
       ),
     );
-    setState(() {});
+    if (this.mounted) setState(() {});
   }
 
   @override

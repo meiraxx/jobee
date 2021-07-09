@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart' show FirebaseAuthException;
+import 'package:flutter/services.dart' show TextInput;
 import 'package:jobee/screens/screens-shared/logo.dart' show Logo;
 import 'package:jobee/services/auth.dart' show AuthService;
 import 'package:jobee/shared/constants.dart' show appBarButton;
@@ -59,97 +60,100 @@ class _AuthMailPasswordState extends State<AuthMailPassword> {
             ],
           )
         ),
-        body: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    SizedBox(height: 20.0),
-                    TextFormField(
-                      decoration: InputDecoration(
-                        labelText: "Email",
-                      ),
-                      textAlignVertical: TextAlignVertical.center,
-                      autofillHints: [AutofillHints.email],
-                      validator: (String? emailVal) {
-                        setState(() => _errorSizedBoxHeightEmail = defaultFormFieldSpacing);
-                        return validateNotEmpty(
-                          text: emailVal!,
-                          field: 'Email',
-                          errorMessage: "Enter your email",
-                          successFunction: () {
-                            setState(() => _errorSizedBoxHeightEmail = defaultFormFieldSpacing);
-                          },
-                          errorFunction: () {
-                            setState(() => _errorSizedBoxHeightEmail = 0.0);
-                          },
-                        );
-                      },
-                      onChanged: (val1) { setState(() => _email = val1); },
-                    ),
-                    SizedBox(height: _errorSizedBoxHeightEmail),
-                    SizedBox(height: defaultFormFieldSpacing),
-                    TextFormField(
-                      decoration: InputDecoration(
-                        labelText: 'Password',
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            _passwordVisible?Icons.visibility:Icons.visibility_off,
-                          ),
-                          onPressed: () {
-                            // Update the state, i.e., toggle the state of _passwordVisible variable
-                            setState(() => _passwordVisible = !_passwordVisible);
-                          },
+        body: AutofillGroup(
+          child: Column(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      SizedBox(height: 20.0),
+                      TextFormField(
+                        decoration: InputDecoration(
+                          labelText: "Email",
                         ),
+                        textAlignVertical: TextAlignVertical.center,
+                        autofillHints: [AutofillHints.email],
+                        keyboardType: TextInputType.emailAddress,
+                        validator: (String? emailVal) {
+                          setState(() => _errorSizedBoxHeightEmail = defaultFormFieldSpacing);
+                          return validateNotEmpty(
+                            text: emailVal!,
+                            field: 'Email',
+                            errorMessage: "Enter your email",
+                            successFunction: () {
+                              setState(() => _errorSizedBoxHeightEmail = defaultFormFieldSpacing);
+                            },
+                            errorFunction: () {
+                              setState(() => _errorSizedBoxHeightEmail = 0.0);
+                            },
+                          );
+                        },
+                        onChanged: (String emailVal) { setState(() => _email = emailVal); },
                       ),
-                      obscureText: !_passwordVisible,
-                      textAlignVertical: TextAlignVertical.center,
-                      autofillHints: [AutofillHints.password],
-                      validator: (String? passwordVal) {
-                        return validateNotEmpty(
-                          text: passwordVal!,
-                          field: 'Password',
-                          errorMessage: "Enter your password",
-                          successFunction: () {
-                            setState(() => _errorSizedBoxHeightPassword = defaultFormFieldSpacing);
-                          },
-                          errorFunction: () {
-                            setState(() => _errorSizedBoxHeightPassword = 0.0);
-                          },
-                        );
-                      },
-                      onChanged: (val2) { setState(() => _password = val2); },
-                    ),
-                    SizedBox(height: _errorSizedBoxHeightPassword),
-                    SizedBox(height: defaultFormFieldSpacing),
-                    Builder(
-                      builder: (BuildContext context) {
-                        return _loading ? InPlaceLoader(replacedWidgetSize: Size(48.0, 48.0), submissionErrorHeight: defaultSubmissionErrorHeight)
-                        : ElevatedButton(
-                          child: Wrap(
-                            crossAxisAlignment: WrapCrossAlignment.center,
-                            children: [
-                              Icon(Icons.login),
-                              SizedBox(width: 4.0),
-                              Text("Sign in"),
-                            ],
+                      SizedBox(height: _errorSizedBoxHeightEmail),
+                      SizedBox(height: defaultFormFieldSpacing),
+                      TextFormField(
+                        decoration: InputDecoration(
+                          labelText: 'Password',
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _passwordVisible?Icons.visibility:Icons.visibility_off,
+                            ),
+                            onPressed: () {
+                              // Update the state, i.e., toggle the state of _passwordVisible variable
+                              setState(() => _passwordVisible = !_passwordVisible);
+                            },
                           ),
-                          onPressed: () async {
-                            if (_formKey.currentState!.validate()) {
-                              setState(() {
+                        ),
+                        obscureText: !_passwordVisible,
+                        textAlignVertical: TextAlignVertical.center,
+                        autofillHints: [AutofillHints.password],
+                        keyboardType: TextInputType.text,
+                        onEditingComplete: () => TextInput.finishAutofillContext(),
+                        validator: (String? passwordVal) {
+                          return validateNotEmpty(
+                            text: passwordVal!,
+                            field: 'Password',
+                            errorMessage: "Enter your password",
+                            successFunction: () {
+                              setState(() => _errorSizedBoxHeightPassword = defaultFormFieldSpacing);
+                            },
+                            errorFunction: () {
+                              setState(() => _errorSizedBoxHeightPassword = 0.0);
+                            },
+                          );
+                        },
+                        onChanged: (String passwordVal) { setState(() => _password = passwordVal); },
+                      ),
+                      SizedBox(height: _errorSizedBoxHeightPassword),
+                      SizedBox(height: defaultFormFieldSpacing),
+                      Builder(
+                        builder: (BuildContext context) {
+                          return _loading ? InPlaceLoader(replacedWidgetSize: Size(48.0, 48.0), submissionErrorHeight: defaultSubmissionErrorHeight)
+                          : ElevatedButton(
+                            child: Wrap(
+                              crossAxisAlignment: WrapCrossAlignment.center,
+                              children: [
+                                Icon(Icons.login),
+                                SizedBox(width: 4.0),
+                                Text("Sign in"),
+                              ],
+                            ),
+                            onPressed: () async {
+                              if (_formKey.currentState!.validate()) {
                                 // while logging in, set _loading to true
                                 _loading = true;
                                 _submissionErrorSizedBoxHeight = defaultFormFieldSpacing;
-                              });
-                              await InPlaceLoader.minimumLoadingSleep(const Duration(seconds: 1));
-                              try {
-                                await AuthService.loginWithEmailAndPassword(_email, _password);
-                              } on FirebaseAuthException catch (e) {
-                                setState(() {
+                                if (this.mounted) setState(() {});
+
+                                await InPlaceLoader.minimumLoadingSleep(const Duration(seconds: 1));
+                                try {
+                                  await AuthService.loginWithEmailAndPassword(_email, _password);
+                                } on FirebaseAuthException catch (e) {
                                   if (e.message == "The email address is badly formatted.") {
                                     _submissionError = e.message!;
                                   } else {
@@ -161,45 +165,46 @@ class _AuthMailPasswordState extends State<AuthMailPassword> {
                                   _submissionErrorSizedBoxHeight = defaultSubmissionErrorHeight;
                                   // if there was an error, set _loading back to false
                                   _loading = false;
-                                });
+                                  if (this.mounted) setState(() {});
+                                }
                               }
-                            }
-                          },
-                        );
-                      }
-                    ),
-                    SizedBox(height: _submissionErrorSizedBoxHeight),
-                    Text(
-                      _submissionError,
-                      style: TextStyle(
-                        color: Colors.red,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 12.0,
+                            },
+                          );
+                        }
                       ),
-                    ),
-                  ],
+                      SizedBox(height: _submissionErrorSizedBoxHeight),
+                      Text(
+                        _submissionError,
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12.0,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            Expanded(
-              child: Container(),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                Text("Still don't have an account?"),
-                TextButton(
-                  child: Text(
-                    'Register',
-                    style: TextStyle(color: Colors.blue),
-                  ),
-                  onPressed: () {
-                    widget.toggleView();
-                  },
-                )
-              ],
-            )
-          ],
+              Expanded(
+                child: Container(),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  Text("Still don't have an account?"),
+                  TextButton(
+                    child: Text(
+                      'Register',
+                      style: TextStyle(color: Colors.blue),
+                    ),
+                    onPressed: () {
+                      widget.toggleView();
+                    },
+                  )
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );

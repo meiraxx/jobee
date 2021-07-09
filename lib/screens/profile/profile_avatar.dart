@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:jobee/models/app_user.dart' show AppUserData;
 import 'package:jobee/services/storage/storage.dart' show StorageService;
@@ -6,6 +7,7 @@ import 'package:jobee/widgets/media_files.dart' show showImageSourceActionSheet;
 import 'package:image_picker/image_picker.dart' show PickedFile;
 import 'dart:io' show File;
 import 'dart:typed_data' show Uint8List;
+import 'package:jobee/shared/globals.dart' as globals;
 
 class ProfileAvatar extends StatefulWidget {
   final AppUserData appUserData;
@@ -22,7 +24,7 @@ class _ProfileAvatarState extends State<ProfileAvatar> {
   StorageService? _storageService;
 
   // Auxiliary functions
-  void _downloadAndUpdateProfileAvatar() async {
+  Future<void> _downloadAndUpdateProfileAvatar() async {
     // if the _forceProfileAvatarDownloadAndUpdate is false, we do nothing
     if (!_forceProfileAvatarDownloadAndUpdate) return null;
 
@@ -30,7 +32,6 @@ class _ProfileAvatarState extends State<ProfileAvatar> {
 
     // Turn off further downloads and updates
     _forceProfileAvatarDownloadAndUpdate = false;
-
     // Download the image file and halt thread execution until we have a File object
     File? downloadedFile = await StorageService.downloadFile(
       remoteFileRef: _storageService!.userDirRemoteRef!.child('remote-profile-picture.jpg'),
@@ -41,14 +42,21 @@ class _ProfileAvatarState extends State<ProfileAvatar> {
     if (downloadedFile==null) return null;
 
     // else...
-    // Set _userImageFile as the downloaded file
+    // Set _profileAvatarBytes as the downloaded file's bytes
     _profileAvatarBytes = downloadedFile.readAsBytesSync();
 
-    // Asynchronously update UI with new profile avatar
-    setState(() {});
+    // Asynchronously update UI with new profile avatar only if the
+    // downloaded profile avatar is different than the already stored
+    // one !listEquals(_profileAvatarBytes, globals.userProfileAvatarBytes)
+    if (this.mounted && !listEquals(_profileAvatarBytes, globals.userProfileAvatarBytes)) {
+      setState(() {});
+    }
+
+    // Update the global variable globals.userProfileAvatarBytes to the recently downloaded file (_profileAvatarBytes)
+    globals.userProfileAvatarBytes = _profileAvatarBytes;
   }
 
-  void _handleProfileAvatarClick(BuildContext context) async {
+  Future<void> _handleProfileAvatarClick(BuildContext context) async {
     PickedFile? pickedImageFile = await showImageSourceActionSheet(context);
     UploadTask? uploadTask = await _storageService!.uploadUserFile(context: context, pickedFile: pickedImageFile, remoteFileName: 'remote-profile-picture.jpg');
     if (uploadTask == null) return null;
@@ -56,7 +64,8 @@ class _ProfileAvatarState extends State<ProfileAvatar> {
     // when avatar upload is complete
     uploadTask.whenComplete(() {
       // Force re-download and update UI
-      setState( () => _forceProfileAvatarDownloadAndUpdate = true );
+      _forceProfileAvatarDownloadAndUpdate = true;
+      if (this.mounted) setState(() {});
     });
   }
 
@@ -66,13 +75,13 @@ class _ProfileAvatarState extends State<ProfileAvatar> {
     // Initialize _storageService based on uid
     _storageService = StorageService(uid: widget.appUserData.uid);
     // Download the profile avatar
-    _downloadAndUpdateProfileAvatar();
+    //_downloadAndUpdateProfileAvatar();
   }
 
   @override
   Widget build(BuildContext context) {
-    print(_forceProfileAvatarDownloadAndUpdate);
     // Download the profile avatar
+
     _downloadAndUpdateProfileAvatar();
     return Container(
       decoration: BoxDecoration(
@@ -89,14 +98,14 @@ class _ProfileAvatarState extends State<ProfileAvatar> {
           child: SizedBox(
             width: double.infinity,
             height: double.infinity,
-            child: (_profileAvatarBytes != null)
+            child: (globals.userProfileAvatarBytes != null)
             ? GestureDetector(
               onTap: () async {
                 _handleProfileAvatarClick(context);
               },
               child: ClipOval(
                 child: Image.memory(
-                  _profileAvatarBytes!,
+                  globals.userProfileAvatarBytes!,
                   fit: BoxFit.cover,
                 ),
               ),
@@ -115,5 +124,10 @@ class _ProfileAvatarState extends State<ProfileAvatar> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 }

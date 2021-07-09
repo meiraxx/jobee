@@ -11,55 +11,58 @@ class Logo extends StatefulWidget {
 
 class _LogoState extends State<Logo> {
   static Color _currentLogoColor = Colors.black;
-  static final List<Color> _logoRandomColorList = [
-    // - RGB
-    Colors.red,
-    Colors.green,
-    Colors.blue,
-    // - Others, ordered on material.io/design/color
-    Colors.pink,
-    Colors.purple,
-    Colors.deepPurple,
-    Colors.indigo,
-    Colors.lightBlue,
-    Colors.cyan,
-    Colors.teal,
-    Colors.lightGreen,
-    Colors.lime,
-    Colors.yellow,
-    Colors.amber,
-    Colors.orange,
-    Colors.deepOrange,
-    Colors.brown,
-    Colors.grey,
-    Colors.blueGrey,
-  ];
+  static int _currentLogoIndex = -1;
 
   // - FUNCTIONS
-  void logoInteractions(Color defaultLogoColor, int interaction, List<Color> logoColorList) {
+  Future logoInteractions(BuildContext context, Color defaultLogoColor, int interaction) async {
+    final List<Color> logoColorList = [
+      // - RGB
+      Colors.red,
+      Colors.green,
+      Colors.blue,
+      // - Themed ColorScheme
+      Theme.of(context).colorScheme.primary,
+      Theme.of(context).colorScheme.primaryVariant,
+      // - Others, ordered on material.io/design/color
+      Colors.pink,
+      Colors.purple,
+      //Colors.deepPurple,
+      //Colors.indigo,
+      Colors.lightBlue,
+      Colors.cyan,
+      Colors.teal,
+      Colors.lightGreen,
+      //Colors.lime,
+      //Colors.yellow,
+      //Colors.amber,
+      //Colors.orange,
+      Colors.deepOrange,
+      Colors.brown,
+      //Colors.grey,
+      Colors.blueGrey,
+    ];
     if (interaction == 1) {
       // - INTERACTION 1: toggle between logo's default and a random color
-      setState(() {
-        if (_currentLogoColor == defaultLogoColor) {
-          _currentLogoColor = logoColorList[generateRandomInteger(0, logoColorList.length - 1)];
-        } else {
-          _currentLogoColor = defaultLogoColor;
-        }
-      });
+      if (_currentLogoColor == defaultLogoColor) {
+        _currentLogoIndex = generateDifferentRandomInteger(0, logoColorList.length, _currentLogoIndex);
+        _currentLogoColor = logoColorList[_currentLogoIndex];
+      } else {
+        _currentLogoColor = defaultLogoColor;
+      }
+      if (this.mounted) setState(() {});
     } else if (interaction == 2) {
       // - INTERACTION 2: toggle between logo's random colors
-      setState(() {
-        _currentLogoColor = logoColorList[generateRandomInteger(0, logoColorList.length - 1)];
-      });
+      _currentLogoIndex = generateDifferentRandomInteger(0, logoColorList.length, _currentLogoIndex);
+      _currentLogoColor = logoColorList[_currentLogoIndex];
+      if (this.mounted) setState(() {});
     } else if (interaction == 3) {
       // - INTERACTION 3: make the whole logo disappear!
-      setState(() {
-        if (_currentLogoColor == defaultLogoColor) {
-          _currentLogoColor = Colors.transparent;
-        } else {
-          _currentLogoColor = defaultLogoColor;
-        }
-      });
+      if (_currentLogoColor == defaultLogoColor) {
+        _currentLogoColor = Colors.transparent;
+      } else {
+        _currentLogoColor = defaultLogoColor;
+      }
+      if (this.mounted) setState(() {});
     }
   }
 
@@ -67,14 +70,14 @@ class _LogoState extends State<Logo> {
   Widget build(BuildContext context) {
     // - WIDGETS
     return GestureDetector(
-      onTap: () {
-        logoInteractions(Colors.black, 1, _logoRandomColorList);
+      onTap: () async {
+        logoInteractions(context, Colors.black, 1);
       },
-      onDoubleTap: () {
-        logoInteractions(Colors.black, 2, _logoRandomColorList);
+      onDoubleTap: () async {
+        logoInteractions(context, Colors.black, 2);
       },
-      onHorizontalDragStart: (dragStartDetails) {
-        logoInteractions(Colors.black, 3, _logoRandomColorList);
+      onHorizontalDragStart: (dragStartDetails) async {
+        logoInteractions(context, Colors.black, 3);
       },
       child: Tooltip(
         message: 'jobee logo!',

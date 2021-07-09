@@ -11,8 +11,9 @@ import 'package:jobee/screens/authenticate/authenticate.dart' show Authenticate;
 import 'package:jobee/screens/home/home.dart' show Home;
 import 'package:jobee/screens/wrapper.dart' show Wrapper;
 import 'package:jobee/services/auth.dart' show AuthService;
-import 'package:provider/provider.dart' show StreamProvider;
+import 'package:provider/provider.dart' show MultiProvider, StreamProvider;
 import 'package:jobee/theme/jobee_theme_data.dart' show JobeeThemeData;
+import 'package:provider/single_child_widget.dart' show SingleChildWidget;
 
 void main() async {
   // note: set to true when deploying
@@ -44,9 +45,7 @@ class MyApp extends StatelessWidget {
       '/home': (BuildContext context) => Home(),
     };
 
-    return StreamProvider<AppUser?>.value(
-      initialData: null,
-      value: AuthService.user,
+    return MultiProvider(
       child: MaterialApp(
         /* light theme settings */
         theme: JobeeThemeData.lightThemeData,
@@ -74,6 +73,9 @@ class MyApp extends StatelessWidget {
           Locale('en', 'US'),
         ],
       ),
+      providers: <SingleChildWidget>[
+        StreamProvider<AppUser?>.value(initialData: null, value: AuthService.user),
+      ],
     );
   }
 }

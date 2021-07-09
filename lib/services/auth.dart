@@ -7,12 +7,12 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 
 class AuthService {
 
-  // Create User object based on UserCredential
+  /// Create User object based on UserCredential
   static AppUser _appUserFromFirebaseUser(User user) {
     return AppUser(uid: user.uid, email: user.email!);
   }
 
-  // Auth change user stream
+  /// Auth change user stream
   static Stream<AppUser?> get user {
     return FirebaseAuth.instance.authStateChanges().map( (User? user) {
 
@@ -24,8 +24,12 @@ class AuthService {
     });
   }
 
-  // Sign In anonymously
+  /// Sign In anonymously
   static Future<AppUser> signInAnon() async {
+    /// Signs-in a guest.
+    /// @returns AppUser object.
+    /// @throws FireBaseAuthException If there is an error with
+    ///   firebase authentication.
     try {
       UserCredential userCredential = await FirebaseAuth.instance.signInAnonymously();
       User? user = userCredential.user;
@@ -35,9 +39,9 @@ class AuthService {
     }
   }
 
-  // Sign In with e-mail and password
+  /// Sign In with e-mail and password
   static Future<AppUser> loginWithEmailAndPassword(String email, String password) async {
-    /// Logs-in a normal user with an email and password.
+    /// Signs-in a user using the default email-password Firebase Authentication.
     ///
     /// @param email Email of the user.
     /// @param password Password of the user.
@@ -54,9 +58,9 @@ class AuthService {
     }
   }
 
-  // Register with e-mail and password
+  /// Register with e-mail and password
   static Future<AppUser> registerWithEmailAndPassword(String email, String password) async {
-    /// Registers a normal user with an email and password.
+    /// Registers a user using the default email-password Firebase Authentication.
     ///
     /// @param email Email of the user.
     /// @param password Password of the user.
@@ -77,7 +81,7 @@ class AuthService {
     }
   }
 
-  // Sign Out
+  /// Sign Out
   static Future<bool> signOut({required BuildContext context}) async {
     /// Signs out any user, independently of its Auth provider.
     ///
@@ -111,8 +115,15 @@ class AuthService {
     ],
   );
 
-  // Sign In with Google
+  /// Sign In with Google
   static Future<AppUser?> signInWithGoogle({required BuildContext context}) async {
+    /// Signs in user with Google. If user already has a Jobee account with the same
+    /// e-mail registered, it signs them in normally on their account. If user does
+    /// not have an account
+    ///
+    /// @param context BuildContext object.
+    /// @returns Boolean defining the success of the logout action.
+    ///
     FirebaseAuth auth = FirebaseAuth.instance;
     User? user;
 

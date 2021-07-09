@@ -29,7 +29,7 @@ class StorageService {
   }
 
   /// Create a directory in Firebase Storage
-  void _createDirectory(Reference remoteDirRef) async {
+  Future<void> _createDirectory(Reference remoteDirRef) async {
     remoteDirRef.child('temp.txt').putString(DateTime.now().toString());
     // wait 1 second for the previous action to register on the server
     Future.delayed(Duration(seconds: 1)).then((value) {
