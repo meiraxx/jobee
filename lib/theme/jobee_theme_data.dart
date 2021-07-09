@@ -67,6 +67,8 @@ class JobeeThemeData {
         ),
         contentTextStyle: textTheme.subtitle1!.apply(color: darkFillColor),
       ),
+      // TODO: make splash/highlight effects faster
+      // TODO:get more neutral colors for splash/highlight effects (white-ish or black-ish)
       buttonTheme: ButtonThemeData(
         textTheme: ButtonTextTheme.normal,
         splashColor: colorScheme.secondary.withAlpha(0x7F),
