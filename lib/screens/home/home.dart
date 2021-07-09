@@ -84,10 +84,10 @@ class _HomeState extends State<Home> {
           ),
           title: Logo(),
           actions: <Widget>[
-            appBarButton(iconData: Icons.notifications_none, onPressedFunction: () async {
+            appBarButton(context: context, iconData: Icons.notifications_none, onPressedFunction: () async {
               // TODO: show notifications
             }),
-            appBarButton(iconData: Icons.search_rounded, onPressedFunction: () async {
+            appBarButton(context: context, iconData: Icons.search_rounded, onPressedFunction: () async {
               // TODO: search through jobs (not job types)
             }),
           ],

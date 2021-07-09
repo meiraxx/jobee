@@ -50,7 +50,7 @@ class _RegMailPasswordState extends State<RegMailPassword> {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          leading: appBarButton(iconData: Icons.arrow_back, onPressedFunction: () {
+          leading: appBarButton(context: context, iconData: Icons.arrow_back, onPressedFunction: () {
             Navigator.pushReplacementNamed(context, '/');
           }),
           title: Wrap(

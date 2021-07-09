@@ -69,11 +69,11 @@ class JobeeThemeData {
       ),
       buttonTheme: ButtonThemeData(
         textTheme: ButtonTextTheme.normal,
-        splashColor: colorScheme.secondary.withAlpha(0x1F),
-        highlightColor: colorScheme.secondary.withAlpha(0x1F),
+        splashColor: colorScheme.secondary.withAlpha(0x7F),
+        highlightColor: colorScheme.secondary.withAlpha(0x7F),
       ),
-      splashColor: colorScheme.secondary.withAlpha(0x1F),
-      highlightColor: colorScheme.secondary.withAlpha(0x1F),
+      splashColor: colorScheme.secondary.withAlpha(0x7F),
+      highlightColor: colorScheme.secondary.withAlpha(0x7F),
       focusColor: focusColor,
       // note: default disabled color is always Colors.grey
       inputDecorationTheme: InputDecorationTheme(

@@ -32,13 +32,11 @@ ButtonStyle orangeElevatedButtonStyle = ButtonStyle(
   animationDuration: Duration(milliseconds: 300),
 );
 
-Widget appBarButton({ String? text, IconData? iconData, Image? image, BuildContext? context,
-  String? tooltip, required Function() onPressedFunction }) {
+Widget appBarButton({ required BuildContext context, String? text, IconData? iconData, Image? image,
+  String? tooltip, Color? color, required Function() onPressedFunction }) {
   assert(text!=null || iconData!=null || image != null);
-  // in case image isn't null, we also need the context
-  if (image != null || (text!=null && iconData!=null)) {
-    assert(context!=null);
-  }
+
+  if (color==null) color = Theme.of(context).colorScheme.onPrimary;
 
   if (text != null) {
     if (iconData != null) {
@@ -46,12 +44,12 @@ Widget appBarButton({ String? text, IconData? iconData, Image? image, BuildConte
       return TextButton.icon(
         icon: Icon(
           iconData,
-          color: Theme.of(context!).colorScheme.onPrimary,
+          color: color,
         ),
         label: Text(
           text,
           style: TextStyle(
-            color: Theme.of(context).colorScheme.onPrimary,
+            color: color,
             fontSize: 14,
             fontWeight: FontWeight.w600,
           ),
@@ -100,6 +98,9 @@ Widget appBarButton({ String? text, IconData? iconData, Image? image, BuildConte
         child: Text(
           text,
           textAlign: TextAlign.left,
+          style: TextStyle(
+            color: color,
+          ),
         ),
         onPressed: onPressedFunction,
       );
@@ -112,6 +113,7 @@ Widget appBarButton({ String? text, IconData? iconData, Image? image, BuildConte
           iconData,
         ),
         tooltip: tooltip,
+        color: color,
         onPressed: onPressedFunction,
       );
     }

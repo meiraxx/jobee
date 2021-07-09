@@ -1,25 +1,12 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:jobee/models/app_user.dart';
-import 'package:jobee/screens/profile/profile.dart';
-import 'package:jobee/screens/profile/profile_avatar.dart';
-import 'package:jobee/screens/screens-shared/logo.dart';
-import 'package:jobee/shared/constants.dart';
-import 'package:provider/provider.dart';
-
-import 'loaders.dart';
-
-/*
-class DrawerStateInfo with ChangeNotifier {
-  ProfileAvatar? _currentProfileAvatar;
-  ProfileAvatar? get currentProfileAvatar => _currentProfileAvatar;
-
-  void setCurrentProfileAvatar(ProfileAvatar? profileAvatar) {
-    _currentProfileAvatar = profileAvatar;
-    notifyListeners();
-  }
-
-}*/
+import 'package:flutter/cupertino.dart' show CupertinoPageRoute;
+import 'package:jobee/models/app_user.dart' show AppUserData;
+import 'package:jobee/screens/profile/profile.dart' show ProfileScreen;
+import 'package:jobee/screens/profile/profile_avatar.dart' show ProfileAvatar;
+import 'package:jobee/screens/screens-shared/logo.dart' show Logo;
+import 'package:jobee/shared/constants.dart' show appBarButton;
+import 'package:provider/provider.dart' show Provider;
+import 'loaders.dart' show TextLoader;
 
 class CustomDrawer extends StatefulWidget {
 
@@ -31,11 +18,6 @@ class CustomDrawer extends StatefulWidget {
 
 class _CustomDrawerState extends State<CustomDrawer> {
   final double _drawerMenuWidthRatio = 0.739;
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   void _showServicePanel(BuildContext context) {
     showModalBottomSheet(context: context, builder: (context) {
@@ -180,7 +162,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
             Divider(height: 0.0),
             Divider(height: 0.0),
             // - ACCOUNT
-            appBarButton(text: "Account", iconData: Icons.account_circle_outlined, context: context, onPressedFunction: () async {
+            appBarButton(context: context, text: "Account", iconData: Icons.account_circle_outlined, onPressedFunction: () async {
               // pop the drawer menu
               Navigator.pop(context);
               // push the profile page
@@ -189,7 +171,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
             Divider(height: 0.0),
             Divider(height: 0.0),
             // - SERVICES
-            appBarButton(text: "Services", iconData: Icons.pages_outlined, context: context, onPressedFunction: () async {
+            appBarButton(context: context, text: "Services", iconData: Icons.pages_outlined, onPressedFunction: () async {
               // pop the drawer menu
               Navigator.pop(context);
               // show the service panel widget
@@ -201,11 +183,6 @@ class _CustomDrawerState extends State<CustomDrawer> {
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 }
 

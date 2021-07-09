@@ -66,7 +66,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     // Widget
     return Scaffold(
       appBar: AppBar(
-        leading: appBarButton(iconData: Icons.arrow_back, onPressedFunction: () {
+        leading: appBarButton(context: context, iconData: Icons.arrow_back, onPressedFunction: () {
           Navigator.pop(context);
         }),
         title: Text("Profile"),
