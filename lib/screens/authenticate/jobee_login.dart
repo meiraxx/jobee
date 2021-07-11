@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart' show FirebaseAuthException;
 import 'package:flutter/services.dart' show TextInput;
 import 'package:jobee/screens/screens-shared/logo.dart' show Logo;
 import 'package:jobee/services/auth.dart' show AuthService;
-import 'package:jobee/shared/constants.dart' show appBarButton;
+import 'package:jobee/shared/global_constants.dart' show appBarButton;
 import 'package:jobee/widgets/loaders.dart' show InPlaceLoader;
 import 'package:jobee/utils/input_field_utils.dart' show validateNotEmpty;
 

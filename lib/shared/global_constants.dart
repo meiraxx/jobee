@@ -1,43 +1,12 @@
 import 'package:flutter/material.dart';
-
-// plus black and white
-const Map<String, Color> paletteColors1 = {
-  "cream": const Color(0xFFF5F1D4),
-  "yellow1": const Color(0xFFFFCF26),
-  "yellow2": const Color(0xFFFCAB15),
-  "orange": const Color(0xFFFF853E),
-  "brown": const Color(0xFFB25C36)
-};
-
-const Map<String, Color> lightPaletteColors = {
-  // Palette Colors
-  "cream": const Color(0xFFFFFAD8),
-  "orange": const Color(0xFFFFAE2A),
-  "deeperOrange": const Color(0xFFFF872A),
-  "yellow": const Color(0xFFFDD329),
-  "crispYellow": const Color(0xFFF7B61C),
-  "lightGray": const Color(0xFFF6F6F4),
-  // More Colors
-  "error": const Color(0xFFB00020), /* used for errors */
-  "white": Colors.white, /* white */
-  "black": Colors.black, /* black */
-};
-
-ButtonStyle orangeElevatedButtonStyle = ButtonStyle(
-  backgroundColor: MaterialStateProperty.resolveWith<Color?>(
-          (Set<MaterialState> states) => lightPaletteColors["orange"]),
-  overlayColor: MaterialStateProperty.all(lightPaletteColors["yellow"]!.withAlpha(0x7F)),
-  elevation: MaterialStateProperty.all(2.0),
-  padding: MaterialStateProperty.all(EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0)),
-  animationDuration: Duration(milliseconds: 300),
-);
+import 'package:jobee/theme/jobee_theme_data.dart' show JobeeThemeData;
 
 Widget appBarButton({ required BuildContext context, String? text, IconData? iconData, Image? image,
   String? tooltip, Color? color, required Function() onPressedFunction }) {
   assert(text!=null || iconData!=null || image != null);
 
   if (color==null) color = Theme.of(context).colorScheme.onPrimary;
-
+  
   if (text != null) {
     if (iconData != null) {
       // IconText button
@@ -56,6 +25,9 @@ Widget appBarButton({ required BuildContext context, String? text, IconData? ico
           textAlign: TextAlign.left,
         ),
         onPressed: onPressedFunction,
+        style: ButtonStyle(
+          overlayColor: MaterialStateProperty.all( Theme.of(context).colorScheme.primary ),
+        ),
       );
     } else if (image != null) {
       // ImageText Button
@@ -114,6 +86,11 @@ Widget appBarButton({ required BuildContext context, String? text, IconData? ico
         ),
         tooltip: tooltip,
         color: color,
+        //splashColor: JobeeThemeData.darkSplashColor,
+        //highlightColor: JobeeThemeData.darkHighlightColor,
+        splashColor: JobeeThemeData.darkSplashColor,
+        highlightColor: JobeeThemeData.darkHighlightColor,
+        splashRadius: iconSplashRadius,
         onPressed: onPressedFunction,
       );
     }
@@ -122,3 +99,5 @@ Widget appBarButton({ required BuildContext context, String? text, IconData? ico
   return Container();
 }
 
+// global icon splash radius
+double iconSplashRadius = 20.0;

@@ -4,7 +4,7 @@ import 'package:jobee/models/app_user.dart' show AppUserData;
 import 'package:jobee/screens/profile/profile.dart' show ProfileScreen;
 import 'package:jobee/screens/profile/profile_avatar.dart' show ProfileAvatar;
 import 'package:jobee/screens/screens-shared/logo.dart' show Logo;
-import 'package:jobee/shared/constants.dart' show appBarButton;
+import 'package:jobee/shared/global_constants.dart' show appBarButton;
 import 'package:provider/provider.dart' show Provider;
 import 'loaders.dart' show TextLoader;
 
@@ -40,18 +40,21 @@ class _CustomDrawerState extends State<CustomDrawer> {
     return Container(
       // based on experiments, 0.739 is the drawer menu default width
       // if intended, simply change the drawer_menu_width value
+      color: Theme.of(context).colorScheme.primary,
       width: maxDrawerWidth,
       child: Drawer(
         semanticLabel: "Menu",
         child: ListView(
+          padding: const EdgeInsets.all(0.0),
           children: <Widget>[
             // - LOGO BAR
             Container(
-              padding: const EdgeInsets.fromLTRB(8.0, 12.0, 8.0, 12.0),
+              padding: const EdgeInsets.fromLTRB(8.0, 12.0*3, 8.0, 12.0),
+              color: Theme.of(context).colorScheme.primary,
               child: Logo(),
             ),
-            Divider(height: 0.0),
-            Divider(height: 0.0),
+            //Divider(height: 0.0),
+            //Divider(height: 0.0),
             // - SUMMARIZED PROFILE
             SizedBox(height: 6.0),
             Center(

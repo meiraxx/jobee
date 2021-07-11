@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
 import 'package:jobee/models/app_user.dart' show AppUserData;
 import 'package:jobee/screens/profile/profile_avatar.dart' show ProfileAvatar;
 import 'package:jobee/services/auth.dart' show AuthService;
-import 'package:jobee/shared/constants.dart' show appBarButton;
+import 'package:jobee/shared/global_constants.dart' show appBarButton;
 
 class ProfileScreen extends StatefulWidget {
   final AppUserData? appUserData;
@@ -79,7 +79,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Center(
-                  child: ProfileAvatar(appUserData: widget.appUserData!),
+                  child: ProfileAvatar(appUserData: widget.appUserData!, profileScreenAvatar: true),
                 ),
                 SizedBox(height: 6.0),
                 Center(

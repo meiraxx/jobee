@@ -2,26 +2,28 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
 import 'package:jobee/models/app_user.dart' show AppUserData;
+import 'package:jobee/screens/profile/profile.dart';
 import 'package:jobee/services/storage/storage.dart' show StorageService;
 import 'package:firebase_storage/firebase_storage.dart' show UploadTask;
-import 'package:jobee/shared/constants.dart' show appBarButton;
+import 'package:jobee/shared/global_constants.dart' show appBarButton;
 import 'package:jobee/widgets/media_files.dart' show showImageSourceActionSheet;
 import 'package:image_picker/image_picker.dart' show PickedFile;
 import 'dart:io' show File;
 import 'dart:typed_data' show Uint8List;
 import 'package:flutter/foundation.dart' show listEquals;
-import 'package:jobee/shared/globals.dart' as globals;
+import 'package:jobee/shared/global_variables.dart' as global_variables;
 
 class ProfileAvatar extends StatefulWidget {
   final AppUserData appUserData;
+  final bool profileScreenAvatar;
 
-  const ProfileAvatar({Key? key, required this.appUserData}) : super(key: key);
+  const ProfileAvatar({Key? key, required this.appUserData, this.profileScreenAvatar = false}) : super(key: key);
 
   @override
   _ProfileAvatarState createState() => _ProfileAvatarState();
 }
 
-class _ProfileAvatarState extends State<ProfileAvatar> {
+class _ProfileAvatarState extends State<ProfileAvatar> with TickerProviderStateMixin {
   bool _forceProfileAvatarDownloadAndUpdate = true;
   StorageService? _storageService;
   double _circleAvatarRadius = 40.0;
@@ -50,13 +52,13 @@ class _ProfileAvatarState extends State<ProfileAvatar> {
 
     // Asynchronously update UI with new profile avatar only if the
     // downloaded profile avatar is different than the already stored
-    // one !listEquals(profileAvatarBytes, globals.userProfileAvatarBytes)
-    if (this.mounted && !listEquals(profileAvatarBytes, globals.userProfileAvatarBytes)) {
+    // one !listEquals(profileAvatarBytes, global_variables.userProfileAvatarBytes)
+    if (this.mounted && !listEquals(profileAvatarBytes, global_variables.userProfileAvatarBytes)) {
       setState(() {});
     }
 
-    // Update the global variable globals.userProfileAvatarBytes to the recently downloaded file (profileAvatarBytes)
-    globals.userProfileAvatarBytes = profileAvatarBytes;
+    // Update the global variable global_variables.userProfileAvatarBytes to the recently downloaded file (profileAvatarBytes)
+    global_variables.userProfileAvatarBytes = profileAvatarBytes;
   }
 
   Future<void> _handleProfileAvatarUploadIntent(BuildContext context) async {
@@ -82,8 +84,8 @@ class _ProfileAvatarState extends State<ProfileAvatar> {
   @override
   Widget build(BuildContext context) {
     // Download the profile avatar
-
     _downloadAndUpdateProfileAvatar();
+
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.primary,
@@ -102,7 +104,7 @@ class _ProfileAvatarState extends State<ProfileAvatar> {
               child: SizedBox(
                 width: double.infinity,
                 height: double.infinity,
-                child: (globals.userProfileAvatarBytes == null)
+                child: (global_variables.userProfileAvatarBytes == null)
                 ? GestureDetector(
                   child: Container(
                     decoration: BoxDecoration(
@@ -125,19 +127,34 @@ class _ProfileAvatarState extends State<ProfileAvatar> {
                   },
                 )
                 : GestureDetector(
-                  child: ClipOval(
-                    child: Image.memory(
-                      globals.userProfileAvatarBytes!,
-                      fit: BoxFit.cover,
+                  child: Hero(
+                    tag: 'profileAvatarHero',
+                    child: ClipOval(
+                      child: Image.memory(
+                        global_variables.userProfileAvatarBytes!,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                   onTap: () async {
-                    // navigate to a widget with a full-screen image
+                    // if we're in the profile view:
+                    if (widget.profileScreenAvatar) {
+                      // navigate to a widget with a full-screen image
+                      Navigator.push(
+                        context,
+                        PageRouteBuilder(
+                          pageBuilder: (BuildContext context, Animation<double> a, Animation<double> b) => ProfileAvatarFullScreen(profileAvatar: widget),
+                          transitionDuration: Duration(milliseconds: 500),
+                        ),
+                      );
+                      return null;
+                    }
+
+                    // else, we assume the user wants to navigate to the profile screen
                     Navigator.push(
                       context,
-                      CupertinoPageRoute(builder: (BuildContext context) => ProfileAvatarFullScreen(profileAvatar: widget), fullscreenDialog: false),
+                      CupertinoPageRoute(builder: (BuildContext context) => ProfileScreen(appUserData: widget.appUserData), fullscreenDialog: false),
                     );
-                    //_handleProfileAvatarUploadIntent(context);
                   },
                 ),
               ),
@@ -158,7 +175,8 @@ class _ProfileAvatarState extends State<ProfileAvatar> {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   //color: const Color(0xFF128C7E), // Teal Green
-                  color: const Color(0xFF34B7F1), // Blue
+                  //color: const Color(0xFF34B7F1), // Blue
+                  color: Theme.of(context).colorScheme.secondary,
                 ),
               ),
               onTap: () async {
@@ -181,10 +199,11 @@ class ProfileAvatarFullScreen extends StatefulWidget {
   _ProfileAvatarFullScreenState createState() => _ProfileAvatarFullScreenState();
 }
 
-class _ProfileAvatarFullScreenState extends State<ProfileAvatarFullScreen> {
+class _ProfileAvatarFullScreenState extends State<ProfileAvatarFullScreen> with SingleTickerProviderStateMixin {
+  
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
+    return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
         leading: appBarButton(context: context, iconData: Icons.arrow_back, onPressedFunction: () {
@@ -203,12 +222,27 @@ class _ProfileAvatarFullScreenState extends State<ProfileAvatarFullScreen> {
           Expanded(
             child: Container(color: Colors.black),
           ),
-          AspectRatio(
-            aspectRatio: 3 / 3,
-            child: Image.memory(
-              globals.userProfileAvatarBytes!,
-              alignment: Alignment.center,
-              fit: BoxFit.cover,
+          Container(
+            color: Colors.black,
+            child: Hero(
+              tag: 'profileAvatarHero',
+              child: AspectRatio(
+                aspectRatio: 3 / 3,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.black,
+                    borderRadius: null,
+                    border: null,
+                    boxShadow: null,
+                    image: DecorationImage(
+                      image: MemoryImage(
+                        global_variables.userProfileAvatarBytes!,
+                      ),
+                      fit: BoxFit.cover,
+                    )
+                  ),
+                ),
+              ),
             ),
           ),
           Expanded(

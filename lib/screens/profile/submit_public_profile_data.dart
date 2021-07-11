@@ -50,13 +50,6 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
   GlobalKey _dropdownButtonKey = GlobalKey();
 
   @override
-  void initState() {
-    super.initState();
-    //WidgetsBinding.instance!
-    //    .addPostFrameCallback((_) => build(context));
-  }
-
-  @override
   Widget build(BuildContext context) {
     MediaQueryData queryData = MediaQuery.of(context);
     // form info

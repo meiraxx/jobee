@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:jobee/screens/authenticate/jobee_register.dart';
-import 'package:jobee/screens/authenticate/jobee_login.dart';
-import 'package:jobee/shared/constants.dart';
-import 'google_sign_in_button.dart';
+import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
+import 'package:jobee/screens/authenticate/jobee_register.dart' show RegMailPassword;
+import 'package:jobee/screens/authenticate/jobee_login.dart' show AuthMailPassword;
+import 'package:jobee/widgets/ink_splash/custom_elevatedButton_ink_splash.dart'
+    show CustomElevatedButtonInkSplash;
+import 'google_sign_in_button.dart' show GoogleSignInButton;
+import 'package:jobee/theme/jobee_theme_data.dart' show JobeeThemeData;
 
 class Authenticate extends StatefulWidget {
   @override
@@ -51,7 +52,7 @@ class _AuthenticateState extends State<Authenticate> {
           children: [
             // - Guy Call Image
             Container(
-              color: lightPaletteColors["cream"],
+              color: JobeeThemeData.lightPaletteColors["white"],
               child: Image.asset(
                 "images/dude-call.png",
                 semanticLabel: "Businessman negotiating with a client",
@@ -83,9 +84,9 @@ class _AuthenticateState extends State<Authenticate> {
                       Text(
                         "start providing and hiring services in your area.",
                         style: GoogleFonts.roboto().copyWith(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 30.0,
-                            color: Colors.black
+                          fontWeight: FontWeight.bold,
+                          fontSize: 30.0,
+                          color: Colors.black,
                         ),
                       ),
                     ],
@@ -103,12 +104,14 @@ class _AuthenticateState extends State<Authenticate> {
                     setState(() => showSignIn = false);
                   });
                 },
-                overlayColor: MaterialStateProperty.all(lightPaletteColors["yellow"]!.withAlpha(0x7F)),
-                highlightColor: lightPaletteColors["yellow"]!.withAlpha(0x7F),
+                overlayColor: MaterialStateProperty.all(JobeeThemeData.lightPaletteColors["yellow"]!.withAlpha(0x7F)),
+                highlightColor: JobeeThemeData.lightPaletteColors["yellow"]!.withAlpha(0x7F),
+                splashColor: JobeeThemeData.lightPaletteColors["yellow"]!.withAlpha(0x7F),
+                splashFactory: CustomElevatedButtonInkSplash.splashFactory,
                 child: Ink(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(4.0),
-                    color: lightPaletteColors["crispYellow"],
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                   child: Padding(
                     padding: EdgeInsets.fromLTRB(4.0, 4.0, 10.0, 4.0),
@@ -134,7 +137,7 @@ class _AuthenticateState extends State<Authenticate> {
                         ),
                         SizedBox(width: 12.0),
                         Text(
-                          "Create ",
+                          "Sign up a ",
                           style: GoogleFonts.montserrat(
                             //fontFamily: Theme.of(context).textTheme.button!.fontFamily,
                             fontSize: Theme.of(context).textTheme.button!.fontSize,
@@ -143,11 +146,12 @@ class _AuthenticateState extends State<Authenticate> {
                           ),
                         ),
                         Text(
-                          "jobee",
+                          "Jobee",
                           style: GoogleFonts.museoModerno().copyWith(
                             fontSize: Theme.of(context).textTheme.button!.fontSize,
                             color: Theme.of(context).textTheme.button!.color,
                             fontWeight: FontWeight.w700,
+                            //fontWeight: FontWeight.w700,
                           ),
                         ),
                         Text(

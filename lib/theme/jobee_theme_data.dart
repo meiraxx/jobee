@@ -5,18 +5,109 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:jobee/widgets/ink_splash/custom_elevatedButton_ink_splash.dart';
+import 'package:jobee/widgets/ink_splash/custom_iconButton_ink_splash.dart';
+import 'package:jobee/widgets/ink_splash/custom_textButton_ink_splash.dart';
 
 class JobeeThemeData {
+
+  /// TEXT THEME
+  static const _regular = FontWeight.w400;
+  static const _medium = FontWeight.w500;
+  static const _semiBold = FontWeight.w600;
+  static const _bold = FontWeight.w700;
+
+  static final TextTheme _textTheme = TextTheme(
+    headline4: GoogleFonts.montserrat(fontWeight: _bold, fontSize: 20.0),
+    caption: GoogleFonts.roboto(fontWeight: _regular, fontSize: 12.0),
+    headline5: GoogleFonts.montserrat(fontWeight: _bold, fontSize: 18.0),
+    subtitle1: GoogleFonts.montserrat(fontWeight: _regular, fontSize: 18.0),
+    overline: GoogleFonts.montserrat(fontWeight: _medium, fontSize: 12.0),
+    bodyText1: GoogleFonts.montserrat(fontWeight: _regular, fontSize: 16.0),
+    subtitle2: GoogleFonts.montserrat(fontWeight: _medium, fontSize: 14.0),
+    bodyText2: GoogleFonts.montserrat(fontWeight: _regular, fontSize: 13.0),
+    headline6: GoogleFonts.montserrat(fontWeight: _semiBold, fontSize: 18.0),
+    button: GoogleFonts.montserrat(fontWeight: _medium, fontSize: 14.0),
+  );
+
+  /// LIGHT COLOR SCHEME
+  static const ColorScheme _lightColorScheme = ColorScheme(
+    primary: const Color(0xFFFFAE2A), // lightPaletteColors['orange']!
+    primaryVariant: const Color(0xFFFF872A), // lightPaletteColors['deeperOrange']!
+    secondary: const Color(0xFF2A7BFF), // lightPaletteColors['blue']!
+    secondaryVariant: const Color(0xFF442AFF), // lightPaletteColors['darkerBlue']!
+    surface: _darkFillColor,
+    background: _darkFillColor,
+    error: _lightFillColor,
+    onPrimary: _lightFillColor,
+    onSecondary: _lightFillColor,
+    onSurface: _lightFillColor,
+    onBackground: _lightFillColor,
+    onError: _lightFillColor,
+    brightness: Brightness.light,
+  );
+
+  /// DARK COLOR SCHEME
+  static const ColorScheme _darkColorScheme = ColorScheme(
+    primary: Color(0xFFFF8383),
+    primaryVariant: Color(0xFF1CDEC9),
+    secondary: Color(0xFF4D1F7C),
+    secondaryVariant: Color(0xFF451B6F),
+    background: Color(0xFF241E30),
+    surface: Color(0xFF1F1929),
+    onBackground: Color(0x0DFFFFFF), // White with 0.05 opacity
+    error: _darkFillColor,
+    onError: _darkFillColor,
+    onPrimary: _darkFillColor,
+    onSecondary: _darkFillColor,
+    onSurface: _darkFillColor,
+    brightness: Brightness.dark,
+  );
+
+
+  /// Different Types of Colors
+
   static const _lightFillColor = Colors.black;
   static const _darkFillColor = Colors.white;
 
   static final Color _lightFocusColor = Colors.black.withOpacity(0.12);
   static final Color _darkFocusColor = Colors.white.withOpacity(0.12);
 
-  static ThemeData lightThemeData = themeData(_lightColorScheme, _textTheme, _lightFocusColor, _lightFillColor, _darkFillColor);
-  static ThemeData darkThemeData = themeData(_darkColorScheme, _textTheme, _darkFocusColor, _lightFillColor, _darkFillColor);
+  static final Color _lightSplashColor = Colors.black12;
+  static final Color _darkSplashColor = Colors.white24;
 
-  static ThemeData themeData(ColorScheme colorScheme, TextTheme textTheme, Color focusColor, Color lightFillColor, Color darkFillColor) {
+  static final Color _lightHighlightColor = Colors.black12;
+  static final Color _darkHighlightColor = Colors.white24;
+
+  static Color get lightSplashColor => _lightSplashColor;
+  static Color get darkSplashColor => _darkSplashColor;
+  static Color get lightHighlightColor => _lightHighlightColor;
+  static Color get darkHighlightColor => _darkHighlightColor;
+
+  /// Light Color Palette
+  static const Map<String, Color> _lightPaletteColors = {
+    // Palette Colors [Bee]
+    "cream": const Color(0xFFFFFAD8),
+    "orange": const Color(0xFFFFAE2A),
+    "deeperOrange": const Color(0xFFFF872A),
+    "yellow": const Color(0xFFFDD329),
+    "crispYellow": const Color(0xFFF7B61C),
+    "lightGray": const Color(0xFFF6F6F4),
+    // Complementary Colors [of the chosen primary, Orange]
+    "blue": const Color(0xFF2A7BFF),
+    "darkerBlue": const Color(0xFF442AFF),
+    // More Colors
+    "error": const Color(0xFFB00020), /* used for errors */
+    "white": Colors.white, /* white */
+    "black": Colors.black, /* black */
+  };
+  static Map<String, Color> get lightPaletteColors => _lightPaletteColors;
+
+  static ThemeData lightThemeData = themeData(_lightColorScheme, _textTheme, _lightFocusColor, _lightFillColor, _darkFillColor, _lightSplashColor, _lightHighlightColor);
+  static ThemeData darkThemeData = themeData(_darkColorScheme, _textTheme, _darkFocusColor, _lightFillColor, _darkFillColor, _darkSplashColor, _darkHighlightColor);
+
+  static ThemeData themeData(ColorScheme colorScheme, TextTheme textTheme, Color defaultFocusColor, Color lightFillColor, Color darkFillColor,
+      Color defaultSplashColor, Color defaultHighlightColor) {
     return ThemeData(
       colorScheme: colorScheme,
       // apply colorScheme colors to the default-colored textTheme
@@ -39,8 +130,8 @@ class JobeeThemeData {
       backgroundColor: colorScheme.background,
       appBarTheme: AppBarTheme(
         textTheme: textTheme.apply(bodyColor: colorScheme.onPrimary),
-        color: colorScheme.background,
-        elevation: 0.5,
+        color: colorScheme.primary,
+        elevation: 0.0,
         iconTheme: IconThemeData(color: colorScheme.onPrimary),
         actionsIconTheme: IconThemeData(color: colorScheme.onPrimary),
         brightness: colorScheme.brightness,
@@ -71,12 +162,14 @@ class JobeeThemeData {
       // TODO:get more neutral colors for splash/highlight effects (white-ish or black-ish)
       buttonTheme: ButtonThemeData(
         textTheme: ButtonTextTheme.normal,
-        splashColor: colorScheme.secondary.withAlpha(0x7F),
-        highlightColor: colorScheme.secondary.withAlpha(0x7F),
+        colorScheme: colorScheme,
+        splashColor: defaultSplashColor,
+        highlightColor: defaultHighlightColor,
       ),
-      splashColor: colorScheme.secondary.withAlpha(0x7F),
-      highlightColor: colorScheme.secondary.withAlpha(0x7F),
-      focusColor: focusColor,
+      splashFactory: CustomIconButtonInkSplash.splashFactory,  // custom iconButton splash factory
+      splashColor: defaultSplashColor,
+      highlightColor: defaultHighlightColor,
+      focusColor: defaultFocusColor,
       // note: default disabled color is always Colors.grey
       inputDecorationTheme: InputDecorationTheme(
         errorMaxLines: 3,
@@ -99,48 +192,31 @@ class JobeeThemeData {
           elevation: 2.0,
           padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
         ).copyWith(
-          overlayColor: MaterialStateProperty.all(colorScheme.secondary.withAlpha(0x7F)),
+          overlayColor: MaterialStateProperty.all( lightPaletteColors["yellow"]!.withAlpha(0x7F) ),
+          splashFactory: CustomElevatedButtonInkSplash.splashFactory,
         ),
       ),
       textButtonTheme: TextButtonThemeData(
-        style: ButtonStyle( overlayColor: MaterialStateProperty.all(Colors.transparent) ),
+        style: ButtonStyle(
+          overlayColor: MaterialStateProperty.all( Colors.black12 ),
+          splashFactory: CustomTextButtonInkSplash.splashFactory, // custom textButton splash factory
+        ),
       ),
       cardTheme: CardTheme(
         color: Colors.white,
         margin: EdgeInsets.zero,
       ),
+      // TODO: understand why pageTransitionsTheme is not working
+      pageTransitionsTheme: PageTransitionsTheme(
+        builders: {
+          TargetPlatform.android: ZoomPageTransitionsBuilder(),
+        },
+      ),
     );
   }
 
-  static const ColorScheme _lightColorScheme = ColorScheme(
-    /*
-    // ORIGINAL PRIMARY COLORS, BASED ON THE FACT THAT AN EXAMPLE I FOUND OF A LIGHT THEME
-    // USED DARKER SECONDARY COLORS
-    primary: const Color(0xFFFDD329), // lightPaletteColors['yellow']!
-    primaryVariant: const Color(0xFFF7B61C), // lightPaletteColors['crispYellow']!
-    secondary: const Color(0xFFFFAE2A), // lightPaletteColors['orange']!
-    secondaryVariant: const Color(0xFFFF872A), // lightPaletteColors['deeperOrange']!
-    */
-    // NEW TESTING PRIMARY COLORS, BASED ON THE FACT THAT A PRIMARY YELLOW ON CREAM IS NOT
-    // VERY FRIENDLY, SO WE'LL ONLY USE YELLOWS WHEN WE NEED TO ACCENT SOMETHING DARKER
-    // (from what I've tested until now, this looks a lot better than the other version)
-    primary: const Color(0xFFFFAE2A), // lightPaletteColors['orange']!
-    primaryVariant: const Color(0xFFFF872A), // lightPaletteColors['deeperOrange']!
-    secondary: const Color(0xFFFDD329), // lightPaletteColors['yellow']!
-    secondaryVariant: const Color(0xFFF7B61C), // lightPaletteColors['crispYellow']!
-    surface: _darkFillColor, // lightPaletteColors['cream']! = const Color(0xFFFFFAD8)
-    background: _darkFillColor, // lightPaletteColors['cream']! = const Color(0xFFFFFAD8)
-    error: _lightFillColor,
-    onPrimary: _lightFillColor,
-    onSecondary: _lightFillColor,
-    onSurface: _lightFillColor,
-    onBackground: _lightFillColor,
-    onError: _lightFillColor,
-    brightness: Brightness.light,
-  );
-
-  // taken from flutter gallery
-  static const ColorScheme lightColorScheme = ColorScheme(
+  // originals, taken from flutter gallery
+  static const ColorScheme originalLightColorScheme = ColorScheme(
     primary: Color(0xFFB93C5D),
     primaryVariant: Color(0xFF117378),
     secondary: Color(0xFFEFF3F3),
@@ -156,24 +232,8 @@ class JobeeThemeData {
     brightness: Brightness.light,
   );
 
-  static const ColorScheme _darkColorScheme = ColorScheme(
-    primary: Color(0xFFFF8383),
-    primaryVariant: Color(0xFF1CDEC9),
-    secondary: Color(0xFF4D1F7C),
-    secondaryVariant: Color(0xFF451B6F),
-    background: Color(0xFF241E30),
-    surface: Color(0xFF1F1929),
-    onBackground: Color(0x0DFFFFFF), // White with 0.05 opacity
-    error: _darkFillColor,
-    onError: _darkFillColor,
-    onPrimary: _darkFillColor,
-    onSecondary: _darkFillColor,
-    onSurface: _darkFillColor,
-    brightness: Brightness.dark,
-  );
-
   // taken from flutter gallery
-  static const ColorScheme darkColorScheme = ColorScheme(
+  static const ColorScheme originalDarkColorScheme = ColorScheme(
     primary: Color(0xFFFF8383),
     primaryVariant: Color(0xFF1CDEC9),
     secondary: Color(0xFF4D1F7C),
@@ -187,23 +247,5 @@ class JobeeThemeData {
     onSecondary: _darkFillColor,
     onSurface: _darkFillColor,
     brightness: Brightness.dark,
-  );
-
-  static const _regular = FontWeight.w400;
-  static const _medium = FontWeight.w500;
-  static const _semiBold = FontWeight.w600;
-  static const _bold = FontWeight.w700;
-
-  static final TextTheme _textTheme = TextTheme(
-    headline4: GoogleFonts.montserrat(fontWeight: _bold, fontSize: 20.0),
-    caption: GoogleFonts.roboto(fontWeight: _regular, fontSize: 12.0),
-    headline5: GoogleFonts.montserrat(fontWeight: _bold, fontSize: 18.0),
-    subtitle1: GoogleFonts.montserrat(fontWeight: _regular, fontSize: 18.0),
-    overline: GoogleFonts.montserrat(fontWeight: _medium, fontSize: 12.0),
-    bodyText1: GoogleFonts.montserrat(fontWeight: _regular, fontSize: 16.0),
-    subtitle2: GoogleFonts.montserrat(fontWeight: _medium, fontSize: 14.0),
-    bodyText2: GoogleFonts.montserrat(fontWeight: _regular, fontSize: 13.0),
-    headline6: GoogleFonts.montserrat(fontWeight: _semiBold, fontSize: 18.0),
-    button: GoogleFonts.montserrat(fontWeight: _medium, fontSize: 14.0),
   );
 }
