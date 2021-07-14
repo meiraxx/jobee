@@ -1,7 +1,7 @@
-import 'package:jobee/models/profile.dart';
-import 'package:jobee/screens/home/profile_tile.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:jobee/models/profile.dart' show Profile;
+import 'package:jobee/screens/home/profile_tile.dart' show ProfileTile;
+import 'package:provider/provider.dart' show Provider;
 
 class ProfileList extends StatefulWidget {
 

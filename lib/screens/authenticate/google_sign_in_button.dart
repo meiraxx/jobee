@@ -1,9 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:jobee/models/app_user.dart';
-import 'package:jobee/services/auth.dart';
-import 'package:jobee/services/database.dart';
+import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
+import 'package:jobee/models/app_user.dart' show AppUser;
+import 'package:jobee/services/auth.dart' show AuthService;
+import 'package:jobee/services/database.dart' show DatabaseService;
 
 class GoogleSignInButton extends StatefulWidget {
   @override

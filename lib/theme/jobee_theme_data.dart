@@ -4,10 +4,10 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:jobee/widgets/ink_splash/custom_elevatedButton_ink_splash.dart';
-import 'package:jobee/widgets/ink_splash/custom_iconButton_ink_splash.dart';
-import 'package:jobee/widgets/ink_splash/custom_textButton_ink_splash.dart';
+import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
+import 'package:jobee/widgets/ink_splash/custom_elevatedButton_ink_splash.dart' show CustomElevatedButtonInkSplash;
+import 'package:jobee/widgets/ink_splash/custom_iconButton_ink_splash.dart' show CustomIconButtonInkSplash;
+import 'package:jobee/widgets/ink_splash/custom_textButton_ink_splash.dart' show CustomTextButtonInkSplash;
 
 class JobeeThemeData {
 
@@ -70,8 +70,14 @@ class JobeeThemeData {
   static const _lightFillColor = Colors.black;
   static const _darkFillColor = Colors.white;
 
+  static Color get lightFillColor => _lightFillColor;
+  static Color get darkFillColor => _darkFillColor;
+
   static final Color _lightFocusColor = Colors.black.withOpacity(0.12);
   static final Color _darkFocusColor = Colors.white.withOpacity(0.12);
+
+  static Color get lightFocusColor => _lightFocusColor;
+  static Color get darkFocusColor => _darkFocusColor;
 
   static final Color _lightSplashColor = Colors.black12;
   static final Color _darkSplashColor = Colors.white24;
@@ -83,6 +89,9 @@ class JobeeThemeData {
   static Color get darkSplashColor => _darkSplashColor;
   static Color get lightHighlightColor => _lightHighlightColor;
   static Color get darkHighlightColor => _darkHighlightColor;
+
+  static final Color _lightInactiveItemColor = const Color(0xFF757575);
+  static Color get lightInactiveItemColor => _lightInactiveItemColor;
 
   /// Light Color Palette
   static const Map<String, Color> _lightPaletteColors = {
@@ -138,7 +147,7 @@ class JobeeThemeData {
         centerTitle: false,
       ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
-        elevation: 5.0,
+        elevation: 0.0,
       ),
       iconTheme: IconThemeData(
         color: colorScheme.onPrimary,

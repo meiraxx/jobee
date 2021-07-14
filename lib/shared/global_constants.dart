@@ -86,8 +86,6 @@ Widget appBarButton({ required BuildContext context, String? text, IconData? ico
         ),
         tooltip: tooltip,
         color: color,
-        //splashColor: JobeeThemeData.darkSplashColor,
-        //highlightColor: JobeeThemeData.darkHighlightColor,
         splashColor: JobeeThemeData.darkSplashColor,
         highlightColor: JobeeThemeData.darkHighlightColor,
         splashRadius: iconSplashRadius,

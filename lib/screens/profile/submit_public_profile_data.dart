@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:jobee/models/app_user.dart';
-import 'package:jobee/screens/profile/submit_personal_profile_data.dart';
-import 'package:jobee/screens/screens-shared/logo.dart';
-import 'package:jobee/services/auth.dart';
-import 'package:jobee/services/database.dart';
-import 'package:jobee/utils/input_field_utils.dart';
-import 'package:jobee/widgets/loaders.dart';
-import 'package:provider/provider.dart';
+import 'package:jobee/models/app_user.dart' show AppUserData;
+import 'package:jobee/screens/profile/submit_personal_profile_data.dart' show SubmitPersonalProfileData;
+import 'package:jobee/screens/screens-shared/logo.dart' show Logo;
+import 'package:jobee/services/auth.dart' show AuthService;
+import 'package:jobee/services/database.dart' show DatabaseService;
+import 'package:jobee/utils/input_field_utils.dart' show openDropdownMethod2, validateNotEmpty;
+import 'package:jobee/widgets/loaders.dart' show TextLoader, InPlaceLoader;
+import 'package:provider/provider.dart' show Provider;
 
 class SubmitPublicProfileData extends StatefulWidget {
   const SubmitPublicProfileData({Key? key}) : super(key: key);

@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:jobee/external-libs/intl_phone_field-2.0.0/intl_phone_field.dart';
-import 'package:jobee/external-libs/intl_phone_field-2.0.0/phone_number.dart';
-import 'package:jobee/models/app_user.dart';
-import 'package:jobee/screens/home/home.dart';
-import 'package:jobee/screens/screens-shared/logo.dart';
-import 'package:jobee/screens/wrapper.dart';
-import 'package:jobee/services/auth.dart';
-import 'package:jobee/services/database.dart';
-import 'package:jobee/services/network.dart';
-import 'package:jobee/utils/input_field_utils.dart';
-import 'package:jobee/widgets/loaders.dart';
-import 'package:provider/provider.dart';
+import 'package:jobee/external-libs/intl_phone_field-2.0.0/intl_phone_field.dart' show IntlPhoneField;
+import 'package:jobee/external-libs/intl_phone_field-2.0.0/phone_number.dart' show PhoneNumber;
+import 'package:jobee/models/app_user.dart' show AppUserData;
+import 'package:jobee/screens/home/home.dart' show Home;
+import 'package:jobee/screens/screens-shared/logo.dart' show Logo;
+import 'package:jobee/screens/wrapper.dart' show Wrapper;
+import 'package:jobee/services/auth.dart' show AuthService;
+import 'package:jobee/services/database.dart' show DatabaseService;
+import 'package:jobee/services/network.dart' show NetworkService;
+import 'package:jobee/utils/input_field_utils.dart' show validateNotEmpty, validatePhoneNumber;
+import 'package:jobee/widgets/loaders.dart' show TextLoader, InPlaceLoader;
+import 'package:provider/provider.dart' show Provider;
 
 class SubmitPersonalProfileData extends StatefulWidget {
   const SubmitPersonalProfileData({Key? key}) : super(key: key);

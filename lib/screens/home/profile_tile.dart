@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:jobee/models/profile.dart';
+import 'package:jobee/models/profile.dart' show Profile;
 
 class ProfileTile extends StatelessWidget {
 

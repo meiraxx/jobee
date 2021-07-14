@@ -21,17 +21,23 @@ Future<PickedFile?> showImageSourceActionSheet(BuildContext context) async {
       builder: (BuildContext context) => CupertinoActionSheet(
         actions: <Widget>[
           CupertinoActionSheetAction(
-            child: Text('Camera'),
+            child: Text('Take a photo'),
             onPressed: () async {
-              Navigator.pop(context);
               pickedImage = await _getImageFromSource(ImageSource.camera);
+              Navigator.pop(context);
             },
           ),
           CupertinoActionSheetAction(
-            child: Text('Gallery'),
+            child: Text('Pick from gallery'),
+            onPressed: () async {
+              pickedImage = await _getImageFromSource(ImageSource.gallery);
+              Navigator.pop(context);
+            },
+          ),
+          CupertinoActionSheetAction(
+            child: Text("Remove image"),
             onPressed: () async {
               Navigator.pop(context);
-              pickedImage = await _getImageFromSource(ImageSource.gallery);
             },
           ),
         ],
@@ -43,17 +49,24 @@ Future<PickedFile?> showImageSourceActionSheet(BuildContext context) async {
       builder: (context) => Wrap(children: [
         ListTile(
           leading: Icon(Icons.camera_alt),
-          title: Text('Camera'),
+          title: Text('Take a photo'),
           onTap: () async {
             pickedImage = await _getImageFromSource(ImageSource.camera);
             Navigator.pop(context);
           },
         ),
         ListTile(
-          leading: Icon(Icons.photo_album),
-          title: Text('Gallery'),
+          leading: Icon(Icons.image),
+          title: Text('Pick from gallery'),
           onTap: () async {
             pickedImage = await _getImageFromSource(ImageSource.gallery);
+            Navigator.pop(context);
+          },
+        ),
+        ListTile(
+          leading: Icon(Icons.delete),
+          title: Text("Remove image"),
+          onTap: () async {
             Navigator.pop(context);
           },
         ),

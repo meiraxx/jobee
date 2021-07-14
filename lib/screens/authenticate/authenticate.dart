@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
 import 'package:jobee/screens/authenticate/jobee_register.dart' show RegMailPassword;
 import 'package:jobee/screens/authenticate/jobee_login.dart' show AuthMailPassword;
-import 'package:jobee/widgets/ink_splash/custom_elevatedButton_ink_splash.dart'
-    show CustomElevatedButtonInkSplash;
+import 'package:jobee/widgets/ink_splash/custom_elevatedButton_ink_splash.dart' show CustomElevatedButtonInkSplash;
 import 'google_sign_in_button.dart' show GoogleSignInButton;
 import 'package:jobee/theme/jobee_theme_data.dart' show JobeeThemeData;
 
