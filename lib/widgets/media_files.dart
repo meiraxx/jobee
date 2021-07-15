@@ -16,6 +16,7 @@ Future<PickedFile?> showImageSourceActionSheet(BuildContext context) async {
   PickedFile? pickedImage;
   Future<dynamic> userActionsFuture;
 
+  // TODO and TODO-BackEnd: implement image upload maximum bytes
   if (Platform.isIOS) {
     userActionsFuture = showCupertinoModalPopup(
       context: context,
@@ -26,17 +27,18 @@ Future<PickedFile?> showImageSourceActionSheet(BuildContext context) async {
               pickedImage = await _getImageFromSource(ImageSource.camera);
               Navigator.pop(context);
             },
-            child: const Text('Take a photo'),
+            child: const Text("Take a photo"),
           ),
           CupertinoActionSheetAction(
             onPressed: () async {
               pickedImage = await _getImageFromSource(ImageSource.gallery);
               Navigator.pop(context);
             },
-            child: const Text('Pick from gallery'),
+            child: const Text("Pick from gallery"),
           ),
           CupertinoActionSheetAction(
             onPressed: () async {
+              // TODO: implement remove image
               Navigator.pop(context);
             },
             child: const Text("Remove image"),
@@ -50,7 +52,7 @@ Future<PickedFile?> showImageSourceActionSheet(BuildContext context) async {
       builder: (BuildContext context) => Wrap(children: <Widget>[
         ListTile(
           leading: const Icon(Icons.camera_alt),
-          title: const Text('Take a photo'),
+          title: const Text("Take a photo"),
           onTap: () async {
             pickedImage = await _getImageFromSource(ImageSource.camera);
             Navigator.pop(context);
@@ -58,7 +60,7 @@ Future<PickedFile?> showImageSourceActionSheet(BuildContext context) async {
         ),
         ListTile(
           leading: const Icon(Icons.image),
-          title: const Text('Pick from gallery'),
+          title: const Text("Pick from gallery"),
           onTap: () async {
             pickedImage = await _getImageFromSource(ImageSource.gallery);
             Navigator.pop(context);
@@ -68,6 +70,7 @@ Future<PickedFile?> showImageSourceActionSheet(BuildContext context) async {
           leading: const Icon(Icons.delete),
           title: const Text("Remove image"),
           onTap: () async {
+            // TODO: implement remove image
             Navigator.pop(context);
           },
         ),

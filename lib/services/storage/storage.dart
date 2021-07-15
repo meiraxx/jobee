@@ -53,23 +53,23 @@ class StorageService {
       }
       return null;
     }
-
     UploadTask uploadTask;
 
     // Create a Reference to the file
-    final Reference ref = FirebaseStorage.instance
+    final Reference remoteFileRef = FirebaseStorage.instance
         .ref()
         .child(this.uid!)
         .child(remoteFileName);
 
+    // TODO-BackEnd: disallow users with certain uid to write outside of their directory
     final SettableMetadata metadata = SettableMetadata(
         contentType: 'image/jpeg',
         customMetadata: <String, String>{'picked-file-path': pickedFile.path});
 
     if (kIsWeb) {
-      uploadTask = ref.putData(await pickedFile.readAsBytes(), metadata);
+      uploadTask = remoteFileRef.putData(await pickedFile.readAsBytes(), metadata);
     } else {
-      uploadTask = ref.putFile(File(pickedFile.path), metadata);
+      uploadTask = remoteFileRef.putFile(File(pickedFile.path), metadata);
     }
 
     return Future<UploadTask>.value(uploadTask);

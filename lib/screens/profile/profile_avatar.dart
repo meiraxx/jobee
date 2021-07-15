@@ -30,7 +30,7 @@ class ProfileAvatar extends StatefulWidget {
 }
 
 class _ProfileAvatarState extends State<ProfileAvatar> with TickerProviderStateMixin {
-  bool _forceProfileAvatarDownloadAndUpdate = true;
+  bool _forceProfileAvatarDownloadAndUpdate = global_variables.updateUserProfileAvatar??true;
   late StorageService? _storageService;
   final double _circleAvatarRadius = 40.0;
   Uint8List? _profileAvatarBytes;
@@ -57,15 +57,16 @@ class _ProfileAvatarState extends State<ProfileAvatar> with TickerProviderStateM
     // Set _profileAvatarBytes as the downloaded file's bytes
     _profileAvatarBytes = downloadedFile.readAsBytesSync();
 
+    // Update the global variable global_variables.userProfileAvatarBytes to the recently downloaded file (_profileAvatarBytes)
+    global_variables.userProfileAvatarBytes = _profileAvatarBytes;
+    global_variables.updateUserProfileAvatar = false;
+
     // Asynchronously update UI with new profile avatar only if the
     // downloaded profile avatar is different than the already stored
     // one !listEquals(_profileAvatarBytes, global_variables.userProfileAvatarBytes)
     if (this.mounted && !listEquals(_profileAvatarBytes, global_variables.userProfileAvatarBytes)) {
       setState(() {});
     }
-
-    // Update the global variable global_variables.userProfileAvatarBytes to the recently downloaded file (_profileAvatarBytes)
-    global_variables.userProfileAvatarBytes = _profileAvatarBytes;
 
     return _profileAvatarBytes;
   }
@@ -79,6 +80,8 @@ class _ProfileAvatarState extends State<ProfileAvatar> with TickerProviderStateM
     uploadTask.whenComplete(() {
       // Force re-download and update UI
       _forceProfileAvatarDownloadAndUpdate = true;
+      global_variables.updateUserProfileAvatar = true;
+
       if (this.mounted) setState(() {});
     });
   }
@@ -89,13 +92,14 @@ class _ProfileAvatarState extends State<ProfileAvatar> with TickerProviderStateM
     // Initialize _storageService based on uid
     _storageService = StorageService(uid: widget.appUserData.uid);
 
-    // each 3 seconds, update home UI with changes
-    Timer.periodic(const Duration(seconds: 3), (Timer t) {
-      if (this.mounted) {
-        setState(() {});
-      }
+    // each second, update const UI with changes (e.g., bottom navbar)
+    Timer.periodic(const Duration(seconds: 1), (Timer t) {
+      if (this.mounted) setState(() {});
     });
 
+    // (_forceProfileAvatarDownloadAndUpdate and global_variables.updateUserProfileAvatar)
+    // TODO-MAYBE: instead, create listener to update the "update avatar" boolean values above, when the stored image changes on the back-end
+    // TODO-BackEnd-MAYBE: notify this listener when stored image changes
   }
 
   @override
@@ -107,6 +111,7 @@ class _ProfileAvatarState extends State<ProfileAvatar> with TickerProviderStateM
     Widget? heroChild;
     Widget? profileAvatarHero;
 
+    // TODO: check a FireStore bool to check if the user image needs to be downloaded and updated
     // Download the profile avatar
     _downloadAndUpdateProfileAvatar();
 

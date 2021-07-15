@@ -51,6 +51,10 @@ class _HomeState extends State<Home> {
       // - THEME OF SCAFFOLD
       child: Scaffold(
         //drawerEnableOpenDragGesture: true,
+        onDrawerChanged: (bool drawerChanged) {
+          // on drawer changed, update UI
+          setState(() {});
+        },
         drawer: const CustomDrawer(),
         appBar: AppBar(
           leading: Builder(
