@@ -36,13 +36,13 @@ String? validatePassword({required String password, required int minLength, Func
   return null;
 }
 
-List<Object> validatePhoneNumber({required String phoneCountryDialCode, required String phoneNumber}) {
-  Map<String, Map<String, Object>> phoneCountryDialCodePropertiesMap = {
+List<dynamic> validatePhoneNumber({required String phoneCountryDialCode, required String phoneNumber}) {
+  final Map<String, Map<String, dynamic>> phoneCountryDialCodePropertiesMap = <String, Map<String, dynamic>>{
     // Portugal properties
-    '+351': {
+    '+351': <String, dynamic>{
       'countryName': 'Portugal',
       'numberLength': 9,
-      'firstMobileDigitsList': ['91', '92', '93', '96']
+      'firstMobileDigitsList': <String>['91', '92', '93', '96']
     },
   };
 
@@ -50,28 +50,34 @@ List<Object> validatePhoneNumber({required String phoneCountryDialCode, required
   if (!phoneCountryDialCodePropertiesMap.containsKey(phoneCountryDialCode)) {
     //String phoneCountryDialCodePropertiesMapKeysString = phoneCountryDialCodePropertiesMap.keys.toString();
     //String supportedPhoneCountryDialCodes = phoneCountryDialCodePropertiesMapKeysString.substring(1, phoneCountryDialCodePropertiesMapKeysString.length-1);
-    return [false, "Dial code '$phoneCountryDialCode' not yet supported"];
+    return <dynamic>[
+      false,
+      "Dial code '$phoneCountryDialCode' not yet supported"
+    ];
   }
 
   // since the country code is supported, we select its map
-  Map<String, Object> currentCountryCodeInfo = phoneCountryDialCodePropertiesMap[phoneCountryDialCode]!;
+  final Map<String, dynamic> currentCountryCodeInfo = phoneCountryDialCodePropertiesMap[phoneCountryDialCode]!;
 
   // country properties
-  String countryName = (currentCountryCodeInfo['countryName'] as String);
-  int numberLength = (currentCountryCodeInfo['numberLength'] as int);
-  List<String> firstMobileDigitsList = (currentCountryCodeInfo['firstMobileDigitsList'] as List<String>);
+  final String countryName = currentCountryCodeInfo['countryName']! as String;
+  final int numberLength = currentCountryCodeInfo['numberLength']! as int;
+  final List<String> firstMobileDigitsList = currentCountryCodeInfo['firstMobileDigitsList']! as List<String>;
 
   /* -------------
   |  Validation  |
   ------------- */
   // typed phone number's length cannot be different than numberLength
   if (phoneNumber.length != 9) {
-    return [false, "$countryName numbers require $numberLength digits"];
+    return <dynamic>[
+      false,
+      "$countryName numbers require $numberLength digits"
+    ];
   }
 
   bool firstMobileDigitsCheck = false;
   // typed phone number's first digits cannot be different than firstMobileDigitsList
-  for (String digits in firstMobileDigitsList) {
+  for (final String digits in firstMobileDigitsList) {
     // for-in loop instead of for-each loop just because I feel like it
 
     /* at this point, we have a phoneNumber
@@ -82,18 +88,19 @@ List<Object> validatePhoneNumber({required String phoneCountryDialCode, required
   }
 
   if (!firstMobileDigitsCheck) {
-    String firstMobileDigitsString = firstMobileDigitsList.toString();
-    return [false, "Insert valid first digits (e.g., "
-      "${firstMobileDigitsList[generateRandomInteger(0, firstMobileDigitsList.length)]})"];
+    return <dynamic>[
+      false,
+      "Insert valid first digits (e.g., ${firstMobileDigitsList[generateRandomInteger(0, firstMobileDigitsList.length)]})"
+    ];
   }
 
-  return [true, ''];
+  return <dynamic>[true, ''];
 }
 
 /* ---------------------------
 |        Widget utils        |
 --------------------------- */
-
+/*
 void openDropdownMethod1(GlobalKey dropdownButtonKey) {
   dropdownButtonKey.currentContext!.visitChildElements((element) {
     if (element.widget is Semantics) {
@@ -109,12 +116,12 @@ void openDropdownMethod1(GlobalKey dropdownButtonKey) {
       });
     }
   });
-}
+}*/
 
 void openDropdownMethod2(GlobalKey dropdownButtonKey) {
   GestureDetector? detector;
   void searchForGestureDetector(BuildContext element) {
-    element.visitChildElements((element) {
+    element.visitChildElements((Element element) {
       if (element.widget is GestureDetector) {
         detector = element.widget as GestureDetector?;
       } else {

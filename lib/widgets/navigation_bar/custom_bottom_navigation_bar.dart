@@ -2,14 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/material.dart';
 import 'dart:collection' show Queue;
 import 'dart:math' as math;
 
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:vector_math/vector_math_64.dart' show Vector3;
 
-import 'custom_bottomNavigationBarItem.dart' show CustomBottomNavigationBarItem;
+import 'custom_bottom_navigation_bar_item.dart' show CustomBottomNavigationBarItem;
 
 
 /// Defines the layout and behavior of a [CustomBottomNavigationBar].
@@ -45,7 +45,7 @@ enum CustomBottomNavigationBarType {
 /// [CustomBottomNavigationBarType.fixed] when there are less than four items, and
 /// [CustomBottomNavigationBarType.shifting] otherwise.
 ///
-/// The length of [items] must be at least two and each item's icon and title/label
+/// The length of [items] must be at least two and each item's icon and label
 /// must not be null.
 ///
 ///  * [CustomBottomNavigationBarType.fixed], the default when there are less than
@@ -272,22 +272,20 @@ class CustomBottomNavigationBar extends StatefulWidget {
     this.showUnselectedLabels,
     this.mouseCursor,
     this.enableFeedback,
-  }) : assert(items != null),
-        assert(items.length >= 2),
+  }) : assert(items.length >= 2),
         assert(
-        items.every((CustomBottomNavigationBarItem item) => item.title != null) ||
-            items.every((CustomBottomNavigationBarItem item) => item.label != null),
-        'Every item must have a non-null title or label',
+          items.every((CustomBottomNavigationBarItem item) => item.label != null),
+          'Every item must have a non-null label',
         ),
         assert(0 <= currentIndex && currentIndex < items.length),
         assert(elevation == null || elevation >= 0.0),
-        assert(iconSize != null && iconSize >= 0.0),
+        assert(iconSize >= 0.0),
         assert(
         selectedItemColor == null || fixedColor == null,
         'Either selectedItemColor or fixedColor can be specified, but not both',
         ),
-        assert(selectedFontSize != null && selectedFontSize >= 0.0),
-        assert(unselectedFontSize != null && unselectedFontSize >= 0.0),
+        assert(selectedFontSize >= 0.0),
+        assert(unselectedFontSize >= 0.0),
         selectedItemColor = selectedItemColor ?? fixedColor,
         super(key: key);
 
@@ -336,14 +334,12 @@ class CustomBottomNavigationBar extends StatefulWidget {
   /// See [CustomBottomNavigationBarItem.icon] for more information.
   final double iconSize;
 
-  /// The color of the selected [CustomBottomNavigationBarItem.icon] and
-  /// [CustomBottomNavigationBarItem.title].
+  /// The color of the selected [CustomBottomNavigationBarItem.icon].
   ///
   /// If null then the [ThemeData.primaryColor] is used.
   final Color? selectedItemColor;
 
-  /// The color of the unselected [CustomBottomNavigationBarItem.icon] and
-  /// [CustomBottomNavigationBarItem.title]s.
+  /// The color of the unselected [CustomBottomNavigationBarItem.icon].
   ///
   /// If null then the [ThemeData.unselectedWidgetColor]'s color is used.
   final Color? unselectedItemColor;
@@ -442,13 +438,7 @@ class _CustomBottomNavigationTile extends StatelessWidget {
         this.indexLabel,
         required this.mouseCursor,
         required this.enableFeedback,
-      }) : assert(type != null),
-        assert(item != null),
-        assert(animation != null),
-        assert(selected != null),
-        assert(selectedLabelStyle != null),
-        assert(unselectedLabelStyle != null),
-        assert(mouseCursor != null);
+      });
 
   final CustomBottomNavigationBarType type;
   final CustomBottomNavigationBarItem item;
@@ -553,10 +543,9 @@ class _CustomBottomNavigationTile extends StatelessWidget {
       mouseCursor: mouseCursor,
       enableFeedback: enableFeedback,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         mainAxisSize: MainAxisSize.min,
-        children: [
+        children: <Widget>[
           _SelectIndicator(
             colorTween: colorTween!,
             animation: animation,
@@ -569,7 +558,6 @@ class _CustomBottomNavigationTile extends StatelessWidget {
           Padding(
             padding: EdgeInsets.only(top: topPadding, bottom: bottomPadding),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
@@ -661,13 +649,13 @@ class _SelectIndicator extends StatelessWidget {
       animation.value,
     );
 
-    Widget selectedWidget = Container(
+    final Widget selectedWidget = Container(
       color: iconThemeData.color,
       height: 2.0,
       width: iconSize*2,
     );
 
-    Widget unselectedWidget = Container(
+    final Widget unselectedWidget = Container(
       color: BottomNavigationBarTheme.of(context).backgroundColor,
       height: 2.0,
       width: iconSize*2,
@@ -694,9 +682,7 @@ class _TileIcon extends StatelessWidget {
     required this.item,
     required this.selectedIconTheme,
     required this.unselectedIconTheme,
-  }) : assert(selected != null),
-        assert(item != null),
-        super(key: key);
+  }) : super(key: key);
 
   final ColorTween colorTween;
   final Animation<double> animation;
@@ -740,14 +726,7 @@ class _Label extends StatelessWidget {
     required this.unselectedLabelStyle,
     required this.showSelectedLabels,
     required this.showUnselectedLabels,
-  }) : assert(colorTween != null),
-        assert(animation != null),
-        assert(item != null),
-        assert(selectedLabelStyle != null),
-        assert(unselectedLabelStyle != null),
-        assert(showSelectedLabels != null),
-        assert(showUnselectedLabels != null),
-        super(key: key);
+  }) : super(key: key);
 
   final ColorTween colorTween;
   final Animation<double> animation;
@@ -785,7 +764,7 @@ class _Label extends StatelessWidget {
           ),
         ),
         alignment: Alignment.bottomCenter,
-        child: item.title ?? Text(item.label!),
+        child: Text(item.label!),
       ),
     );
 
@@ -848,10 +827,12 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> w
   static final Animatable<double> _flexTween = Tween<double>(begin: 1.0, end: 1.5);
 
   void _resetState() {
-    for (final AnimationController controller in _controllers)
+    for (final AnimationController controller in _controllers) {
       controller.dispose();
-    for (final _Circle circle in _circles)
+    }
+    for (final _Circle circle in _circles) {
       circle.dispose();
+    }
     _circles.clear();
 
     _controllers = List<AnimationController>.generate(widget.items.length, (int index) {
@@ -915,10 +896,12 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> w
 
   @override
   void dispose() {
-    for (final AnimationController controller in _controllers)
+    for (final AnimationController controller in _controllers) {
       controller.dispose();
-    for (final _Circle circle in _circles)
+    }
+    for (final _Circle circle in _circles) {
       circle.dispose();
+    }
     super.dispose();
   }
 
@@ -974,22 +957,22 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> w
       _controllers[oldWidget.currentIndex].reverse();
       _controllers[widget.currentIndex].forward();
     } else {
-      if (_backgroundColor != widget.items[widget.currentIndex].backgroundColor)
+      if (_backgroundColor != widget.items[widget.currentIndex].backgroundColor) {
         _backgroundColor = widget.items[widget.currentIndex].backgroundColor;
+      }
     }
   }
 
   // If the given [TextStyle] has a non-null `fontSize`, it should be used.
   // Otherwise, the [selectedFontSize] parameter should be used.
   static TextStyle _effectiveTextStyle(TextStyle? textStyle, double fontSize) {
-    textStyle ??= const TextStyle();
+    final TextStyle tmpTextStyle = textStyle ?? const TextStyle();
     // Prefer the font size on textStyle if present.
-    return textStyle.fontSize == null ? textStyle.copyWith(fontSize: fontSize) : textStyle;
+    return tmpTextStyle.fontSize == null ? tmpTextStyle.copyWith(fontSize: fontSize) : tmpTextStyle;
   }
 
   List<Widget> _createTiles() {
     final MaterialLocalizations localizations = MaterialLocalizations.of(context);
-    assert(localizations != null);
 
     final ThemeData themeData = Theme.of(context);
     final BottomNavigationBarThemeData bottomTheme = BottomNavigationBarTheme.of(context);
@@ -1163,9 +1146,7 @@ class _Circle {
     required this.index,
     required this.color,
     required TickerProvider vsync,
-  }) : assert(state != null),
-        assert(index != null),
-        assert(color != null) {
+  }) {
     controller = AnimationController(
       duration: kThemeAnimationDuration,
       vsync: vsync,
@@ -1208,8 +1189,7 @@ class _RadialPainter extends CustomPainter {
   _RadialPainter({
     required this.circles,
     required this.textDirection,
-  }) : assert(circles != null),
-        assert(textDirection != null);
+  });
 
   final List<_Circle> circles;
   final TextDirection textDirection;
@@ -1226,15 +1206,20 @@ class _RadialPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_RadialPainter oldPainter) {
-    if (textDirection != oldPainter.textDirection)
+    if (textDirection != oldPainter.textDirection) {
       return true;
-    if (circles == oldPainter.circles)
+    }
+    if (circles == oldPainter.circles) {
       return false;
-    if (circles.length != oldPainter.circles.length)
+    }
+    if (circles.length != oldPainter.circles.length) {
       return true;
-    for (int i = 0; i < circles.length; i += 1)
-      if (circles[i] != oldPainter.circles[i])
+    }
+    for (int i = 0; i < circles.length; i += 1) {
+      if (circles[i] != oldPainter.circles[i]) {
         return true;
+      }
+    }
     return false;
   }
 

@@ -24,7 +24,7 @@ class Wrapper extends StatelessWidget {
       return StreamProvider<AppUserData?>.value(
         initialData: null,
         value: DatabaseService(uid: appUser.uid).appUserData,
-        child: SubmitPublicProfileData(),
+        child: const SubmitPublicProfileData(),
       );
     }
   }

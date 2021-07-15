@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
-import 'package:jobee/screens/authenticate/jobee_register.dart' show RegMailPassword;
 import 'package:jobee/screens/authenticate/jobee_login.dart' show AuthMailPassword;
-import 'package:jobee/widgets/ink_splash/custom_elevatedButton_ink_splash.dart' show CustomElevatedButtonInkSplash;
-import 'google_sign_in_button.dart' show GoogleSignInButton;
+import 'package:jobee/screens/authenticate/jobee_register.dart' show RegMailPassword;
 import 'package:jobee/theme/jobee_theme_data.dart' show JobeeThemeData;
+import 'package:jobee/widgets/ink_splash/custom_elevated_button_ink_splash.dart'
+    show CustomElevatedButtonInkSplash;
+
+import 'google_sign_in_button.dart' show GoogleSignInButton;
 
 class Authenticate extends StatefulWidget {
   @override
@@ -15,14 +17,14 @@ class _AuthenticateState extends State<Authenticate> {
   bool? showSignIn;
 
   void toggleView() {
-    setState( () => showSignIn = !(showSignIn!) );
+    setState( () => showSignIn = !showSignIn! );
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     precacheImage(
-      AssetImage("images/dude-call.png"),
+      const AssetImage("images/dude-call.png"),
       context,
       size: Size(
         MediaQuery.of(context).size.width,
@@ -38,7 +40,7 @@ class _AuthenticateState extends State<Authenticate> {
     const double orSeparationWidth = 3.0;
     final Color? orRectangleColor = Colors.grey[600];
     // query data
-    MediaQueryData queryData = MediaQuery.of(context);
+    final MediaQueryData queryData = MediaQuery.of(context);
 
     if (showSignIn != null) {
       return (showSignIn!)?AuthMailPassword(toggleView: toggleView):RegMailPassword(toggleView: toggleView);
@@ -48,7 +50,7 @@ class _AuthenticateState extends State<Authenticate> {
       resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Column(
-          children: [
+          children: <Widget>[
             // - Guy Call Image
             Container(
               color: JobeeThemeData.lightPaletteColors["white"],
@@ -62,7 +64,7 @@ class _AuthenticateState extends State<Authenticate> {
                 fit: BoxFit.cover,
               ),
             ),
-            SizedBox(height: 20.0),
+            const SizedBox(height: 20.0),
             Container(
               padding: const EdgeInsets.only(left: paddingLeft),
               child: Column(
@@ -71,7 +73,7 @@ class _AuthenticateState extends State<Authenticate> {
                   // - Join Text
                   Wrap(
                     crossAxisAlignment: WrapCrossAlignment.center,
-                    children: [
+                    children: <Widget>[
                       Text(
                         "Join our community to",
                         style: GoogleFonts.roboto().copyWith(
@@ -94,7 +96,7 @@ class _AuthenticateState extends State<Authenticate> {
                 ],
               ),
             ),
-            SizedBox(height: 40.0),
+            const SizedBox(height: 40.0),
             // - Create account Button
             Center(
               child: InkWell(
@@ -113,7 +115,7 @@ class _AuthenticateState extends State<Authenticate> {
                     color: Theme.of(context).colorScheme.primary,
                   ),
                   child: Padding(
-                    padding: EdgeInsets.fromLTRB(4.0, 4.0, 10.0, 4.0),
+                    padding: const EdgeInsets.fromLTRB(4.0, 4.0, 10.0, 4.0),
                     child: Wrap(
                       crossAxisAlignment: WrapCrossAlignment.center,
                       children: <Widget>[
@@ -121,7 +123,7 @@ class _AuthenticateState extends State<Authenticate> {
                           width: 32.0,
                           height: 32.0,
                           child: Container(
-                            padding: EdgeInsets.all(2.0),
+                            padding: const EdgeInsets.all(2.0),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(4.0),
                               color: Colors.white,
@@ -134,7 +136,7 @@ class _AuthenticateState extends State<Authenticate> {
                             ),
                           ),
                         ),
-                        SizedBox(width: 12.0),
+                        const SizedBox(width: 12.0),
                         Text(
                           "Sign up a ",
                           style: GoogleFonts.montserrat(
@@ -168,27 +170,21 @@ class _AuthenticateState extends State<Authenticate> {
                 ),
               ),
             ),
-            SizedBox(height: 20.0),
+            const SizedBox(height: 20.0),
             // - OR Rectangle
             Row(
               children: <Widget>[
-                SizedBox(width: paddingLeft),
+                const SizedBox(width: paddingLeft),
                 Expanded(
-                  child: DecoratedBox(
+                  child: Container(
+                    height: 1.0,
                     decoration: BoxDecoration(
-                      shape: BoxShape.rectangle,
-                    ),
-                    child: Container(
-                      height: 1.0,
-                      decoration: new BoxDecoration(
-                        color: orRectangleColor,
-                        shape: BoxShape.rectangle,
-                        borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                      ),
+                      color: orRectangleColor,
+                      borderRadius: const BorderRadius.all(Radius.circular(8.0)),
                     ),
                   ),
                 ),
-                SizedBox(width: orSeparationWidth),
+                const SizedBox(width: orSeparationWidth),
                 Center(
                   child: Text(
                     "OR",
@@ -197,26 +193,20 @@ class _AuthenticateState extends State<Authenticate> {
                     ),
                   ),
                 ),
-                SizedBox(width: orSeparationWidth),
+                const SizedBox(width: orSeparationWidth),
                 Expanded(
-                  child: DecoratedBox(
+                  child: Container(
+                    height: 1.0,
                     decoration: BoxDecoration(
-                      shape: BoxShape.rectangle,
-                    ),
-                    child: Container(
-                      height: 1.0,
-                      decoration: new BoxDecoration(
-                        color: orRectangleColor,
-                        shape: BoxShape.rectangle,
-                        borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                      ),
+                      color: orRectangleColor,
+                      borderRadius: const BorderRadius.all(Radius.circular(8.0)),
                     ),
                   ),
                 ),
-                SizedBox(width: paddingLeft),
+                const SizedBox(width: paddingLeft),
               ],
             ),
-            SizedBox(height: 24.0),
+            const SizedBox(height: 24.0),
             // - Google Sign In
             Center(
               child: GoogleSignInButton(),
@@ -228,17 +218,17 @@ class _AuthenticateState extends State<Authenticate> {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
-                Text(
+                const Text(
                   "Already have an account?",
                 ),
                 TextButton(
-                  child: Text(
-                    "Sign in",
-                    style: TextStyle(color: Colors.blue),
-                  ),
                   onPressed: () {
                     setState(() => showSignIn = true);
                   },
+                  child: const Text(
+                    "Sign in",
+                    style: TextStyle(color: Colors.blue),
+                  ),
                 ),
               ],
             ),

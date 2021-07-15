@@ -20,9 +20,9 @@ class _CustomDrawerState extends State<CustomDrawer> {
   final double _drawerMenuWidthRatio = 0.739;
 
   void _showServicePanel(BuildContext context) {
-    showModalBottomSheet(context: context, builder: (context) {
+    showModalBottomSheet(context: context, builder: (BuildContext context) {
       return Container(
-        padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 60.0),
+        padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 60.0),
         child: Container(),
       );
     });
@@ -30,12 +30,12 @@ class _CustomDrawerState extends State<CustomDrawer> {
 
   @override
   Widget build(BuildContext context) {
-    MediaQueryData queryData = MediaQuery.of(context);
-    double maxDrawerWidth = queryData.size.width*_drawerMenuWidthRatio;
+    final MediaQueryData queryData = MediaQuery.of(context);
+    final double maxDrawerWidth = queryData.size.width*_drawerMenuWidthRatio;
 
     // database service - app user data
-    AppUserData? appUserData = Provider.of<AppUserData?>(context);
-    if (appUserData==null) return TextLoader(text: "Fetching user data...");
+    final AppUserData? appUserData = Provider.of<AppUserData?>(context);
+    if (appUserData==null) return const TextLoader(text: "Fetching user data...");
 
     return Container(
       // based on experiments, 0.739 is the drawer menu default width
@@ -50,7 +50,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
           children: <Widget>[
             // - LOGO BAR
             Stack(
-              children: [
+              children: <Widget>[
                 Positioned(
                   child: Container(
                     height: 80.0,
@@ -70,17 +70,17 @@ class _CustomDrawerState extends State<CustomDrawer> {
             //Divider(height: 0.0),
             // - SUMMARIZED PROFILE
             ProfileSummarized(appUserData: appUserData),
-            Divider(height: 0.0),
-            Divider(height: 0.0),
+            const Divider(height: 0.0),
+            const Divider(height: 0.0),
             // - ACCOUNT
             appBarButton(context: context, text: "View profile", iconData: Icons.account_circle_outlined, onPressedFunction: () async {
               // pop the drawer menu
               Navigator.pop(context);
               // push the profile page
-              Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) => ProfileDetailedScreen(appUserData: appUserData), fullscreenDialog: false));
+              Navigator.push(context, CupertinoPageRoute<dynamic>(builder: (BuildContext context) => ProfileDetailedScreen(appUserData: appUserData)));
             }),
-            Divider(height: 0.0),
-            Divider(height: 0.0),
+            const Divider(height: 0.0),
+            const Divider(height: 0.0),
             // - SERVICES
             appBarButton(context: context, text: "Services", iconData: Icons.pages_outlined, onPressedFunction: () async {
               // pop the drawer menu
@@ -88,8 +88,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
               // show the service panel widget
               _showServicePanel(context);
             }),
-            Divider(height: 0.0),
-            Divider(height: 0.0)
+            const Divider(height: 0.0),
+            const Divider(height: 0.0)
           ],
         ),
       ),

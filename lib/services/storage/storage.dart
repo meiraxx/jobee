@@ -31,7 +31,7 @@ class StorageService {
   }
 
   /// Create a directory in Firebase Storage
-  Future<void> _createUserDirectory(Reference remoteDirRef) async {
+  /*Future<void> _createUserDirectory(Reference remoteDirRef) async {
     // the only way to create a folder on firebase storage is to put a file there
     remoteDirRef.child('temp.txt').putString(DateTime.now().toString());
     // wait 10 seconds for the previous action to register on the server
@@ -39,7 +39,7 @@ class StorageService {
       // to delete the file
       remoteDirRef.child('temp.txt').delete();
     });
-  }
+  }*/
 
   /// The user selects a file, and the task is added to the list.
   Future<UploadTask?> uploadUserFile({required BuildContext context, PickedFile? pickedFile, required String remoteFileName, bool showError = false}) async {

@@ -1,7 +1,8 @@
+import 'dart:io' show Platform;
+
+import 'package:flutter/cupertino.dart' show CupertinoActionSheet, CupertinoActionSheetAction, showCupertinoModalPopup;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:flutter/cupertino.dart' show CupertinoActionSheet, CupertinoActionSheetAction, showCupertinoModalPopup;
-import 'dart:io' show File, Platform;
 
 
 Future<PickedFile?> _getImageFromSource(ImageSource imageSource) async {
@@ -13,7 +14,7 @@ Future<PickedFile?> _getImageFromSource(ImageSource imageSource) async {
 
 Future<PickedFile?> showImageSourceActionSheet(BuildContext context) async {
   PickedFile? pickedImage;
-  Future userActionsFuture;
+  Future<dynamic> userActionsFuture;
 
   if (Platform.isIOS) {
     userActionsFuture = showCupertinoModalPopup(
@@ -21,24 +22,24 @@ Future<PickedFile?> showImageSourceActionSheet(BuildContext context) async {
       builder: (BuildContext context) => CupertinoActionSheet(
         actions: <Widget>[
           CupertinoActionSheetAction(
-            child: Text('Take a photo'),
             onPressed: () async {
               pickedImage = await _getImageFromSource(ImageSource.camera);
               Navigator.pop(context);
             },
+            child: const Text('Take a photo'),
           ),
           CupertinoActionSheetAction(
-            child: Text('Pick from gallery'),
             onPressed: () async {
               pickedImage = await _getImageFromSource(ImageSource.gallery);
               Navigator.pop(context);
             },
+            child: const Text('Pick from gallery'),
           ),
           CupertinoActionSheetAction(
-            child: Text("Remove image"),
             onPressed: () async {
               Navigator.pop(context);
             },
+            child: const Text("Remove image"),
           ),
         ],
       ),
@@ -46,26 +47,26 @@ Future<PickedFile?> showImageSourceActionSheet(BuildContext context) async {
   } else {
     userActionsFuture = showModalBottomSheet(
       context: context,
-      builder: (context) => Wrap(children: [
+      builder: (BuildContext context) => Wrap(children: <Widget>[
         ListTile(
-          leading: Icon(Icons.camera_alt),
-          title: Text('Take a photo'),
+          leading: const Icon(Icons.camera_alt),
+          title: const Text('Take a photo'),
           onTap: () async {
             pickedImage = await _getImageFromSource(ImageSource.camera);
             Navigator.pop(context);
           },
         ),
         ListTile(
-          leading: Icon(Icons.image),
-          title: Text('Pick from gallery'),
+          leading: const Icon(Icons.image),
+          title: const Text('Pick from gallery'),
           onTap: () async {
             pickedImage = await _getImageFromSource(ImageSource.gallery);
             Navigator.pop(context);
           },
         ),
         ListTile(
-          leading: Icon(Icons.delete),
-          title: Text("Remove image"),
+          leading: const Icon(Icons.delete),
+          title: const Text("Remove image"),
           onTap: () async {
             Navigator.pop(context);
           },

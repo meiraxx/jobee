@@ -2,8 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/material.dart';
 import 'dart:ui' show Color;
+
+import 'package:flutter/material.dart';
 
 /// An interactive button within either material's [CustomBottomNavigationBar]
 /// or the iOS themed [CupertinoTabBar] with an icon and title.
@@ -23,17 +24,11 @@ class CustomBottomNavigationBarItem {
   /// The argument [icon] should not be null and the argument [label] should not be null when used in a Material Design's [CustomBottomNavigationBar].
   const CustomBottomNavigationBarItem({
     required this.icon,
-    @Deprecated(
-      'Use "label" instead, as it allows for an improved text-scaling experience. '
-          'This feature was deprecated after v1.19.0.',
-    )
-    this.title,
-    this.label,
+    required this.label,
     Widget? activeIcon,
     this.backgroundColor,
     this.tooltip,
-  }) : activeIcon = activeIcon ?? icon,
-        assert(label == null || title == null);
+  }) : activeIcon = activeIcon ?? icon;
 
   /// The icon of the item.
   ///
@@ -64,15 +59,6 @@ class CustomBottomNavigationBarItem {
   ///
   ///  * [CustomBottomNavigationBarItem.icon], for a description of how to pair icons.
   final Widget activeIcon;
-
-  /// The title of the item. If the title is not provided only the icon will be shown when not used in a Material Design [CustomBottomNavigationBar].
-  ///
-  /// This field is deprecated, use [label] instead.
-  @Deprecated(
-    'Use "label" instead, as it allows for an improved text-scaling experience. '
-        'This feature was deprecated after v1.19.0.',
-  )
-  final Widget? title;
 
   /// The text label for this [CustomBottomNavigationBarItem].
   ///

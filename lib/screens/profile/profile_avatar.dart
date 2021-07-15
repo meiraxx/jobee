@@ -12,7 +12,7 @@ import 'package:jobee/screens/profile/profile_detailed.dart' show ProfileDetaile
 import 'package:jobee/services/storage/storage.dart' show StorageService;
 import 'package:jobee/shared/global_constants.dart' show appBarButton;
 import 'package:jobee/shared/global_variables.dart' as global_variables;
-import 'package:jobee/widgets/ink_splash/custom_iconButton_ink_splash.dart';
+import 'package:jobee/widgets/ink_splash/custom_icon_button_ink_splash.dart';
 import 'package:jobee/widgets/media_files.dart' show showImageSourceActionSheet;
 
 class ProfileAvatar extends StatefulWidget {

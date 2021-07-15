@@ -4,7 +4,7 @@ import 'dart:typed_data';
 
 /// Initializes a DOM container where we can host elements.
 Element _ensureInitialized(String id) {
-  var target = querySelector('#$id');
+  Element? target = querySelector('#$id');
   if (target == null) {
     final Element targetElement = Element.tag('flt-x-file')..id = id;
 
@@ -16,7 +16,7 @@ Element _ensureInitialized(String id) {
 }
 
 AnchorElement _createAnchorElement(String href, String suggestedName) {
-  return AnchorElement(href: href)..download = suggestedName ?? 'download';
+  return AnchorElement(href: href)..download = suggestedName;
 }
 
 /// Add an element to a container and click it
@@ -30,11 +30,11 @@ void _addElementToContainerAndClick(Element container, Element element) {
 /// Present a dialog so the user can save as... a bunch of bytes.
 Future<void> saveAsBytes(Uint8List bytes, String suggestedName) async {
   // Convert bytes to an ObjectUrl through Blob
-  final blob = Blob([bytes]);
-  final path = Url.createObjectUrl(blob);
+  final Blob blob = Blob(<Uint8List>[bytes]);
+  final String path = Url.createObjectUrl(blob);
 
   // Create a DOM container where we can host the anchor.
-  final target = _ensureInitialized('__x_file_dom_element');
+  final Element target = _ensureInitialized('__x_file_dom_element');
 
   // Create an <a> tag with the appropriate download attributes and click it
   // May be overridden with XFileTestOverrides

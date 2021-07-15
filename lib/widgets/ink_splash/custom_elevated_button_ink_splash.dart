@@ -16,8 +16,7 @@ RectCallback? _getClipCallback(RenderBox referenceBox, bool containedInkWell, Re
     assert(containedInkWell);
     return rectCallback;
   }
-  if (containedInkWell)
-    return () => Offset.zero & referenceBox.size;
+  if (containedInkWell) return () => Offset.zero & referenceBox.size;
   return null;
 }
 
@@ -37,8 +36,8 @@ double _getSplashRadiusForPositionInSize(Size bounds, Offset position) {
   return math.max(math.max(d1, d2), math.max(d3, d4)).ceilToDouble();
 }
 
-class _CustomIconButtonInkSplashFactory extends InteractiveInkFeatureFactory {
-  const _CustomIconButtonInkSplashFactory();
+class _CustomElevatedButtonInkSplashFactory extends InteractiveInkFeatureFactory {
+  const _CustomElevatedButtonInkSplashFactory();
 
   @override
   InteractiveInkFeature create({
@@ -54,7 +53,7 @@ class _CustomIconButtonInkSplashFactory extends InteractiveInkFeatureFactory {
     double? radius,
     VoidCallback? onRemoved,
   }) {
-    return CustomIconButtonInkSplash(
+    return CustomElevatedButtonInkSplash(
       controller: controller,
       referenceBox: referenceBox,
       position: position,
@@ -92,7 +91,7 @@ class _CustomIconButtonInkSplashFactory extends InteractiveInkFeatureFactory {
 ///    [Material].
 ///  * [Ink], a convenience widget for drawing images and other decorations on
 ///    Material widgets.
-class CustomIconButtonInkSplash extends InteractiveInkFeature {
+class CustomElevatedButtonInkSplash extends InteractiveInkFeature {
   /// Begin a splash, centered at position relative to [referenceBox].
   ///
   /// The [controller] argument is typically obtained via
@@ -108,7 +107,7 @@ class CustomIconButtonInkSplash extends InteractiveInkFeature {
   /// This is the default.
   ///
   /// When the splash is removed, `onRemoved` will be called.
-  CustomIconButtonInkSplash({
+  CustomElevatedButtonInkSplash({
     required MaterialInkController controller,
     required RenderBox referenceBox,
     required TextDirection textDirection,
@@ -162,7 +161,7 @@ class CustomIconButtonInkSplash extends InteractiveInkFeature {
 
   /// Used to specify this type of ink splash for an [InkWell], [InkResponse],
   /// material [Theme], or [ButtonStyle].
-  static const InteractiveInkFeatureFactory splashFactory = _CustomIconButtonInkSplashFactory();
+  static const InteractiveInkFeatureFactory splashFactory = _CustomElevatedButtonInkSplashFactory();
   
   @override
   void confirm() {
@@ -179,8 +178,7 @@ class CustomIconButtonInkSplash extends InteractiveInkFeature {
   }
 
   void _handleAlphaStatusChanged(AnimationStatus status) {
-    if (status == AnimationStatus.completed)
-      dispose();
+    if (status == AnimationStatus.completed) dispose();
   }
 
   @override
@@ -195,8 +193,7 @@ class CustomIconButtonInkSplash extends InteractiveInkFeature {
   void paintFeature(Canvas canvas, Matrix4 transform) {
     final Paint paint = Paint()..color = color.withAlpha(_alpha.value);
     Offset? center = _position;
-    if (_repositionToReferenceBox)
-      center = Offset.lerp(center, referenceBox.size.center(Offset.zero), _radiusController.value);
+    if (_repositionToReferenceBox) center = Offset.lerp(center, referenceBox.size.center(Offset.zero), _radiusController.value);
     paintInkCircle(
       canvas: canvas,
       transform: transform,

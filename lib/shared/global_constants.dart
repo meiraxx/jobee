@@ -5,7 +5,7 @@ Widget appBarButton({ required BuildContext context, String? text, IconData? ico
   String? tooltip, Color? color, required Function() onPressedFunction }) {
   assert(text!=null || iconData!=null || image != null);
 
-  if (color==null) color = Theme.of(context).colorScheme.onPrimary;
+  color ??= Theme.of(context).colorScheme.onPrimary;
   
   if (text != null) {
     if (iconData != null) {
@@ -38,7 +38,7 @@ Widget appBarButton({ required BuildContext context, String? text, IconData? ico
           },
           borderRadius: BorderRadius.circular(4.0),
           child: Padding(
-            padding: EdgeInsets.symmetric(
+            padding: const EdgeInsets.symmetric(
               horizontal: 8.0,
               vertical: 20.0
             ),
@@ -50,10 +50,10 @@ Widget appBarButton({ required BuildContext context, String? text, IconData? ico
                   height: 18.0,
                   child: image,
                 ),
-                SizedBox(width: 6.0),
+                const SizedBox(width: 6.0),
                 Text(
                   text,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                   ),
@@ -67,6 +67,7 @@ Widget appBarButton({ required BuildContext context, String? text, IconData? ico
     } else {
       // TextButton
       return TextButton(
+        onPressed: onPressedFunction,
         child: Text(
           text,
           textAlign: TextAlign.left,
@@ -74,7 +75,6 @@ Widget appBarButton({ required BuildContext context, String? text, IconData? ico
             color: color,
           ),
         ),
-        onPressed: onPressedFunction,
       );
     }
   } else {

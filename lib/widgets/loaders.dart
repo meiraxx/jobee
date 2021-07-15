@@ -23,7 +23,7 @@ class InPlaceLoader extends StatelessWidget {
 
   // waiting 1-3 seconds showing the loading widget animation is recommended because
   // it looks neater than an almost-instant animation
-  static Future<void> minimumLoadingSleep(Duration duration) async => await Future.delayed(duration);
+  static Future<void> minimumLoadingSleep(Duration duration) async => Future<void>.delayed(duration);
 }
 
 class TextLoader extends StatefulWidget {
@@ -39,10 +39,10 @@ class _TextLoaderState extends State<TextLoader> {
 
   @override
   Widget build(BuildContext context) {
-    MediaQueryData queryData = MediaQuery.of(context);
-    double loaderRadius = 25.0;
-    double spacing = 12.0;
-    TextStyle loadingTextStyle = Theme.of(context).textTheme.headline4!;
+    final MediaQueryData queryData = MediaQuery.of(context);
+    const double loaderRadius = 25.0;
+    const double spacing = 12.0;
+    final TextStyle loadingTextStyle = Theme.of(context).textTheme.headline4!;
 
     return Container(
       color: Theme.of(context).colorScheme.background,
@@ -50,15 +50,14 @@ class _TextLoaderState extends State<TextLoader> {
         top: queryData.size.height/2 - (loaderRadius + spacing + loadingTextStyle.fontSize!),
       ),
       child: Column(
-        children: [
+        children: <Widget>[
           Center(
             child: SpinKitChasingDots(
               color: Theme.of(context).colorScheme.primary,
-              size: loaderRadius*2,
-              duration: Duration(seconds: 1),
+              duration: const Duration(seconds: 1),
             ),
           ),
-          SizedBox(height: spacing),
+          const SizedBox(height: spacing),
           Text(
             widget.text!,
             style: loadingTextStyle,

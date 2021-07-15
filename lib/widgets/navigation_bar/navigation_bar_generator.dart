@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'custom_bottomNavigationBar.dart';
-import 'custom_bottomNavigationBarItem.dart';
+import 'custom_bottom_navigation_bar.dart';
+import 'custom_bottom_navigation_bar_item.dart';
 
 Widget bottomNavigationBarGenerator({ required BuildContext context, required Function(int) onTap,
   required int bottomNavigationCurrentIndex, required List<Widget> inactiveIconList, required List<Widget> activeIconList,
@@ -15,12 +15,12 @@ Widget bottomNavigationBarGenerator({ required BuildContext context, required Fu
   assert(activeIconList.length == nItems); // verify activeIconList only has 'nItems' elements
   assert(labelList.length == nItems); // verify labelList only has 'nItems' elements
 
-  Color activeColor = Theme.of(context).colorScheme.primary;
+  final Color activeColor = Theme.of(context).colorScheme.primary;
 
   return Container(
     decoration: BoxDecoration(
       color: Theme.of(context).colorScheme.background,
-      boxShadow: [
+      boxShadow: <BoxShadow>[
         BoxShadow(
           color: inactiveColor,
         ),
@@ -35,7 +35,7 @@ Widget bottomNavigationBarGenerator({ required BuildContext context, required Fu
       unselectedFontSize: 11.0,
       elevation: 8.0,
       items: <CustomBottomNavigationBarItem>[
-        for (var i = 0; i < labelList.length; i+=1) CustomBottomNavigationBarItem(
+        for (int i = 0; i < labelList.length; i+=1) CustomBottomNavigationBarItem(
           icon: inactiveIconList[i],
           activeIcon: activeIconList[i],
           label: labelList[i],

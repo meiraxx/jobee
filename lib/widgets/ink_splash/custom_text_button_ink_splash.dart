@@ -9,7 +9,7 @@ const Duration _kUnconfirmedSplashDuration = Duration(milliseconds: 500);
 const Duration _kSplashFadeOutDuration = Duration(milliseconds: 500);
 const Duration _kSplashFadeInDuration = Duration(milliseconds: 500);
 
-const double _kSplashInitialSize = 0.0; // logical pixels
+//const double _kSplashInitialSize = 0.0; // logical pixels (not used)
 const double _kSplashConfirmedVelocity = 1.0; // logical pixels per millisecond
 
 RectCallback? _getClipCallback(RenderBox referenceBox, bool containedInkWell, RectCallback? rectCallback) {
@@ -17,8 +17,7 @@ RectCallback? _getClipCallback(RenderBox referenceBox, bool containedInkWell, Re
     assert(containedInkWell);
     return rectCallback;
   }
-  if (containedInkWell)
-    return () => Offset.zero & referenceBox.size;
+  if (containedInkWell) return () => Offset.zero & referenceBox.size;
   return null;
 }
 
@@ -226,8 +225,7 @@ class CustomTextButtonInkSplash extends InteractiveInkFeature {
     late final Paint paint;
     paint = Paint()..color = color.withAlpha(_alpha.value);
     Offset? center = _position;
-    if (_repositionToReferenceBox)
-      center = Offset.lerp(center, referenceBox.size.center(Offset.zero), _radiusController.value);
+    if (_repositionToReferenceBox) center = Offset.lerp(center, referenceBox.size.center(Offset.zero), _radiusController.value);
     paintInkCircle(
       canvas: canvas,
       transform: transform,

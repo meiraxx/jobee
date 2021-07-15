@@ -5,17 +5,20 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
-import 'package:jobee/widgets/ink_splash/custom_elevatedButton_ink_splash.dart' show CustomElevatedButtonInkSplash;
-import 'package:jobee/widgets/ink_splash/custom_iconButton_ink_splash.dart' show CustomIconButtonInkSplash;
-import 'package:jobee/widgets/ink_splash/custom_textButton_ink_splash.dart' show CustomTextButtonInkSplash;
+import 'package:jobee/widgets/ink_splash/custom_elevated_button_ink_splash.dart'
+    show CustomElevatedButtonInkSplash;
+import 'package:jobee/widgets/ink_splash/custom_icon_button_ink_splash.dart'
+    show CustomIconButtonInkSplash;
+import 'package:jobee/widgets/ink_splash/custom_text_button_ink_splash.dart'
+    show CustomTextButtonInkSplash;
 
 class JobeeThemeData {
 
   /// TEXT THEME
-  static const _regular = FontWeight.w400;
-  static const _medium = FontWeight.w500;
-  static const _semiBold = FontWeight.w600;
-  static const _bold = FontWeight.w700;
+  static const FontWeight _regular = FontWeight.w400;
+  static const FontWeight _medium = FontWeight.w500;
+  static const FontWeight _semiBold = FontWeight.w600;
+  static const FontWeight _bold = FontWeight.w700;
 
   static final TextTheme _textTheme = TextTheme(
     headline4: GoogleFonts.montserrat(fontWeight: _bold, fontSize: 20.0),
@@ -32,10 +35,10 @@ class JobeeThemeData {
 
   /// LIGHT COLOR SCHEME
   static const ColorScheme _lightColorScheme = ColorScheme(
-    primary: const Color(0xFFFFAE2A), // lightPaletteColors['orange']!
-    primaryVariant: const Color(0xFFFF872A), // lightPaletteColors['deeperOrange']!
-    secondary: const Color(0xFF2A7BFF), // lightPaletteColors['blue']!
-    secondaryVariant: const Color(0xFF442AFF), // lightPaletteColors['darkerBlue']!
+    primary: Color(0xFFFFAE2A), // lightPaletteColors['orange']!
+    primaryVariant: Color(0xFFFF872A), // lightPaletteColors['deeperOrange']!
+    secondary: Color(0xFF2A7BFF), // lightPaletteColors['blue']!
+    secondaryVariant: Color(0xFF442AFF), // lightPaletteColors['darkerBlue']!
     surface: _darkFillColor,
     background: _darkFillColor,
     error: _lightFillColor,
@@ -67,8 +70,8 @@ class JobeeThemeData {
 
   /// Different Types of Colors
 
-  static const _lightFillColor = Colors.black;
-  static const _darkFillColor = Colors.white;
+  static const Color _lightFillColor = Colors.black;
+  static const Color _darkFillColor = Colors.white;
 
   static Color get lightFillColor => _lightFillColor;
   static Color get darkFillColor => _darkFillColor;
@@ -90,23 +93,23 @@ class JobeeThemeData {
   static Color get lightHighlightColor => _lightHighlightColor;
   static Color get darkHighlightColor => _darkHighlightColor;
 
-  static final Color _lightInactiveItemColor = const Color(0xFF757575);
+  static const Color _lightInactiveItemColor = Color(0xFF757575);
   static Color get lightInactiveItemColor => _lightInactiveItemColor;
 
   /// Light Color Palette
-  static const Map<String, Color> _lightPaletteColors = {
+  static const Map<String, Color> _lightPaletteColors = <String, Color>{
     // Palette Colors [Bee]
-    "cream": const Color(0xFFFFFAD8),
-    "orange": const Color(0xFFFFAE2A),
-    "deeperOrange": const Color(0xFFFF872A),
-    "yellow": const Color(0xFFFDD329),
-    "crispYellow": const Color(0xFFF7B61C),
-    "lightGray": const Color(0xFFF6F6F4),
+    "cream": Color(0xFFFFFAD8),
+    "orange": Color(0xFFFFAE2A),
+    "deeperOrange": Color(0xFFFF872A),
+    "yellow": Color(0xFFFDD329),
+    "crispYellow": Color(0xFFF7B61C),
+    "lightGray": Color(0xFFF6F6F4),
     // Complementary Colors [of the chosen primary, Orange]
-    "blue": const Color(0xFF2A7BFF),
-    "darkerBlue": const Color(0xFF442AFF),
+    "blue": Color(0xFF2A7BFF),
+    "darkerBlue": Color(0xFF442AFF),
     // More Colors
-    "error": const Color(0xFFB00020), /* used for errors */
+    "error": Color(0xFFB00020), /* used for errors */
     "white": Colors.white, /* white */
     "black": Colors.black, /* black */
   };
@@ -146,7 +149,7 @@ class JobeeThemeData {
         brightness: colorScheme.brightness,
         centerTitle: false,
       ),
-      bottomNavigationBarTheme: BottomNavigationBarThemeData(
+      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         elevation: 0.0,
       ),
       iconTheme: IconThemeData(
@@ -170,7 +173,6 @@ class JobeeThemeData {
       // TODO: make splash/highlight effects faster
       // TODO:get more neutral colors for splash/highlight effects (white-ish or black-ish)
       buttonTheme: ButtonThemeData(
-        textTheme: ButtonTextTheme.normal,
         colorScheme: colorScheme,
         splashColor: defaultSplashColor,
         highlightColor: defaultHighlightColor,
@@ -180,7 +182,7 @@ class JobeeThemeData {
       highlightColor: defaultHighlightColor,
       focusColor: defaultFocusColor,
       // note: default disabled color is always Colors.grey
-      inputDecorationTheme: InputDecorationTheme(
+      inputDecorationTheme: const InputDecorationTheme(
         errorMaxLines: 3,
         contentPadding: EdgeInsets.all(5.0),
         alignLabelWithHint: true,
@@ -190,16 +192,15 @@ class JobeeThemeData {
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          side: BorderSide(
+          side: const BorderSide(
             color: Colors.grey,
-            width: 1.0,
           ),
         ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           elevation: 2.0,
-          padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
         ).copyWith(
           overlayColor: MaterialStateProperty.all( lightPaletteColors["yellow"]!.withAlpha(0x7F) ),
           splashFactory: CustomElevatedButtonInkSplash.splashFactory,
@@ -211,13 +212,13 @@ class JobeeThemeData {
           splashFactory: CustomTextButtonInkSplash.splashFactory, // custom textButton splash factory
         ),
       ),
-      cardTheme: CardTheme(
+      cardTheme: const CardTheme(
         color: Colors.white,
         margin: EdgeInsets.zero,
       ),
       // TODO: understand why pageTransitionsTheme is not working
-      pageTransitionsTheme: PageTransitionsTheme(
-        builders: {
+      pageTransitionsTheme: const PageTransitionsTheme(
+        builders: <TargetPlatform, PageTransitionsBuilder>{
           TargetPlatform.android: ZoomPageTransitionsBuilder(),
         },
       ),

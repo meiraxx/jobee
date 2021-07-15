@@ -159,7 +159,7 @@ class _SubmitPersonalProfileDataState extends State<SubmitPersonalProfileData> {
                                       }
 
                                       // else, logically validate phone number
-                                      final List<Object> phoneNumberValidationInfo = validatePhoneNumber(
+                                      final List<dynamic> phoneNumberValidationInfo = validatePhoneNumber(
                                         phoneCountryDialCode: _phoneCountryDialCode,
                                         phoneNumber: phoneNumber??'',
                                       );
