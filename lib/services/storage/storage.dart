@@ -1,15 +1,17 @@
 import 'dart:async';
+import 'dart:io' show File;
+import 'dart:io';
+import 'dart:typed_data' show Uint8List;
 
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/material.dart';
-import 'dart:io' show File, sleep;
-import 'package:image_picker/image_picker.dart' show PickedFile;
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'save_as/save_as.dart' show saveAsBytes;
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart' show PickedFile;
 import 'package:path/path.dart' show join;
-import 'dart:typed_data' show Uint8List;
 import 'package:path_provider/path_provider.dart' show getApplicationDocumentsDirectory;
+
+import 'save_as/save_as.dart' show saveAsBytes;
 
 class StorageService {
   // uid
@@ -29,11 +31,12 @@ class StorageService {
   }
 
   /// Create a directory in Firebase Storage
-  Future<void> _createDirectory(Reference remoteDirRef) async {
+  Future<void> _createUserDirectory(Reference remoteDirRef) async {
+    // the only way to create a folder on firebase storage is to put a file there
     remoteDirRef.child('temp.txt').putString(DateTime.now().toString());
-    // wait 1 second for the previous action to register on the server
-    Future.delayed(Duration(seconds: 1)).then((value) {
-      // delete temp.txt
+    // wait 10 seconds for the previous action to register on the server
+    Future<void>.delayed(const Duration(seconds: 10)).then((void onValue) {
+      // to delete the file
       remoteDirRef.child('temp.txt').delete();
     });
   }
@@ -54,14 +57,14 @@ class StorageService {
     UploadTask uploadTask;
 
     // Create a Reference to the file
-    Reference ref = FirebaseStorage.instance
+    final Reference ref = FirebaseStorage.instance
         .ref()
         .child(this.uid!)
         .child(remoteFileName);
 
-    final metadata = SettableMetadata(
+    final SettableMetadata metadata = SettableMetadata(
         contentType: 'image/jpeg',
-        customMetadata: {'picked-file-path': pickedFile.path});
+        customMetadata: <String, String>{'picked-file-path': pickedFile.path});
 
     if (kIsWeb) {
       uploadTask = ref.putData(await pickedFile.readAsBytes(), metadata);
@@ -69,14 +72,14 @@ class StorageService {
       uploadTask = ref.putFile(File(pickedFile.path), metadata);
     }
 
-    return Future.value(uploadTask);
+    return Future<UploadTask>.value(uploadTask);
   }
 
   static Future<File?> downloadFile({required Reference remoteFileRef, required String localFileName}) async {
     assert(remoteFileRef.parent!=null, 'downloadFile() error: remoteFileRef needs to be included in a directory');
     String url;
 
-    bool remoteFileExistsInDirectory = await _checkIfRemoteFileExists(remoteFileRef);
+    final bool remoteFileExistsInDirectory = await _checkIfRemoteFileExists(remoteFileRef);
 
     /* if the target remote file reference points to a
      * file that does not exist in its directory */
@@ -86,8 +89,8 @@ class StorageService {
     }
 
     // else, obtain url from firebase
-    url = await remoteFileRef.getDownloadURL().onError((error, stackTrace) {
-      print("Error getting profile picture");
+    url = await remoteFileRef.getDownloadURL().onError((Object? error, StackTrace stackTrace) {
+      // error getting profile picture
       return '';
     });
 
@@ -97,9 +100,9 @@ class StorageService {
     final http.Response response = await http.get(Uri.parse(url));
 
 
-    final documentDirectory = await getApplicationDocumentsDirectory();
+    final Directory documentDirectory = await getApplicationDocumentsDirectory();
 
-    final file = File(join(documentDirectory.path, localFileName));
+    final File file = File(join(documentDirectory.path, localFileName));
 
     file.writeAsBytesSync(response.bodyBytes);
 
@@ -115,12 +118,12 @@ class StorageService {
   /// exists in the specified remote directory
   static Future<bool> _checkIfRemoteFileExists(Reference remoteFileRef) async {
     assert(remoteFileRef.parent!=null, '_checkIfRemoteFileExists() error: remoteFileRef needs to be included in a directory');
-    Reference remoteDirRef = remoteFileRef.parent!;
-    List<Reference> childRemoteRefList = await _listChildRemoteRefs(remoteDirRef);
+    final Reference remoteDirRef = remoteFileRef.parent!;
+    final List<Reference> childRemoteRefList = await _listChildRemoteRefs(remoteDirRef);
     bool exists = false;
 
-    for (Reference childRemoteRef in childRemoteRefList) {
-      exists = (childRemoteRef.fullPath == remoteFileRef.fullPath);
+    for (final Reference childRemoteRef in childRemoteRefList) {
+      exists = childRemoteRef.fullPath == remoteFileRef.fullPath;
     }
 
     return exists;
@@ -128,7 +131,7 @@ class StorageService {
 
   static Future<void> downloadBytes({required Reference remoteRef, required String localFileName}) async {
     final Uint8List? bytes = await remoteRef.getData();
-    if (bytes==null) return null;
+    if (bytes==null) return;
 
     // Download...
     await saveAsBytes(bytes, localFileName);

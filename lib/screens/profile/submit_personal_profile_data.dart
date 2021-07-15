@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:jobee/external-libs/intl_phone_field-2.0.0/intl_phone_field.dart' show IntlPhoneField;
 import 'package:jobee/external-libs/intl_phone_field-2.0.0/phone_number.dart' show PhoneNumber;
+//import 'package:intl_phone_field/intl_phone_field.dart' show IntlPhoneField;
+//import 'package:intl_phone_field/phone_number.dart' show PhoneNumber;
 import 'package:jobee/models/app_user.dart' show AppUserData;
 import 'package:jobee/screens/home/home.dart' show Home;
 import 'package:jobee/screens/screens-shared/logo.dart' show Logo;
@@ -42,7 +44,7 @@ class _SubmitPersonalProfileDataState extends State<SubmitPersonalProfileData> {
   final bool _spacedFormFields = false;
 
   // user info
-  Future<Map<String, dynamic>> _infoByIP = NetworkService.getInfoByIP() as Future<Map<String, dynamic>>;
+  final Future<Map<String, dynamic>> _infoByIP = NetworkService.getInfoByIP()!;
 
   @override
   void initState() {
@@ -51,33 +53,34 @@ class _SubmitPersonalProfileDataState extends State<SubmitPersonalProfileData> {
 
   @override
   Widget build(BuildContext context) {
-    MediaQueryData queryData = MediaQuery.of(context);
+    final MediaQueryData queryData = MediaQuery.of(context);
     // form info
     final double defaultFormFieldSpacing = Theme.of(context).textTheme.caption!.fontSize!;
     final double defaultSubmissionErrorHeight = defaultFormFieldSpacing/2;
 
     const double formVerticalPadding = 20.0;
     const double formHorizontalPadding = 30.0;
-    double formWidth = (queryData.size.width - formHorizontalPadding*2);
+    final double formWidth = queryData.size.width - formHorizontalPadding*2;
 
     // app user data
-    AppUserData? appUserData = Provider.of<AppUserData?>(context);
-    if (appUserData==null) return TextLoader(text: "Fetching user data...");
+    final AppUserData? appUserData = Provider.of<AppUserData?>(context);
+    if (appUserData==null) return const TextLoader(text: "Fetching user data...");
 
     return appUserData.hasRegisteredPersonalData
-    ?Home()
-    :FutureBuilder<Map<String, dynamic>>(
+    ? const Home()
+    : FutureBuilder<Map<String, dynamic>>(
       future: _infoByIP,
       builder: (BuildContext context, AsyncSnapshot<Map<String, dynamic>> futureSnapshot) {
         switch (futureSnapshot.connectionState) {
-          case ConnectionState.none: return Text('ConnectionState.none is not reached.');
-          case ConnectionState.waiting: return TextLoader(text: "Personal information page loading");
+          case ConnectionState.none: return const Text('ConnectionState.none is not reached.');
+          case ConnectionState.waiting: return const TextLoader(text: "Personal information page loading");
           default:
-            if (futureSnapshot.hasError)
+            if (futureSnapshot.hasError) {
               return Text('Error: ${futureSnapshot.error}');
+            }
 
             // else, condition to validate that we received the expected data from the external API
-            if ( futureSnapshot.data==null || !(futureSnapshot.data!.containsKey("countryCode")) ) {
+            if ( futureSnapshot.data==null || !futureSnapshot.data!.containsKey("countryCode") ) {
               // return to wrapper to retry connection
               return Wrapper();
             }
@@ -95,10 +98,10 @@ class _SubmitPersonalProfileDataState extends State<SubmitPersonalProfileData> {
                 appBar: AppBar(
                   title: Wrap(
                     crossAxisAlignment: WrapCrossAlignment.center,
-                    children: [
+                    children: <Widget>[
                       Logo(),
-                      SizedBox(width: 16.0),
-                      Text(
+                      const SizedBox(width: 16.0),
+                      const Text(
                         "|   Personal information",
                         style: TextStyle(
                           color: Colors.black,
@@ -108,29 +111,27 @@ class _SubmitPersonalProfileDataState extends State<SubmitPersonalProfileData> {
                   ),
                 ),
                 body: Column(
-                  children: [
+                  children: <Widget>[
                     Container(
                       padding: const EdgeInsets.symmetric(vertical: formVerticalPadding, horizontal: formHorizontalPadding),
                       child: Form(
                         key: _formKey,
                         child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            SizedBox(height: 20.0),
+                            const SizedBox(height: 20.0),
                             // - phoneNumber row
                             Row(
                               children: <Widget>[
-                                Container(
+                                SizedBox(
                                   width: formWidth,
-                                  //height: defaultFormFieldSpacing*6,
                                   child: IntlPhoneField(
-                                    decoration: InputDecoration(
+                                    decoration: const InputDecoration(
                                       labelText: 'Phone Number',
                                     ),
                                     textAlignVertical: TextAlignVertical.center,
                                     // initialCountryCode obtained using _infoByIP
-                                    initialCountryCode: futureSnapshot.data!["countryCode"],
+                                    initialCountryCode: futureSnapshot.data!["countryCode"] as String?,
                                     onChanged: (PhoneNumber phone) {
                                       _phoneNumber = phone.number;
                                     },
@@ -138,7 +139,7 @@ class _SubmitPersonalProfileDataState extends State<SubmitPersonalProfileData> {
                                       _phoneCountryDialCode = phone.countryCode!;
                                     },
                                     validator: (String? phoneNumber){
-                                      String? emptyMessage = validateNotEmpty(
+                                      final String? emptyMessage = validateNotEmpty(
                                         text: phoneNumber??'',
                                         field: 'phoneNumber',
                                         errorMessage: "Enter your phone number",
@@ -158,12 +159,12 @@ class _SubmitPersonalProfileDataState extends State<SubmitPersonalProfileData> {
                                       }
 
                                       // else, logically validate phone number
-                                      List<Object> phoneNumberValidationInfo = validatePhoneNumber(
+                                      final List<Object> phoneNumberValidationInfo = validatePhoneNumber(
                                         phoneCountryDialCode: _phoneCountryDialCode,
                                         phoneNumber: phoneNumber??'',
                                       );
-                                      bool phoneNumberValidated = phoneNumberValidationInfo[0] as bool;
-                                      String validationMessage = phoneNumberValidationInfo[1] as String;
+                                      final bool phoneNumberValidated = phoneNumberValidationInfo[0] as bool;
+                                      final String validationMessage = phoneNumberValidationInfo[1] as String;
 
                                       if (!phoneNumberValidated) {
                                         // phone validation error
@@ -181,15 +182,15 @@ class _SubmitPersonalProfileDataState extends State<SubmitPersonalProfileData> {
                               ],
                             ),
                             SizedBox(height: _errorSizedBoxSizePhoneNumber),
-                            if (_spacedFormFields) ...[
+                            if (_spacedFormFields) ... <Widget>[
                               SizedBox(height: defaultFormFieldSpacing)
-                            ] else ...[
+                            ] else ... const <Widget>[
                               SizedBox(height: 0.0)
                             ],
                             Center(
                               child: Builder(builder: (BuildContext context) {
                                 return _loading
-                                ? InPlaceLoader(replacedWidgetSize: Size(48.0, 48.0), submissionErrorHeight: defaultSubmissionErrorHeight)
+                                ? InPlaceLoader(replacedWidgetSize: const Size(48.0, 48.0), submissionErrorHeight: defaultSubmissionErrorHeight)
                                 : ElevatedButton(
                                   onPressed: () async {
                                     _formNotSubmitted = false;
@@ -221,7 +222,7 @@ class _SubmitPersonalProfileDataState extends State<SubmitPersonalProfileData> {
                                   },
                                   child: Wrap(
                                     crossAxisAlignment: WrapCrossAlignment.center,
-                                    children: [
+                                    children: const <Widget>[
                                       Icon(Icons.lock),
                                       SizedBox(width: 4.0),
                                       Text(
@@ -235,7 +236,7 @@ class _SubmitPersonalProfileDataState extends State<SubmitPersonalProfileData> {
                             SizedBox(height: _submissionErrorSizedBoxHeight),
                             Text(
                               _submissionError,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: Colors.red,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 12.0,
@@ -252,16 +253,16 @@ class _SubmitPersonalProfileDataState extends State<SubmitPersonalProfileData> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: <Widget>[
-                        Text("Want to switch account?"),
+                        const Text("Want to switch account?"),
                         TextButton(
-                          child: Text(
-                            "Sign out",
-                            style: TextStyle(color: Colors.blue),
-                          ),
                           onPressed: () async {
                             await AuthService.signOut(context: context);
                             Navigator.pushReplacementNamed(context, '/');
                           },
+                          child: const Text(
+                            "Sign out",
+                            style: TextStyle(color: Colors.blue),
+                          ),
                         )
                       ],
                     )

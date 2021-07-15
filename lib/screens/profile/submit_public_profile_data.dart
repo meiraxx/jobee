@@ -22,12 +22,12 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
   bool _formNotSubmitted = true;
 
   // text field state
-  TextEditingController _userNameController = TextEditingController();
-  TextEditingController _firstNameController = TextEditingController();
-  TextEditingController _lastNameController = TextEditingController();
-  TextEditingController _birthDayController = TextEditingController();
+  final TextEditingController _userNameController = TextEditingController();
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
+  final TextEditingController _birthDayController = TextEditingController();
   String? _gender;
-  List<String> _genders = ['Male', 'Female', 'Other', "I'd rather not say"];
+  final List<String> _genders = <String>['Male', 'Female', 'Other', "I'd rather not say"];
   DateTime? _birthDay;
 
 
@@ -47,20 +47,20 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
   double _submissionErrorSizedBoxHeight = 0.0;
 
   // Open Dropdown
-  GlobalKey _dropdownButtonKey = GlobalKey();
+  final GlobalKey _dropdownButtonKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
-    MediaQueryData queryData = MediaQuery.of(context);
+    final MediaQueryData queryData = MediaQuery.of(context);
     // form info
     final double defaultFormFieldSpacing = Theme.of(context).textTheme.caption!.fontSize!;
     final double defaultSubmissionErrorHeight = defaultFormFieldSpacing/2;
     const double formVerticalPadding = 20.0;
     const double formHorizontalPadding = 30.0;
-    double formWidth = (queryData.size.width - formHorizontalPadding*2);
+    final double formWidth = queryData.size.width - formHorizontalPadding*2;
 
     // form validation
-    Map <String, String? Function()> validateFieldFunctionMap = {
+    final Map <String, String? Function()> validateFieldFunctionMap = <String, String? Function()>{
       'userName': () => validateNotEmpty(
         text: _userNameController.text,
         field: 'userName',
@@ -126,20 +126,20 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
     bool allFormFieldsValidated() {
       // run every field validation function,
       // if every function returns null, then every field is validated
-      return validateFieldFunctionMap.values.every((fieldValidationFunction) => fieldValidationFunction()==null);
+      return validateFieldFunctionMap.values.every((String? Function() fieldValidationFunction) => fieldValidationFunction()==null);
     }
 
     // etc.
-    DateTime today = DateTime.now();
-    Locale userLocale = Localizations.localeOf(context);
+    final DateTime today = DateTime.now();
+    final Locale userLocale = Localizations.localeOf(context);
 
     // app user data
-    AppUserData? appUserData = Provider.of<AppUserData?>(context);
-    if (appUserData==null) return TextLoader(text: "Fetching user data...");
+    final AppUserData? appUserData = Provider.of<AppUserData?>(context);
+    if (appUserData==null) return const TextLoader(text: "Fetching user data...");
 
     return appUserData.hasRegisteredPublicData
-    ?SubmitPersonalProfileData()
-    :GestureDetector(
+    ? const SubmitPersonalProfileData()
+    : GestureDetector(
       onTap: () {
         /* removes focus from focused node when
             * the AppBar or Scaffold are touched */
@@ -150,10 +150,10 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
         appBar: AppBar(
             title: Wrap(
               crossAxisAlignment: WrapCrossAlignment.center,
-              children: [
+              children: <Widget>[
                 Logo(),
-                SizedBox(width: 16.0),
-                Text(
+                const SizedBox(width: 16.0),
+                const Text(
                   "|   Public information",
                   style: TextStyle(
                     color: Colors.black,
@@ -163,22 +163,21 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
             )
         ),
         body: Column(
-          children: [
+          children: <Widget>[
             Container(
               padding: const EdgeInsets.symmetric(vertical: formVerticalPadding, horizontal: formHorizontalPadding),
               child: Form(
                 key: _formKey,
                 child: AutofillGroup(
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      SizedBox(height: 20.0),
+                      const SizedBox(height: 20.0),
                       // - userName row
                       Row(
                         children: <Widget>[
                           // - userName form field
-                          Container(
+                          SizedBox(
                             width: formWidth,
                             height: defaultFormFieldSpacing*6,
                             child: TextFormField(
@@ -201,16 +200,16 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
                           SizedBox(height: _errorSizedBoxSizeUserName),
                         ],
                       ),
-                      if (_spacedFormFields) ...[
+                      if (_spacedFormFields) ... <Widget>[
                         SizedBox(height: defaultFormFieldSpacing)
-                      ] else ...[
+                      ] else ... const <Widget>[
                         SizedBox(height: 0.0)
                       ],
                       // - firstName+lastName row
                       Row(
                         children: <Widget>[
                           // - First name
-                          Container(
+                          SizedBox(
                             width: formWidth/2 - defaultFormFieldSpacing/2,
                             height: defaultFormFieldSpacing*6,
                             child: TextFormField(
@@ -221,7 +220,7 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
                                 errorText: validateFieldFunctionMap['firstName']!(),
                               ),
                               textAlignVertical: TextAlignVertical.center,
-                              autofillHints: [AutofillHints.givenName],
+                              autofillHints: const <String>[AutofillHints.givenName],
                               // cleanse errors by rebuilding widget on... :
                               onTap: () {
                                 setState(() {});
@@ -234,7 +233,7 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
                           SizedBox(height: _errorSizedBoxSizeFirstName),
                           SizedBox(width: defaultFormFieldSpacing),
                           // - Last name
-                          Container(
+                          SizedBox(
                             width: formWidth/2 - defaultFormFieldSpacing/2,
                             height: defaultFormFieldSpacing*6,
                             child: TextFormField(
@@ -245,7 +244,7 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
                                 errorText: validateFieldFunctionMap['lastName']!(),
                               ),
                               textAlignVertical: TextAlignVertical.center,
-                              autofillHints: [AutofillHints.familyName],
+                              autofillHints: const <String>[AutofillHints.familyName],
                               // cleanse errors by rebuilding widget on... :
                               onTap: () {
                                 setState(() {});
@@ -258,24 +257,24 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
                           SizedBox(height: _errorSizedBoxSizeLastName),
                         ],
                       ),
-                      if (_spacedFormFields) ...[
+                      if (_spacedFormFields) ... <Widget>[
                         SizedBox(height: defaultFormFieldSpacing)
-                      ] else ...[
+                      ] else ... const <Widget>[
                         SizedBox(height: 0.0)
                       ],
                       // - gender+birthDay row
                       Row(
-                        children: [
+                        children: <Widget>[
                           // - Gender
                           GestureDetector(
                             onTap: () {
                               // print("Manually activate dropdown button");
                               openDropdownMethod2(_dropdownButtonKey); // manually activate dropdown button
                             },
-                            child: Container(
+                            child: SizedBox(
                               width: formWidth/2 - defaultFormFieldSpacing/2,
                               height: defaultFormFieldSpacing*6,
-                              child: DropdownButtonFormField(
+                              child: DropdownButtonFormField<String>(
                                 key: _dropdownButtonKey,
                                 iconSize: 0.0,
                                 value: _gender,
@@ -292,7 +291,7 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
                                   FocusManager.instance.primaryFocus?.unfocus();
                                 },
                                 items: _genders.map((String gender) {
-                                  return DropdownMenuItem(
+                                  return DropdownMenuItem<String>(
                                     value: gender,
                                     child: Text(gender),
                                   );
@@ -312,7 +311,7 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
                                 child: GestureDetector(
                                   onTap: () async {
                                     // await for user to pick the date
-                                    DateTime? picked = await showDatePicker(
+                                    final DateTime? picked = await showDatePicker(
                                       context: context,
                                       // initialDate is set to
                                       initialDate: _birthDay??DateTime(today.year-18, today.month, today.day),
@@ -332,8 +331,8 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
                                       _birthDay = picked;
                                       _birthDayController.value = TextEditingValue(
                                         text: "${picked.year}"
-                                          "/${picked.month>=10?picked.month:('0'+picked.month.toString())}"
-                                          "/${picked.day>=10?picked.day:('0'+picked.day.toString())}"
+                                          "/${picked.month>=10?picked.month:('0${picked.month}')}"
+                                          "/${picked.day>=10?picked.day:('0${picked.day}')}"
                                       );
                                       if (this.mounted) setState(() {});
                                     }
@@ -358,15 +357,15 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
                           )
                         ],
                       ),
-                      if (_spacedFormFields) ...[
+                      if (_spacedFormFields) ... <Widget>[
                         SizedBox(height: defaultFormFieldSpacing)
-                      ] else ...[
+                      ] else ... const <Widget>[
                         SizedBox(height: 0.0)
                       ],
                       Center(
                         child: Builder(builder: (BuildContext context) {
                           return _loading
-                          ? InPlaceLoader(replacedWidgetSize: Size(48.0, 48.0), submissionErrorHeight: defaultSubmissionErrorHeight)
+                          ? InPlaceLoader(replacedWidgetSize: const Size(48.0, 48.0), submissionErrorHeight: defaultSubmissionErrorHeight)
                           : ElevatedButton(
                             onPressed: () async {
                               _formNotSubmitted = false;
@@ -402,7 +401,7 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
                             },
                             child: Wrap(
                               crossAxisAlignment: WrapCrossAlignment.center,
-                              children: [
+                              children: const <Widget>[
                                 Icon(Icons.public),
                                 SizedBox(width: 4.0),
                                 Text(
@@ -416,7 +415,7 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
                       SizedBox(height: _submissionErrorSizedBoxHeight),
                       Text(
                         _submissionError,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.red,
                           fontWeight: FontWeight.bold,
                           fontSize: 12.0,
@@ -434,16 +433,16 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
-                Text("Want to switch account?"),
+                const Text("Want to switch account?"),
                 TextButton(
-                  child: Text(
-                    "Sign out",
-                    style: TextStyle(color: Colors.blue),
-                  ),
                   onPressed: () async {
                     await AuthService.signOut(context: context);
                     Navigator.pushReplacementNamed(context, '/');
                   },
+                  child: const Text(
+                    "Sign out",
+                    style: TextStyle(color: Colors.blue),
+                  ),
                 )
               ],
             )

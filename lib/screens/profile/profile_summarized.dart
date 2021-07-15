@@ -16,7 +16,7 @@ class _ProfileSummarizedState extends State<ProfileSummarized> {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        SizedBox(height: 6.0),
+        const SizedBox(height: 6.0),
         Center(
           child: ProfileAvatar(
             appUserData: widget.appUserData!,
@@ -24,7 +24,7 @@ class _ProfileSummarizedState extends State<ProfileSummarized> {
             isHero: false,
           ),
         ),
-        SizedBox(height: 6.0),
+        const SizedBox(height: 6.0),
         Center(
           child: Text(
             "${widget.appUserData!.firstName!} ${widget.appUserData!.lastName!}",
@@ -33,14 +33,14 @@ class _ProfileSummarizedState extends State<ProfileSummarized> {
             ),
           ),
         ),
-        SizedBox(height: 6.0),
+        const SizedBox(height: 6.0),
         Card(
-          margin: EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 0.0),
+          margin: const EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 0.0),
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+              children: <Widget>[
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
@@ -50,7 +50,7 @@ class _ProfileSummarizedState extends State<ProfileSummarized> {
                         fontSize: 13.0,
                       ),
                     ),
-                    SizedBox(width: 4.0),
+                    const SizedBox(width: 4.0),
                     Expanded(
                       child: Text(
                         widget.appUserData!.userName!,
@@ -62,14 +62,14 @@ class _ProfileSummarizedState extends State<ProfileSummarized> {
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.only(top: 2.0),
+                        const Padding(
+                          padding: EdgeInsets.only(top: 2.0),
                           child: Icon(
                             Icons.phone_android_rounded,
                             size: 13.0,
                           ),
                         ),
-                        SizedBox(width: 4.0),
+                        const SizedBox(width: 4.0),
                         Text(
                           "(${widget.appUserData!.phoneCountryDialCode!}) ${widget.appUserData!.phoneNumber!}",
                           style: Theme.of(context).textTheme.bodyText2,
@@ -78,18 +78,18 @@ class _ProfileSummarizedState extends State<ProfileSummarized> {
                     ),
                   ],
                 ),
-                SizedBox(height: 4.0),
+                const SizedBox(height: 4.0),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.only(top: 2.0),
+                    const Padding(
+                      padding: EdgeInsets.only(top: 2.0),
                       child: Icon(
                         Icons.email,
                         size: 13.0,
                       ),
                     ),
-                    SizedBox(width: 4.0),
+                    const SizedBox(width: 4.0),
                     Expanded(
                       child: Text(
                         widget.appUserData!.email,
@@ -98,7 +98,7 @@ class _ProfileSummarizedState extends State<ProfileSummarized> {
                     ),
                   ],
                 ),
-                SizedBox(height: 4.0),
+                const SizedBox(height: 4.0),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
@@ -110,7 +110,7 @@ class _ProfileSummarizedState extends State<ProfileSummarized> {
                         size: 13.0,
                       ),
                     ),
-                    SizedBox(width: 4.0),
+                    const SizedBox(width: 4.0),
                     Text(
                       "Busy",
                       style: TextStyle(
@@ -125,7 +125,7 @@ class _ProfileSummarizedState extends State<ProfileSummarized> {
             ),
           ),
         ),
-        SizedBox(height: 12.0),
+        const SizedBox(height: 12.0),
       ],
     );
   }

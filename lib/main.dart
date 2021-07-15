@@ -15,9 +15,9 @@ import 'package:provider/provider.dart' show MultiProvider, StreamProvider;
 import 'package:jobee/theme/jobee_theme_data.dart' show JobeeThemeData;
 import 'package:provider/single_child_widget.dart' show SingleChildWidget;
 
-void main() async {
+Future<void> main() async {
   // note: set to true when deploying
-  bool useProductionBackend = true;
+  const bool useProductionBackend = true;
 
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -39,13 +39,20 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    Map<String, Widget Function(BuildContext)> routes = {
+    final Map<String, Widget Function(BuildContext)> routes = <String, Widget Function(BuildContext)>{
       '/': (BuildContext context) => Wrapper(),
       '/authenticate': (BuildContext context) => Authenticate(),
-      '/home': (BuildContext context) => Home(),
+      '/home': (BuildContext context) => const Home(),
     };
 
+    // TODO: Code Linting (using the 'link' package)
+    // TODO: Code Packaging
+    // TODO: Code Testing
+
     return MultiProvider(
+      providers: <SingleChildWidget>[
+        StreamProvider<AppUser?>.value(initialData: null, value: AuthService.user),
+      ],
       child: MaterialApp(
         /* light theme settings */
         theme: JobeeThemeData.lightThemeData,
@@ -61,21 +68,18 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         initialRoute: '/',
         onGenerateRoute: (RouteSettings settings) {
-          return CupertinoPageRoute(builder: (BuildContext context) => routes[settings.name]!(context), fullscreenDialog: false);
+          return CupertinoPageRoute<dynamic>(builder: (BuildContext context) => routes[settings.name]!(context));
         },
-        localizationsDelegates: [
+        localizationsDelegates: const <LocalizationsDelegate<dynamic>>[
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
         ],
-        supportedLocales: [
+        supportedLocales: const <Locale>[
           Locale('pt', 'PT'),
           Locale('en', 'UK'),
           Locale('en', 'US'),
         ],
       ),
-      providers: <SingleChildWidget>[
-        StreamProvider<AppUser?>.value(initialData: null, value: AuthService.user),
-      ],
     );
   }
 }

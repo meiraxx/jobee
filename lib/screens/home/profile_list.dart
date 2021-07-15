@@ -17,7 +17,7 @@ class _ProfileListState extends State<ProfileList> {
 
     return ListView.builder(
       itemCount: profiles.length,
-      itemBuilder: (context, index) {
+      itemBuilder: (BuildContext context, int index) {
         return ProfileTile(job: profiles[index]);
       },
     );

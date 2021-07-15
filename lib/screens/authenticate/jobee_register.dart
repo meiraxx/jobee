@@ -10,7 +10,7 @@ import 'package:jobee/utils/input_field_utils.dart' show validateNotEmpty, valid
 class RegMailPassword extends StatefulWidget {
   final Function toggleView;
 
-  RegMailPassword({ required this.toggleView });
+  const RegMailPassword({ required this.toggleView });
 
   @override
   _RegMailPasswordState createState() => _RegMailPasswordState();
@@ -25,7 +25,7 @@ class _RegMailPasswordState extends State<RegMailPassword> {
   // text field state
   String _email = '';
   String _password = '';
-  int _passwordMinLength = 8;
+  final int _passwordMinLength = 8;
 
   // error state
   double _errorSizedBoxHeightEmail = 0.0;
@@ -55,10 +55,10 @@ class _RegMailPasswordState extends State<RegMailPassword> {
           }),
           title: Wrap(
             crossAxisAlignment: WrapCrossAlignment.center,
-            children: [
+            children: <Widget>[
               Logo(),
-              SizedBox(width: 16.0),
-              Text(
+              const SizedBox(width: 16.0),
+              const Text(
                 "|   Register",
               )
             ],
@@ -66,19 +66,18 @@ class _RegMailPasswordState extends State<RegMailPassword> {
         ),
         body: AutofillGroup(
           child: Column(
-            children: [
+            children: <Widget>[
               Container(
                 padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
                 child: Form(
                   key: _formKey,
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
-                      SizedBox(height: 20.0),
+                      const SizedBox(height: 20.0),
                       TextFormField(
-                        decoration: InputDecoration(labelText: 'Email'),
+                        decoration: const InputDecoration(labelText: 'Email'),
                         textAlignVertical: TextAlignVertical.center,
-                        autofillHints: [AutofillHints.email],
+                        autofillHints: const <String>[AutofillHints.email],
                         keyboardType: TextInputType.emailAddress,
                         validator: (String? emailVal) {
                           return validateNotEmpty(
@@ -118,12 +117,12 @@ class _RegMailPasswordState extends State<RegMailPassword> {
                           ),
                         ),
                         textAlignVertical: TextAlignVertical.center,
-                        autofillHints: [AutofillHints.password],
+                        autofillHints: const <String>[AutofillHints.password],
                         keyboardType: TextInputType.text,
                         onEditingComplete: () => TextInput.finishAutofillContext(),
                         obscureText: !_passwordVisible,
                         validator: (String? passwordVal) {
-                          String? passwordCheck = validatePassword(
+                          final String? passwordCheck = validatePassword(
                             password: passwordVal!,
                             minLength: _passwordMinLength,
                             successFunction: () {
@@ -161,7 +160,7 @@ class _RegMailPasswordState extends State<RegMailPassword> {
                           ),
                         ),
                         textAlignVertical: TextAlignVertical.center,
-                        autofillHints: [AutofillHints.password],
+                        autofillHints: const <String>[AutofillHints.password],
                         keyboardType: TextInputType.text,
                         obscureText: !_confirmPasswordVisible,
                         validator: (String? confirmPasswordVal) {
@@ -185,16 +184,8 @@ class _RegMailPasswordState extends State<RegMailPassword> {
                       SizedBox(height: _errorSizedBoxHeightConfirmPassword),
                       SizedBox(height: defaultFormFieldSpacing),
                       Builder(builder: (BuildContext context) {
-                        return _loading ? InPlaceLoader(replacedWidgetSize: Size(48.0, 48.0), submissionErrorHeight: defaultSubmissionErrorHeight)
+                        return _loading ? InPlaceLoader(replacedWidgetSize: const Size(48.0, 48.0), submissionErrorHeight: defaultSubmissionErrorHeight)
                         : ElevatedButton(
-                          child: Wrap(
-                            crossAxisAlignment: WrapCrossAlignment.center,
-                            children: [
-                              Icon(Icons.person),
-                              SizedBox(width: 4.0),
-                              Text('Register'),
-                            ],
-                          ),
                           onPressed: () async {
                             if (_formKey.currentState!.validate()) {
                               // while registering, set _loading to true
@@ -214,12 +205,20 @@ class _RegMailPasswordState extends State<RegMailPassword> {
                               }
                             }
                           },
+                          child: Wrap(
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            children: const <Widget>[
+                              Icon(Icons.person),
+                              SizedBox(width: 4.0),
+                              Text('Register'),
+                            ],
+                          ),
                         );
                       }),
                       SizedBox(height: _submissionErrorSizedBoxHeight),
                       Text(
                         _submissionError,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.red,
                           fontWeight: FontWeight.bold,
                           fontSize: 12.0,
@@ -235,15 +234,15 @@ class _RegMailPasswordState extends State<RegMailPassword> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
-                  Text("Already have an account?"),
+                  const Text("Already have an account?"),
                   TextButton(
-                    child: Text(
-                      "Sign in",
-                      style: TextStyle(color: Colors.blue),
-                    ),
                     onPressed: () {
                       widget.toggleView();
                     },
+                    child: const Text(
+                      "Sign in",
+                      style: TextStyle(color: Colors.blue),
+                    ),
                   )
                 ],
               )

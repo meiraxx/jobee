@@ -51,11 +51,13 @@ dependencies:
   google_fonts: ^2.1.0
   image_picker: ^0.8.0+3
   animations: ^2.0.1
+  intl_phone_field: ^2.0.1
 
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  lint: ^1.5.3
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

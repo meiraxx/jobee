@@ -14,39 +14,34 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
 
   @override
   Widget build(BuildContext context) {
-    Widget button = InkWell(
+    final Widget button = InkWell(
       onTap: () async {
-        try {
-          _isSigningIn = true;
-          if (this.mounted) setState(() {});
+        _isSigningIn = true;
+        if (this.mounted) setState(() {});
 
-          AppUser? appUser = await AuthService.signInWithGoogle(context: context);
+        final AppUser? appUser = await AuthService.signInWithGoogle(context: context);
 
-          // if the user did not login
-          if (appUser==null) {
-            _isSigningIn = false;
-            // stop loading widget and return
-            if (this.mounted) setState((){});
-            return;
-          }
-
-          // else, if the user logged in:
-          // - if the user does not exist yet, we need to create a new document for the user with the returned uid
-          await DatabaseService(uid: appUser.uid).createUserData(appUser.email, 'Google');
-        } catch(e) {
-          // this is usually not reached. if it is, print error to the console
-          print("An unknown error on the GoogleSignInButton widget occurred. Error message: '$e'.");
+        // if the user did not login
+        if (appUser==null) {
+          _isSigningIn = false;
+          // stop loading widget and return
+          if (this.mounted) setState((){});
+          return;
         }
+
+        // else, if the user logged in:
+        // - if the user does not exist yet, we need to create a new document for the user with the returned uid
+        await DatabaseService(uid: appUser.uid).createUserData(appUser.email, 'Google');
       },
       overlayColor: MaterialStateProperty.all(Colors.lightBlueAccent.withAlpha(0x7F)),
       highlightColor: Colors.lightBlueAccent.withAlpha(0x7F),
       child: Ink(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(4.0),
-          color: Color(0xFF397AF3),
+          color: const Color(0xFF397AF3),
         ),
         child: Padding(
-          padding: EdgeInsets.fromLTRB(4.0, 4.0, 10.0, 4.0),
+          padding: const EdgeInsets.fromLTRB(4.0, 4.0, 10.0, 4.0),
           child: Wrap(
             crossAxisAlignment: WrapCrossAlignment.center,
             children: <Widget>[
@@ -66,7 +61,7 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
                   ),
                 ),
               ),
-              SizedBox(width: 12.0),
+              const SizedBox(width: 12.0),
               Text(
                 "Sign in with Google",
                 style: GoogleFonts.montserrat(
@@ -83,7 +78,7 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
     );
 
     return _isSigningIn
-    ? CircularProgressIndicator(
+    ? const CircularProgressIndicator(
       valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF397AF3)),
     )
     : button;

@@ -10,7 +10,7 @@ import 'package:jobee/utils/input_field_utils.dart' show validateNotEmpty;
 class AuthMailPassword extends StatefulWidget {
   final Function toggleView;
 
-  AuthMailPassword({ required this.toggleView });
+  const AuthMailPassword({ required this.toggleView });
 
   @override
   _AuthMailPasswordState createState() => _AuthMailPasswordState();
@@ -51,10 +51,10 @@ class _AuthMailPasswordState extends State<AuthMailPassword> {
           }),
           title: Wrap(
             crossAxisAlignment: WrapCrossAlignment.center,
-            children: [
+            children: <Widget>[
               Logo(),
-              SizedBox(width: 16.0),
-              Text(
+              const SizedBox(width: 16.0),
+              const Text(
                 "|   Sign in",
               )
             ],
@@ -62,21 +62,20 @@ class _AuthMailPasswordState extends State<AuthMailPassword> {
         ),
         body: AutofillGroup(
           child: Column(
-            children: [
+            children: <Widget>[
               Container(
                 padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
                 child: Form(
                   key: _formKey,
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
-                      SizedBox(height: 20.0),
+                      const SizedBox(height: 20.0),
                       TextFormField(
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           labelText: "Email",
                         ),
                         textAlignVertical: TextAlignVertical.center,
-                        autofillHints: [AutofillHints.email],
+                        autofillHints: const <String>[AutofillHints.email],
                         keyboardType: TextInputType.emailAddress,
                         validator: (String? emailVal) {
                           setState(() => _errorSizedBoxHeightEmail = defaultFormFieldSpacing);
@@ -111,7 +110,7 @@ class _AuthMailPasswordState extends State<AuthMailPassword> {
                         ),
                         obscureText: !_passwordVisible,
                         textAlignVertical: TextAlignVertical.center,
-                        autofillHints: [AutofillHints.password],
+                        autofillHints: const <String>[AutofillHints.password],
                         keyboardType: TextInputType.text,
                         onEditingComplete: () => TextInput.finishAutofillContext(),
                         validator: (String? passwordVal) {
@@ -133,16 +132,8 @@ class _AuthMailPasswordState extends State<AuthMailPassword> {
                       SizedBox(height: defaultFormFieldSpacing),
                       Builder(
                         builder: (BuildContext context) {
-                          return _loading ? InPlaceLoader(replacedWidgetSize: Size(48.0, 48.0), submissionErrorHeight: defaultSubmissionErrorHeight)
+                          return _loading ? InPlaceLoader(replacedWidgetSize: const Size(48.0, 48.0), submissionErrorHeight: defaultSubmissionErrorHeight)
                           : ElevatedButton(
-                            child: Wrap(
-                              crossAxisAlignment: WrapCrossAlignment.center,
-                              children: [
-                                Icon(Icons.login),
-                                SizedBox(width: 4.0),
-                                Text("Sign in"),
-                              ],
-                            ),
                             onPressed: () async {
                               if (_formKey.currentState!.validate()) {
                                 // while logging in, set _loading to true
@@ -169,13 +160,21 @@ class _AuthMailPasswordState extends State<AuthMailPassword> {
                                 }
                               }
                             },
+                            child: Wrap(
+                              crossAxisAlignment: WrapCrossAlignment.center,
+                              children: const <Widget>[
+                                Icon(Icons.login),
+                                SizedBox(width: 4.0),
+                                Text("Sign in"),
+                              ],
+                            ),
                           );
                         }
                       ),
                       SizedBox(height: _submissionErrorSizedBoxHeight),
                       Text(
                         _submissionError,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.red,
                           fontWeight: FontWeight.bold,
                           fontSize: 12.0,
@@ -191,15 +190,15 @@ class _AuthMailPasswordState extends State<AuthMailPassword> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
-                  Text("Still don't have an account?"),
+                  const Text("Still don't have an account?"),
                   TextButton(
-                    child: Text(
-                      'Register',
-                      style: TextStyle(color: Colors.blue),
-                    ),
                     onPressed: () {
                       widget.toggleView();
                     },
+                    child: const Text(
+                      'Register',
+                      style: TextStyle(color: Colors.blue),
+                    ),
                   )
                 ],
               )

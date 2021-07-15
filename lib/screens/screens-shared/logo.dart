@@ -4,14 +4,14 @@ import 'package:google_fonts/google_fonts.dart';
 // Logo Class
 class Logo extends StatefulWidget {
   @override
-  _LogoState createState() => new _LogoState();
+  _LogoState createState() => _LogoState();
 }
 
 class _LogoState extends State<Logo> {
   static Color _currentLogoColor = Colors.black;
 
   // - FUNCTIONS
-  Future logoInteractions(BuildContext context, Color defaultLogoColor, int interaction) async {
+  Future<void> logoInteractions(BuildContext context, Color defaultLogoColor, int interaction) async {
     if (interaction == 1) {
       // - INTERACTION 1: toggle between logo's default and a random color
       if (_currentLogoColor == defaultLogoColor) {
@@ -38,14 +38,14 @@ class _LogoState extends State<Logo> {
       onTap: () async {
         logoInteractions(context, Colors.black, 1);
       },
-      onHorizontalDragStart: (dragStartDetails) async {
+      onHorizontalDragStart: (DragStartDetails dragStartDetails) async {
         logoInteractions(context, Colors.black, 2);
       },
       child: Tooltip(
         message: 'jobee logo!',
         child: Wrap(
           crossAxisAlignment: WrapCrossAlignment.center,
-          children: [
+          children: <Widget>[
             Image.asset(
               "images/bee-logo-07.png",
               semanticLabel: "Jobee logo",
@@ -53,7 +53,7 @@ class _LogoState extends State<Logo> {
               height: 32.0, // default icon height
               color: _currentLogoColor
             ),
-            SizedBox(width: 4.0),
+            const SizedBox(width: 4.0),
             Text(
               "Jobee",
               style: GoogleFonts.museoModerno().copyWith(

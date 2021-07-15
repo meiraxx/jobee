@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:jobee/models/app_user.dart' show AppUserData;
 import 'package:jobee/models/profile.dart' show Profile;
 import 'package:jobee/screens/profile/profile_avatar.dart';
+import 'package:jobee/screens/profile/profile_detailed.dart';
 import 'package:jobee/screens/screens-shared/logo.dart' show Logo;
 import 'package:jobee/widgets/drawer.dart' show CustomDrawer;
 import 'package:jobee/services/database.dart' show DatabaseService;
@@ -26,36 +27,36 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     // database service - app user data
-    AppUserData? appUserData = Provider.of<AppUserData?>(context);
-    if (appUserData==null) return TextLoader(text: "Fetching user data...");
+    final AppUserData? appUserData = Provider.of<AppUserData?>(context);
+    if (appUserData==null) return const TextLoader(text: "Fetching user data...");
 
 
     // - BOTTOM NAVIGATION BAR LOGIC
     switch (_bottomNavigationCurrentIndex) {
       case 0:
-        _bottomNavigationCurrentItem = HomeBody(page: 'Page 1: Home (client posts for services based on location VS service posts for clients based on location)');
+        _bottomNavigationCurrentItem = const HomeBody(page: 'Page 1: Home (client posts for services based on location VS service posts for clients based on location)');
         break;
       case 1:
-        _bottomNavigationCurrentItem = HomeBody(page: 'Page 2: Service (create, Icons.add_circle_outlined VS search, Icons.search_rounded)');
+        _bottomNavigationCurrentItem = const HomeBody(page: 'Page 2: Service (create, Icons.add_circle_outlined VS search, Icons.search_rounded)');
         break;
       case 2:
-        _bottomNavigationCurrentItem = HomeBody(page: 'Page 3: Profile');
+        _bottomNavigationCurrentItem = ProfileDetailedBody(appUserData: appUserData, isHero: false, hasLogoutButton: false, isProfileScreenAvatar: false);
         break;
     }
 
     // else, return all
     return StreamProvider<List<Profile>>.value(
-      initialData: [],
+      initialData: const <Profile>[],
       value: DatabaseService().profiles,
       // - THEME OF SCAFFOLD
       child: Scaffold(
-        drawerEnableOpenDragGesture: true,
-        drawer: CustomDrawer(),
+        //drawerEnableOpenDragGesture: true,
+        drawer: const CustomDrawer(),
         appBar: AppBar(
           leading: Builder(
             builder: (BuildContext context) {
               return IconButton(
-                icon: Icon(Icons.menu),
+                icon: const Icon(Icons.menu),
                 splashRadius: iconSplashRadius,
                 splashColor: JobeeThemeData.darkSplashColor,
                 highlightColor: JobeeThemeData.darkHighlightColor,
@@ -89,11 +90,11 @@ class _HomeState extends State<Home> {
             });
           },
           bottomNavigationCurrentIndex: _bottomNavigationCurrentIndex,
-          inactiveIconList: [
-            Icon(Icons.home_outlined),
-            Icon(Icons.work_outline),
+          inactiveIconList: <Widget>[
+            const Icon(Icons.home_outlined),
+            const Icon(Icons.work_outline),
             //Icon(Icons.people_alt_outlined),
-            Container(
+            SizedBox(
               width: 24.0,
               height: 24.0,
               child: AbsorbPointer(
@@ -106,11 +107,11 @@ class _HomeState extends State<Home> {
               ),
             ),
           ],
-          activeIconList: [
-            Icon(Icons.home),
-            Icon(Icons.work),
+          activeIconList: <Widget>[
+            const Icon(Icons.home),
+            const Icon(Icons.work),
             //Icon(Icons.people_alt),
-            Container(
+            SizedBox(
               width: 24.0,
               height: 24.0,
               child: AbsorbPointer(
@@ -123,7 +124,7 @@ class _HomeState extends State<Home> {
               ),
             ),
           ],
-          labelList: [
+          labelList: <String>[
             'Home',
             'Services',
             //'Contacts',
@@ -149,10 +150,8 @@ class HomeBody extends StatefulWidget {
 class _HomeBodyState extends State<HomeBody> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Text(
-        widget.page,
-      ),
+    return Text(
+      widget.page,
     );
   }
 }

@@ -1,9 +1,10 @@
-import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart' show GoogleSignIn, GoogleSignInAccount, GoogleSignInAuthentication;
 import 'package:jobee/models/app_user.dart' show AppUser;
+
 import 'database.dart' show DatabaseService;
-import 'package:flutter/foundation.dart' show kIsWeb;
 
 class AuthService {
 
@@ -31,11 +32,11 @@ class AuthService {
     /// @throws FireBaseAuthException If there is an error with
     ///   firebase authentication.
     try {
-      UserCredential userCredential = await FirebaseAuth.instance.signInAnonymously();
-      User? user = userCredential.user;
+      final UserCredential userCredential = await FirebaseAuth.instance.signInAnonymously();
+      final User? user = userCredential.user;
       return _appUserFromFirebaseUser(user!);
     } catch (e) {
-      throw(e);
+      rethrow;
     }
   }
 
@@ -49,12 +50,12 @@ class AuthService {
     /// @throws FireBaseAuthException If there is an error with
     ///   firebase authentication.
     try {
-      UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword
+      final UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword
         (email: email, password: password);
-      User? user = userCredential.user;
+      final User? user = userCredential.user;
       return _appUserFromFirebaseUser(user!);
     } catch(e){
-      throw(e);
+      rethrow;
     }
   }
 
@@ -68,16 +69,16 @@ class AuthService {
     /// @throws FireBaseAuthException If there is an error with
     ///   firebase authentication.
     try {
-      UserCredential userCredential = await FirebaseAuth.instance.
+      final UserCredential userCredential = await FirebaseAuth.instance.
       createUserWithEmailAndPassword(email: email, password: password);
-      User? user = userCredential.user;
+      final User? user = userCredential.user;
 
       // the user is registering for the first time if this is ever reached,
       // so we need to create a new document for the user with the uid
       await DatabaseService(uid: user!.uid).createUserData(user.email!, 'Jobee');
       return _appUserFromFirebaseUser(user);
-    } on FirebaseAuthException catch (e) {
-      throw(e);
+    } on FirebaseAuthException {
+      rethrow;
     }
   }
 
@@ -95,7 +96,7 @@ class AuthService {
       await FirebaseAuth.instance.signOut();
       return true;
     } catch(e) {
-      print(e);
+      // an error occurred, could not sign out
       return false;
     }
   }
@@ -109,7 +110,7 @@ class AuthService {
   // --------------
 
   static final GoogleSignIn _googleSignIn = GoogleSignIn(
-    scopes: [
+    scopes: <String>[
       'email',
       //'https://www.googleapis.com/auth/contacts.readonly',
     ],
@@ -124,18 +125,14 @@ class AuthService {
     /// @param context BuildContext object.
     /// @returns Boolean defining the success of the logout action.
     ///
-    FirebaseAuth auth = FirebaseAuth.instance;
+    final FirebaseAuth auth = FirebaseAuth.instance;
     User? user;
 
     if (kIsWeb) {
-      GoogleAuthProvider authProvider = GoogleAuthProvider();
+      final GoogleAuthProvider authProvider = GoogleAuthProvider();
 
-      try {
-        final UserCredential userCredential = await auth.signInWithPopup(authProvider);
-        user = userCredential.user;
-      } catch (e) {
-        print(e);
-      }
+      final UserCredential userCredential = await auth.signInWithPopup(authProvider);
+      user = userCredential.user;
     } else {
       final GoogleSignInAccount? googleSignInAccount = await _googleSignIn.signIn();
 
@@ -171,7 +168,7 @@ class AuthService {
       backgroundColor: Colors.black,
       content: Text(
         content,
-        style: TextStyle(color: Colors.redAccent, letterSpacing: 0.5),
+        style: const TextStyle(color: Colors.redAccent, letterSpacing: 0.5),
       ),
     );
   }
