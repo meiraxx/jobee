@@ -21,7 +21,6 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int _bottomNavigationCurrentIndex = 0;
-  Widget? _bottomNavigationCurrentItem;
 
   // BUILD
   @override
@@ -30,19 +29,12 @@ class _HomeState extends State<Home> {
     final AppUserData? appUserData = Provider.of<AppUserData?>(context);
     if (appUserData==null) return const TextLoader(text: "Fetching user data...");
 
+    // - BOTTOM NAVIGATION BAR WIDGETS
+    const Widget homeWidget = HomeBody(page: 'Page 1: Home (client posts for services based on location VS service posts for clients based on location)');
+    const Widget serviceWidget = HomeBody(page: 'Page 2: Service (create, Icons.add_circle_outlined VS search, Icons.search_rounded)');
+    final Widget profileWidget = ProfileDetailedBody(appUserData: appUserData, isHero: false, hasLogoutButton: false, isProfileScreenAvatar: false);
 
-    // - BOTTOM NAVIGATION BAR LOGIC
-    switch (_bottomNavigationCurrentIndex) {
-      case 0:
-        _bottomNavigationCurrentItem = const HomeBody(page: 'Page 1: Home (client posts for services based on location VS service posts for clients based on location)');
-        break;
-      case 1:
-        _bottomNavigationCurrentItem = const HomeBody(page: 'Page 2: Service (create, Icons.add_circle_outlined VS search, Icons.search_rounded)');
-        break;
-      case 2:
-        _bottomNavigationCurrentItem = ProfileDetailedBody(appUserData: appUserData, isHero: false, hasLogoutButton: false, isProfileScreenAvatar: false);
-        break;
-    }
+    final List<Widget> bottomNavigationWidgetList = <Widget>[homeWidget, serviceWidget, profileWidget];
 
     // else, return all
     return StreamProvider<List<Profile>>.value(
@@ -70,7 +62,7 @@ class _HomeState extends State<Home> {
               );
             },
           ),
-          title: Logo(),
+          title: const Logo(),
           actions: <Widget>[
             appBarButton(context: context, iconData: Icons.notifications_none, onPressedFunction: () async {
               // TODO: show notifications
@@ -83,8 +75,9 @@ class _HomeState extends State<Home> {
             }),
           ],
         ),
-        body: Container(
-          child: _bottomNavigationCurrentItem,
+        body: IndexedStack(
+          index: _bottomNavigationCurrentIndex,
+          children: bottomNavigationWidgetList,
         ),
         bottomNavigationBar: bottomNavigationBarGenerator(
           context: context,

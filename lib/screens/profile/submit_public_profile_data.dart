@@ -151,7 +151,7 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
             title: Wrap(
               crossAxisAlignment: WrapCrossAlignment.center,
               children: <Widget>[
-                Logo(),
+                const Logo(),
                 const SizedBox(width: 16.0),
                 const Text(
                   "|   Public information",
@@ -268,7 +268,7 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
                           // - Gender
                           GestureDetector(
                             onTap: () {
-                              // print("Manually activate dropdown button");
+                              // debugPrint("Manually activate dropdown button");
                               openDropdownMethod2(_dropdownButtonKey); // manually activate dropdown button
                             },
                             child: SizedBox(
@@ -295,7 +295,7 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
                                     value: gender,
                                     child: Text(gender),
                                   );
-                                }).toList(),
+                                }).toList(growable: false),
                               ),
                             ),
                           ),
@@ -365,7 +365,11 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
                       Center(
                         child: Builder(builder: (BuildContext context) {
                           return _loading
-                          ? InPlaceLoader(replacedWidgetSize: const Size(48.0, 48.0), submissionErrorHeight: defaultSubmissionErrorHeight)
+                          ? InPlaceLoader(
+                            baseSize: const Size(48.0, 48.0),
+                            correctionSize: Size(defaultSubmissionErrorHeight*2, defaultSubmissionErrorHeight*2),
+                            padding: EdgeInsets.only(top: defaultSubmissionErrorHeight),
+                          )
                           : ElevatedButton(
                             onPressed: () async {
                               _formNotSubmitted = false;

@@ -10,6 +10,7 @@ import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart' show PickedFile;
 import 'package:path/path.dart' show join;
 import 'package:path_provider/path_provider.dart' show getApplicationDocumentsDirectory;
+import 'package:jobee/utils/crypto_utils.dart' show calculateSHA256FromBytes;
 
 import 'save_as/save_as.dart' show saveAsBytes;
 
@@ -42,18 +43,10 @@ class StorageService {
   }*/
 
   /// The user selects a file, and the task is added to the list.
-  Future<UploadTask?> uploadUserFile({required BuildContext context, PickedFile? pickedFile, required String remoteFileName, bool showError = false}) async {
-    if (pickedFile == null) {
-      // if showError flag is true
-      if (showError) {
-        // show error message
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('No file was selected'),
-        ));
-      }
-      return null;
-    }
-    UploadTask uploadTask;
+  Future<List<UploadTask>?> uploadUserFile({required BuildContext context, PickedFile? pickedFile, required String remoteFileName}) async {
+    if (pickedFile == null) return null;
+    UploadTask fileUploadTask;
+    UploadTask sha256UploadTask;
 
     // Create a Reference to the file
     final Reference remoteFileRef = FirebaseStorage.instance
@@ -66,47 +59,102 @@ class StorageService {
         contentType: 'image/jpeg',
         customMetadata: <String, String>{'picked-file-path': pickedFile.path});
 
+    final String sha256Digest = calculateSHA256FromBytes(await pickedFile.readAsBytes());
+    final Reference remoteSHA256Ref = FirebaseStorage.instance
+      .ref()
+      .child(this.uid!)
+      .child(remoteFileName.replaceFirst(".jpg", ".sha256"));
+
+    // if/else for web (html) and other platforms
     if (kIsWeb) {
-      uploadTask = remoteFileRef.putData(await pickedFile.readAsBytes(), metadata);
+      sha256UploadTask = remoteSHA256Ref.putData(Uint8List.fromList(sha256Digest.codeUnits));
+      fileUploadTask = remoteFileRef.putData(await pickedFile.readAsBytes(), metadata);
     } else {
-      uploadTask = remoteFileRef.putFile(File(pickedFile.path), metadata);
+      sha256UploadTask = remoteSHA256Ref.putData(Uint8List.fromList(sha256Digest.codeUnits));
+      fileUploadTask = remoteFileRef.putFile(File(pickedFile.path), metadata);
     }
 
-    return Future<UploadTask>.value(uploadTask);
+    return <UploadTask>[fileUploadTask, sha256UploadTask];
   }
 
-  static Future<File?> downloadFile({required Reference remoteFileRef, required String localFileName}) async {
+  static Future<File?> downloadUserFile({required Reference remoteFileRef, required String localFileName, required Uint8List localBytes}) async {
+    /// Signs in user with Google. If user already has a Jobee account with the same
+    /// e-mail registered, it signs them in normally on their account. If user does
+    /// not have an account
+    ///
+    /// @param remoteFileRef Reference Remote file reference on FireBase Storage.
+    /// @param localFileName String Local file name on this platform.
+    /// @returns null if:
+    ///   1. user still has no picture uploaded on the server
+    ///   2. user still did not download picture once on this platform
+    ///   3. the server picture is the same as the local picture
+    ///   4. an error occurred requesting a Get-URL from FireBase
     assert(remoteFileRef.parent!=null, 'downloadFile() error: remoteFileRef needs to be included in a directory');
-    String url;
+    final Reference remoteSHA256Ref = remoteFileRef.parent!.child(remoteFileRef.name.replaceFirst(".jpg", ".sha256"));
+    final Directory documentDirectory = await getApplicationDocumentsDirectory();
+    final File localFile = File(join(documentDirectory.path, localFileName));
 
-    final bool remoteFileExistsInDirectory = await _checkIfRemoteFileExists(remoteFileRef);
+    /* ------------------------------- */
+    /* DOWNLOAD SHA256 AND VALIDATE IT */
+    /* ------------------------------- */
+    // if the profile avatar file already exists locally
+    if (localFile.existsSync()) {
+      // we validate server sha256 vs local sha256
+      String sha256URL;
+      final bool remoteSHA256ExistsInDirectory = await _checkIfRemoteFileExists(remoteSHA256Ref);
 
-    /* if the target remote file reference points to a
-     * file that does not exist in its directory */
-    if (!remoteFileExistsInDirectory) {
-      // return null
-      return null;
+      /* if the target remote file reference of the file sha256 digest points
+     * to a file that does not exist in its directory, return null */
+      if (!remoteSHA256ExistsInDirectory) return null;
+
+      // else, obtain url from firebase (return empty string if there's an error getting profile picture)
+      sha256URL = await remoteSHA256Ref.getDownloadURL().onError((Object? error, StackTrace stackTrace) => '');
+
+      // if no sha256 url or file url is returned, return null
+      if (sha256URL=='') return null;
+
+      // else...
+      // download remote file's sha256 hash digest
+      final http.Response sha256Response = await http.get(Uri.parse(sha256URL)); // get http response from url
+      final String remoteSHA256Digest = sha256Response.body;
+
+      // get
+      final String localSHA256Digest = calculateSHA256FromBytes(localBytes);
+      debugPrint('Remote SHA256 digest: $remoteSHA256Digest');
+      debugPrint('Local SHA256 digest: $localSHA256Digest');
+      // validate if the current sha256 stored in the server is the same as the local
+      // file's sha256 we already have. If it is, this means we should not request
+      // the download of the image, thus saving bandwidth and UI refresh time
+      if (remoteSHA256Digest == localSHA256Digest) return null;
     }
 
-    // else, obtain url from firebase
-    url = await remoteFileRef.getDownloadURL().onError((Object? error, StackTrace stackTrace) {
-      // error getting profile picture
-      return '';
-    });
+    debugPrint("Downloading file.");
 
-    if (url=='') return null;
+    /* -------------------------- */
+    /* DOWNLOAD FILE AND WRITE IT */
+    /* -------------------------- */
+    String fileURL;
+    final bool remoteFileExistsInDirectory = await _checkIfRemoteFileExists(remoteFileRef);
 
+    /* if the target remote file reference of the file points to
+     * a file that does not exist in its directory, return null */
+    if (!remoteFileExistsInDirectory) return null;
+
+    // else, obtain url from firebase (return empty string if there's an error getting profile picture)
+    fileURL = await remoteFileRef.getDownloadURL().onError((Object? error, StackTrace stackTrace) => '');
+
+    // if no sha256 url or file url is returned, return null
+    if (fileURL=='') return null;
+
+    // else, success, so we go and download the file
     // get http response from url
-    final http.Response response = await http.get(Uri.parse(url));
+    final http.Response fileResponse = await http.get(Uri.parse(fileURL));
 
+    // write to local file
+    localFile.writeAsBytesSync(fileResponse.bodyBytes);
 
-    final Directory documentDirectory = await getApplicationDocumentsDirectory();
-
-    final File file = File(join(documentDirectory.path, localFileName));
-
-    file.writeAsBytesSync(response.bodyBytes);
-
-    return file;
+    debugPrint("File downloaded.");
+    return localFile;
   }
 
   /// Lists the child references of a remote directory
@@ -119,11 +167,13 @@ class StorageService {
   static Future<bool> _checkIfRemoteFileExists(Reference remoteFileRef) async {
     assert(remoteFileRef.parent!=null, '_checkIfRemoteFileExists() error: remoteFileRef needs to be included in a directory');
     final Reference remoteDirRef = remoteFileRef.parent!;
+
     final List<Reference> childRemoteRefList = await _listChildRemoteRefs(remoteDirRef);
     bool exists = false;
 
     for (final Reference childRemoteRef in childRemoteRefList) {
       exists = childRemoteRef.fullPath == remoteFileRef.fullPath;
+      if (exists) break;
     }
 
     return exists;

@@ -61,7 +61,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 Positioned(
                   child: Container(
                     padding: const EdgeInsets.fromLTRB(8.0, 12.0*3, 8.0, 12.0),
-                    child: Logo(),
+                    child: const Logo(),
                   ),
                 ),
               ],

@@ -57,7 +57,7 @@ class _TaskManagerState extends State<TaskManager> {
     );
 
     if (kIsWeb) {
-      //print(ref);
+      //debugPrint(ref);
       uploadTask = ref.putData(await file.readAsBytes(), metadata);
     } else {
       uploadTask = ref.putFile(File(file.path), metadata);
@@ -259,7 +259,7 @@ class UploadTaskListTile extends StatelessWidget {
             subtitle = const Text('Upload canceled.');
           } else {
             // ignore: avoid_print
-            print(asyncSnapshot.error);
+            debugPrint(asyncSnapshot.error.toString());
             subtitle = const Text('Something went wrong.');
           }
         } else if (snapshot != null) {

@@ -21,19 +21,6 @@ class _AuthenticateState extends State<Authenticate> {
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    precacheImage(
-      const AssetImage("images/dude-call.png"),
-      context,
-      size: Size(
-        MediaQuery.of(context).size.width,
-        232
-      )
-    );
-  }
-
-  @override
   Widget build(BuildContext context) {
     // constants
     const double paddingLeft = 20.0;
@@ -55,12 +42,10 @@ class _AuthenticateState extends State<Authenticate> {
             Container(
               color: JobeeThemeData.lightPaletteColors["white"],
               child: Image.asset(
-                "images/dude-call.png",
+                'images/dude-call.png',
                 semanticLabel: "Businessman negotiating with a client",
                 width: queryData.size.width,
                 height: 232,
-                cacheWidth: 1500,
-                cacheHeight: 846,
                 fit: BoxFit.cover,
               ),
             ),

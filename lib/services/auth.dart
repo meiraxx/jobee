@@ -44,8 +44,8 @@ class AuthService {
   static Future<AppUser> loginWithEmailAndPassword(String email, String password) async {
     /// Signs-in a user using the default email-password Firebase Authentication.
     ///
-    /// @param email Email of the user.
-    /// @param password Password of the user.
+    /// @param String email Email of the user.
+    /// @param String password Password of the user.
     /// @returns AppUser object.
     /// @throws FireBaseAuthException If there is an error with
     ///   firebase authentication.
@@ -63,8 +63,8 @@ class AuthService {
   static Future<AppUser> registerWithEmailAndPassword(String email, String password) async {
     /// Registers a user using the default email-password Firebase Authentication.
     ///
-    /// @param email Email of the user.
-    /// @param password Password of the user.
+    /// @param String email Email of the user.
+    /// @param String password Password of the user.
     /// @returns AppUser object.
     /// @throws FireBaseAuthException If there is an error with
     ///   firebase authentication.
@@ -86,7 +86,7 @@ class AuthService {
   static Future<bool> signOut({required BuildContext context}) async {
     /// Signs out any user, independently of its Auth provider.
     ///
-    /// @param context BuildContext object.
+    /// @param BuildContext context The current flutter widget context..
     /// @returns Boolean defining the success of the logout action.
 
     try {
@@ -122,7 +122,7 @@ class AuthService {
     /// e-mail registered, it signs them in normally on their account. If user does
     /// not have an account
     ///
-    /// @param context BuildContext object.
+    /// @param BuildContext context The current flutter widget context.
     /// @returns Boolean defining the success of the logout action.
     ///
     final FirebaseAuth auth = FirebaseAuth.instance;

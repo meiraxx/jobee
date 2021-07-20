@@ -51,10 +51,10 @@ class _AuthMailPasswordState extends State<AuthMailPassword> {
           }),
           title: Wrap(
             crossAxisAlignment: WrapCrossAlignment.center,
-            children: <Widget>[
+            children: const <Widget>[
               Logo(),
-              const SizedBox(width: 16.0),
-              const Text(
+              SizedBox(width: 16.0),
+              Text(
                 "|   Sign in",
               )
             ],
@@ -132,7 +132,12 @@ class _AuthMailPasswordState extends State<AuthMailPassword> {
                       SizedBox(height: defaultFormFieldSpacing),
                       Builder(
                         builder: (BuildContext context) {
-                          return _loading ? InPlaceLoader(replacedWidgetSize: const Size(48.0, 48.0), submissionErrorHeight: defaultSubmissionErrorHeight)
+                          return _loading
+                          ? InPlaceLoader(
+                            baseSize: const Size(48.0, 48.0),
+                            correctionSize: Size(defaultSubmissionErrorHeight*2, defaultSubmissionErrorHeight*2),
+                            padding: EdgeInsets.only(top: defaultSubmissionErrorHeight),
+                          )
                           : ElevatedButton(
                             onPressed: () async {
                               if (_formKey.currentState!.validate()) {

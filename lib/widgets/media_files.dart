@@ -7,7 +7,19 @@ import 'package:image_picker/image_picker.dart';
 
 Future<PickedFile?> _getImageFromSource(ImageSource imageSource) async {
   final ImagePicker picker = ImagePicker();
-  final PickedFile? pickedImage = await picker.getImage(source: imageSource);
+
+  // TODO: enforce a circular cut of the uploaded image with dynamic width/height smaller than maxWidth/maxHeight
+  final PickedFile? pickedImage = await picker.getImage(
+    source: imageSource,
+    maxHeight: 1024,
+    maxWidth: 1024,
+  );
+  // TODO: enforce that the cut image occupies a maximum memory size (in bytes, e.g. 2 MB)
+  // TODO-BackEnd: enforce that the uploaded cut image occupies a maximum memory size (in bytes, e.g. 2 MB)
+  // TODO: enforce that the cut image has width == height (e.g., 1024x1024)
+  // TODO-BackEnd: enforce that the uploaded cut image has width == height (e.g., 1024x1024)
+  // TODO: enforce that the cut image has maxWidth/maxHeight (e.g., 1024)
+  // TODO-BackEnd: enforce that the uploaded cut image has maxWidth/maxHeight (e.g., 1024)
 
   return pickedImage;
 }

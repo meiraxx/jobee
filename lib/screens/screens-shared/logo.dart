@@ -3,6 +3,9 @@ import 'package:google_fonts/google_fonts.dart';
 
 // Logo Class
 class Logo extends StatefulWidget {
+
+  const Logo({Key? key}) : super(key: key);
+
   @override
   _LogoState createState() => _LogoState();
 }
@@ -47,11 +50,11 @@ class _LogoState extends State<Logo> {
           crossAxisAlignment: WrapCrossAlignment.center,
           children: <Widget>[
             Image.asset(
-              "images/bee-logo-07.png",
+              'images/bee-logo-07.png',
               semanticLabel: "Jobee logo",
               width: 32.0, // default icon width
               height: 32.0, // default icon height
-              color: _currentLogoColor
+              color: _currentLogoColor,
             ),
             const SizedBox(width: 4.0),
             Text(

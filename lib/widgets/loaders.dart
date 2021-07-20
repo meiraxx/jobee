@@ -2,18 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class InPlaceLoader extends StatelessWidget {
-  final Size replacedWidgetSize;
-  final double submissionErrorHeight;
+  final Size baseSize;
+  final Size correctionSize;
+  final EdgeInsets padding;
 
-  const InPlaceLoader({Key? key, required this.replacedWidgetSize, required this.submissionErrorHeight}) : super(key: key);
+  const InPlaceLoader({Key? key, required this.baseSize, this.padding = EdgeInsets.zero, this.correctionSize = const Size(0.0, 0.0)}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(top: submissionErrorHeight),
+      padding: padding,
       child: SizedBox(
-        height: replacedWidgetSize.height - submissionErrorHeight*2,
-        width: replacedWidgetSize.width - submissionErrorHeight*2,
+        width: baseSize.width - correctionSize.width,
+        height: baseSize.height - correctionSize.height,
         child: CircularProgressIndicator(
           valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.primary),
         ),

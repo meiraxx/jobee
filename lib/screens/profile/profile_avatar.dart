@@ -3,7 +3,7 @@ import 'dart:io' show File;
 import 'dart:typed_data' show Uint8List;
 import 'package:firebase_storage/firebase_storage.dart' show UploadTask;
 import 'package:flutter/cupertino.dart' show CupertinoPageRoute;
-import 'package:flutter/foundation.dart' show listEquals;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
 import 'package:image_picker/image_picker.dart' show PickedFile;
@@ -12,9 +12,11 @@ import 'package:jobee/screens/profile/profile_detailed.dart' show ProfileDetaile
 import 'package:jobee/services/storage/storage.dart' show StorageService;
 import 'package:jobee/shared/global_constants.dart' show appBarButton;
 import 'package:jobee/shared/global_variables.dart' as global_variables;
-import 'package:jobee/widgets/ink_splash/custom_icon_button_ink_splash.dart';
+import 'package:jobee/widgets/ink_splash/custom_icon_button_ink_splash.dart' show CustomIconButtonInkSplash;
+import 'package:jobee/widgets/loaders.dart' show InPlaceLoader;
 import 'package:jobee/widgets/media_files.dart' show showImageSourceActionSheet;
 
+/// Class for the profile avatar shown inside an outer widget
 class ProfileAvatar extends StatefulWidget {
   final AppUserData appUserData;
   final Color borderColor;
@@ -30,59 +32,72 @@ class ProfileAvatar extends StatefulWidget {
 }
 
 class _ProfileAvatarState extends State<ProfileAvatar> with TickerProviderStateMixin {
-  bool _forceProfileAvatarDownloadAndUpdate = global_variables.updateUserProfileAvatar??true;
   late StorageService? _storageService;
   final double _circleAvatarRadius = 40.0;
-  Uint8List? _profileAvatarBytes;
+  bool _uploadingReDownloadingFlag = false;
 
   // Auxiliary functions
-  Future<Uint8List?> _downloadAndUpdateProfileAvatar() async {
-    // if the _forceProfileAvatarDownloadAndUpdate is false, we do nothing
-    if (!_forceProfileAvatarDownloadAndUpdate) return null;
+  Future<void> _downloadAndUpdateProfileAvatar() async {
+    // if global_variables.updateUserProfileAvatar is false, we do nothing
+    if (!global_variables.updateUserProfileAvatar) return;
 
     // else ...
-
     // Turn off further downloads and updates
-    _forceProfileAvatarDownloadAndUpdate = false;
+    global_variables.updateUserProfileAvatar = false;
+
+    // [1] Downloading image
     // Download the image file and halt thread execution until we have a File object
-    final File? downloadedFile = await StorageService.downloadFile(
+    final File? downloadedFile = await StorageService.downloadUserFile(
       remoteFileRef: _storageService!.userDirRemoteRef!.child('remote-profile-picture.jpg'),
       localFileName: 'local-profile-picture.jpg',
+      localBytes: global_variables.userProfileAvatarBytes,
     );
+    // after download attempt ...
+    // turn _uploadingReDownloadingFlag to false
+    _uploadingReDownloadingFlag = false;
 
-    // if the user hasn't yet uploaded a picture, simply return null
-    if (downloadedFile==null) return null;
+    // if the file was not downloaded
+    if (downloadedFile==null) return;
 
     // else...
+    // [2] Image downloaded
     // Set _profileAvatarBytes as the downloaded file's bytes
-    _profileAvatarBytes = downloadedFile.readAsBytesSync();
+    final Uint8List _profileAvatarBytes = downloadedFile.readAsBytesSync();
 
     // Update the global variable global_variables.userProfileAvatarBytes to the recently downloaded file (_profileAvatarBytes)
     global_variables.userProfileAvatarBytes = _profileAvatarBytes;
+    // turn global_variables.updateUserProfileAvatar to false
     global_variables.updateUserProfileAvatar = false;
 
-    // Asynchronously update UI with new profile avatar only if the
-    // downloaded profile avatar is different than the already stored
-    // one !listEquals(_profileAvatarBytes, global_variables.userProfileAvatarBytes)
-    if (this.mounted && !listEquals(_profileAvatarBytes, global_variables.userProfileAvatarBytes)) {
-      setState(() {});
-    }
-
-    return _profileAvatarBytes;
+    // Asynchronously update UI with new profile avatar
+    if (this.mounted) setState(() {});
   }
 
   Future<void> _handleProfileAvatarUploadIntent(BuildContext context) async {
     final PickedFile? pickedImageFile = await showImageSourceActionSheet(context);
-    final UploadTask? uploadTask = await _storageService!.uploadUserFile(context: context, pickedFile: pickedImageFile, remoteFileName: 'remote-profile-picture.jpg');
-    if (uploadTask == null) return;
+    // [1] Uploading image
+    final List<UploadTask>? userFileUploadTasks = await _storageService!.uploadUserFile(context: context, pickedFile: pickedImageFile, remoteFileName: 'remote-profile-picture.jpg');
+    if (userFileUploadTasks == null) return;
 
-    // when avatar upload is complete
-    uploadTask.whenComplete(() {
-      // Force re-download and update UI
-      _forceProfileAvatarDownloadAndUpdate = true;
-      global_variables.updateUserProfileAvatar = true;
+    // else...
+    // on upload start:
+    // turn _uploadingReDownloadingFlag to true
+    _uploadingReDownloadingFlag = true;
 
-      if (this.mounted) setState(() {});
+    // get both upload tasks (image and sha256)
+    final UploadTask imageUploadTask = userFileUploadTasks[0];
+    final UploadTask imageSHA256UploadTask = userFileUploadTasks[1];
+
+    // when avatar sha256 upload is complete
+    imageSHA256UploadTask.whenComplete(() {
+      // [2] Image SHA256 uploaded
+      // when avatar upload is complete
+      imageUploadTask.whenComplete(() {
+        // [3] Image downloaded
+        // Force re-download and update UI
+        global_variables.updateUserProfileAvatar = true;
+        if (this.mounted) setState(() {});
+      });
     });
   }
 
@@ -97,25 +112,26 @@ class _ProfileAvatarState extends State<ProfileAvatar> with TickerProviderStateM
       if (this.mounted) setState(() {});
     });
 
-    // (_forceProfileAvatarDownloadAndUpdate and global_variables.updateUserProfileAvatar)
-    // TODO-MAYBE: instead, create listener to update the "update avatar" boolean values above, when the stored image changes on the back-end
+    // TODO-MAYBE: instead, create listener to update global_variables.updateUserProfileAvatar, when the stored image changes on the back-end
     // TODO-BackEnd-MAYBE: notify this listener when stored image changes
   }
 
   @override
   Widget build(BuildContext context) {
-
     // - WIDGETS
     Widget? defaultHeroChild;
     Widget? defaultProfileAvatarHero;
     Widget? heroChild;
     Widget? profileAvatarHero;
 
-    // TODO: check a FireStore bool to check if the user image needs to be downloaded and updated
     // Download the profile avatar
     _downloadAndUpdateProfileAvatar();
 
-    if (global_variables.userProfileAvatarBytes == null) {
+    // check if image changed
+    final bool imageBytesChanged = !listEquals( global_variables.userProfileAvatarBytes, Uint8List.fromList(<int>[]) );
+
+    // if (!File('local-profile-picture.jpg').existsSync()) {
+    if (!imageBytesChanged) {
       defaultHeroChild = Material(
         color: Colors.transparent,
         child: Container(
@@ -138,12 +154,46 @@ class _ProfileAvatarState extends State<ProfileAvatar> with TickerProviderStateM
         child: defaultHeroChild,
       ) : defaultHeroChild;
     } else {
-      // Avatar Clip-Oval
-      heroChild = ClipOval(
+      // TODO: use Image.network for any platform
+      final Widget profileAvatarImage = SizedBox(
+        width: 200, // circle avatar image width
+        height: 200, // circle avatar image height
         child: Image.memory(
-          global_variables.userProfileAvatarBytes!,
+          global_variables.userProfileAvatarBytes,
           fit: BoxFit.cover,
         ),
+      );
+
+      /*final Widget profileAvatarImage = SizedBox(
+        width: 200, // circle avatar image width
+        height: 200, // circle avatar image height
+        child: Image.file(
+          File('local-profile-picture.jpg'),
+          fit: BoxFit.cover,
+        ),
+      );*/
+
+      // Avatar Clip-Oval
+      heroChild = ClipOval(
+        child: _uploadingReDownloadingFlag ? Stack(
+          children: <Widget>[
+            Positioned(
+              child: ColorFiltered(
+                colorFilter: ColorFilter.mode(
+                  Colors.black.withOpacity(0.5),
+                  BlendMode.darken,
+                ),
+                child: profileAvatarImage,
+              ),
+            ),
+            const Positioned(
+              child: InPlaceLoader(
+                baseSize: Size(40.0, 40.0),
+                padding: EdgeInsets.only(top: 20.0, left: 20.0),
+              ),
+            ),
+          ],
+        ) : profileAvatarImage,
       );
       // Avatar
       profileAvatarHero = widget.isHero ? Hero(
@@ -171,11 +221,11 @@ class _ProfileAvatarState extends State<ProfileAvatar> with TickerProviderStateM
                 child: SizedBox(
                   width: double.infinity,
                   height: double.infinity,
-                  child: (global_variables.userProfileAvatarBytes == null)
+                  child: (!imageBytesChanged)
                   ? GestureDetector(
                     onTap: () async {
-                      // if no image was uploaded, the click on this widget will
-                      // assume the user wants to upload an image
+                      // if no image was uploaded, the click on the profile avatar
+                      // widget will assume the user wants to upload an image
                       _handleProfileAvatarUploadIntent(context);
                     },
                     child: defaultProfileAvatarHero,
@@ -229,6 +279,7 @@ class _ProfileAvatarState extends State<ProfileAvatar> with TickerProviderStateM
                   customBorder: const CircleBorder(),
                   containedInkWell: true,
                   onTap: () async {
+                    // handle click on the camera icon
                     _handleProfileAvatarUploadIntent(context);
                   },
                   child: const InkWell(
@@ -248,6 +299,8 @@ class _ProfileAvatarState extends State<ProfileAvatar> with TickerProviderStateM
   }
 }
 
+
+/// Class for the full screen profile avatar
 class ProfileAvatarFullScreen extends StatefulWidget {
   final ProfileAvatar profileAvatar;
 
@@ -291,7 +344,7 @@ class _ProfileAvatarFullScreenState extends State<ProfileAvatarFullScreen> with 
                     color: Colors.black,
                     image: DecorationImage(
                       image: MemoryImage(
-                        global_variables.userProfileAvatarBytes!,
+                        global_variables.userProfileAvatarBytes,
                       ),
                       fit: BoxFit.cover,
                     )

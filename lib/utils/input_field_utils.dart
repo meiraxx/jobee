@@ -105,12 +105,12 @@ void openDropdownMethod1(GlobalKey dropdownButtonKey) {
   dropdownButtonKey.currentContext!.visitChildElements((element) {
     if (element.widget is Semantics) {
       element.visitChildElements((element) {
-        print("hello1");
-        print(element);
+        debugPrint("hello1");
+        debugPrint(element);
         if (element.widget is Actions) {
           element.visitChildElements((element) {
-            print("hello");
-            print(element);
+            debugPrint("hello");
+            debugPrint(element);
           });
         }
       });
