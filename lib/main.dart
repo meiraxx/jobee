@@ -1,41 +1,46 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart' show CupertinoPageRoute;
 import 'package:firebase_core/firebase_core.dart' show Firebase;
-import 'package:firebase_auth/firebase_auth.dart' show FirebaseAuth;
-import 'package:cloud_firestore/cloud_firestore.dart' show FirebaseFirestore;
-import 'package:cloud_functions/cloud_functions.dart' show FirebaseFunctions;
-import 'package:firebase_storage/firebase_storage.dart' show FirebaseStorage;
+//import 'package:firebase_auth/firebase_auth.dart' show FirebaseAuth;
+//import 'package:cloud_firestore/cloud_firestore.dart' show FirebaseFirestore;
+//import 'package:cloud_functions/cloud_functions.dart' show FirebaseFunctions;
+//import 'package:firebase_storage/firebase_storage.dart' show FirebaseStorage;
 import 'package:flutter_localizations/flutter_localizations.dart' show GlobalMaterialLocalizations, GlobalWidgetsLocalizations;
 import 'package:jobee/models/app_user.dart' show AppUser;
-import 'package:jobee/screens/authenticate/authenticate.dart' show Authenticate;
-import 'package:jobee/screens/home/home.dart' show Home;
+import 'package:jobee/screens/package1_authenticate/authenticate.dart' show Authenticate;
+import 'package:jobee/screens/package3_home/home.dart' show Home;
 import 'package:jobee/screens/wrapper.dart' show Wrapper;
 import 'package:jobee/services/auth.dart' show AuthService;
 import 'package:jobee/widgets/widget_utils/preload_image.dart' show loadImage;
 import 'package:provider/provider.dart' show MultiProvider, StreamProvider;
 import 'package:jobee/theme/jobee_theme_data.dart' show JobeeThemeData;
 import 'package:provider/single_child_widget.dart' show SingleChildWidget;
+import 'package:jobee/screens/package4_profile/global_variables_profile.dart'
+    show ProfileAsyncGlobals, ProfileSyncGlobals;
 
 Future<void> main() async {
-  // note: set to true when deploying
-  const bool useProductionBackend = true;
-
   WidgetsFlutterBinding.ensureInitialized();
 
-  // initialize firebase app
+  // [1] Initialize firebase app
   await Firebase.initializeApp();
 
   // use emulators rather than real firebase for testing purposes,
-  if (!useProductionBackend) {
-    await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
-    FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
-    FirebaseFunctions.instance.useFunctionsEmulator('localhost', 5001);
-    await FirebaseStorage.instance.useStorageEmulator('localhost', 9199);
-  }
+  //await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
+  //FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
+  //FirebaseFunctions.instance.useFunctionsEmulator('localhost', 5001);
+  //await FirebaseStorage.instance.useStorageEmulator('localhost', 9199);
 
-  // pre-loadings
+  // [2] Set needed global variables
+  // set avatar bytes to the local file bytes if file exists, else remain null
+  ProfileSyncGlobals.userProfileAvatarBytes ??= await ProfileAsyncGlobals.getLocalUserProfileAvatarBytes();
+
+  // [3] Pre-load essential images
+  // Asset images
   await loadImage(const AssetImage('images/dude-call.png'));
   await loadImage(const AssetImage('images/bee-logo-07.png'));
+  // Memory images
+  await loadImage(MemoryImage(ProfileSyncGlobals.userProfileAvatarBytes!));
+
 
   runApp(MyApp());
 }
@@ -50,7 +55,7 @@ class MyApp extends StatelessWidget {
       '/home': (BuildContext context) => const Home(),
     };
 
-    // TODO: Code Linting (using the 'link' package)
+    // DONE: Code Linting (using the 'link' package)
     // TODO: Code Packaging
     // TODO: Code Testing
 

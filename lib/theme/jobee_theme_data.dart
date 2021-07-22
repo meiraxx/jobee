@@ -82,11 +82,11 @@ class JobeeThemeData {
   static Color get lightFocusColor => _lightFocusColor;
   static Color get darkFocusColor => _darkFocusColor;
 
-  static final Color _lightSplashColor = Colors.black12;
-  static final Color _darkSplashColor = Colors.white24;
+  static const Color _lightSplashColor = Colors.black12;
+  static const Color _darkSplashColor = Colors.white24;
 
-  static final Color _lightHighlightColor = Colors.black12;
-  static final Color _darkHighlightColor = Colors.white24;
+  static const Color _lightHighlightColor = Colors.black12;
+  static const Color _darkHighlightColor = Colors.white24;
 
   static Color get lightSplashColor => _lightSplashColor;
   static Color get darkSplashColor => _darkSplashColor;
@@ -115,11 +115,11 @@ class JobeeThemeData {
   };
   static Map<String, Color> get lightPaletteColors => _lightPaletteColors;
 
-  static ThemeData lightThemeData = themeData(_lightColorScheme, _textTheme, _lightFocusColor, _lightFillColor, _darkFillColor, _lightSplashColor, _lightHighlightColor);
-  static ThemeData darkThemeData = themeData(_darkColorScheme, _textTheme, _darkFocusColor, _lightFillColor, _darkFillColor, _darkSplashColor, _darkHighlightColor);
+  static ThemeData lightThemeData = themeData(_lightColorScheme, _textTheme, _lightFocusColor, _lightSplashColor, _lightHighlightColor, _lightFillColor, _darkFillColor);
+  static ThemeData darkThemeData = themeData(_darkColorScheme, _textTheme, _darkFocusColor, _darkSplashColor, _darkHighlightColor, _darkFillColor, _lightFillColor);
 
-  static ThemeData themeData(ColorScheme colorScheme, TextTheme textTheme, Color defaultFocusColor, Color lightFillColor, Color darkFillColor,
-      Color defaultSplashColor, Color defaultHighlightColor) {
+  static ThemeData themeData(ColorScheme colorScheme, TextTheme textTheme, Color defaultFocusColor, Color defaultSplashColor,
+      Color defaultHighlightColor, Color fillColor, Color fillColorComplement) {
     return ThemeData(
       colorScheme: colorScheme,
       // apply colorScheme colors to the default-colored textTheme
@@ -149,8 +149,9 @@ class JobeeThemeData {
         brightness: colorScheme.brightness,
         centerTitle: false,
       ),
-      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+      bottomNavigationBarTheme: BottomNavigationBarThemeData(
         elevation: 0.0,
+        backgroundColor: colorScheme.background,
       ),
       iconTheme: IconThemeData(
         color: colorScheme.onPrimary,
@@ -165,13 +166,13 @@ class JobeeThemeData {
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
         backgroundColor: Color.alphaBlend(
-          lightFillColor.withOpacity(0.80),
-          darkFillColor,
+          fillColor.withOpacity(0.80),
+          fillColorComplement,
         ),
-        contentTextStyle: textTheme.subtitle1!.apply(color: darkFillColor),
+        contentTextStyle: textTheme.subtitle1!.apply(color: fillColorComplement),
       ),
       // TODO: make splash/highlight effects faster
-      // TODO:get more neutral colors for splash/highlight effects (white-ish or black-ish)
+      // TODO: get more neutral colors for splash/highlight effects (white-ish or black-ish)
       buttonTheme: ButtonThemeData(
         colorScheme: colorScheme,
         splashColor: defaultSplashColor,

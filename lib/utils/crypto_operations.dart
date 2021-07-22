@@ -1,5 +1,4 @@
 import 'dart:convert' show utf8;
-import 'dart:typed_data' show Uint8List;
 import 'package:crypto/crypto.dart';
 
 String calculateSHA256DigestFromString(String string) {

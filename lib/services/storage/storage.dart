@@ -1,16 +1,14 @@
-import 'dart:async';
-import 'dart:io' show File;
-import 'dart:io';
+import 'dart:io' show File, Directory;
 import 'dart:typed_data' show Uint8List;
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' show BuildContext, debugPrint;
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart' show PickedFile;
 import 'package:path/path.dart' show join;
 import 'package:path_provider/path_provider.dart' show getApplicationDocumentsDirectory;
-import 'package:jobee/utils/crypto_utils.dart' show calculateSHA256FromBytes;
+import 'package:jobee/utils/crypto_operations.dart' show calculateSHA256FromBytes;
 
 import 'save_as/save_as.dart' show saveAsBytes;
 

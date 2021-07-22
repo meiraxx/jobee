@@ -1,20 +1,22 @@
 import 'dart:async' show Timer;
 import 'dart:io' show File;
 import 'dart:typed_data' show Uint8List;
+
 import 'package:firebase_storage/firebase_storage.dart' show UploadTask;
 import 'package:flutter/cupertino.dart' show CupertinoPageRoute;
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
 import 'package:image_picker/image_picker.dart' show PickedFile;
+import 'package:jobee/screens/package4_profile/global_variables_profile.dart' show ProfileSyncGlobals;
 import 'package:jobee/models/app_user.dart' show AppUserData;
-import 'package:jobee/screens/profile/profile_detailed.dart' show ProfileDetailedScreen;
 import 'package:jobee/services/storage/storage.dart' show StorageService;
-import 'package:jobee/shared/global_constants.dart' show appBarButton;
-import 'package:jobee/shared/global_variables.dart' as global_variables;
 import 'package:jobee/widgets/ink_splash/custom_icon_button_ink_splash.dart' show CustomIconButtonInkSplash;
-import 'package:jobee/widgets/loaders.dart' show InPlaceLoader;
+import 'package:jobee/widgets/loaders/in_place_loader.dart' show InPlaceLoader;
 import 'package:jobee/widgets/media_files.dart' show showImageSourceActionSheet;
+
+import 'profile_avatar_fullscreen.dart' show ProfileAvatarFullScreen;
+import 'profile_detailed.dart' show ProfileDetailedScreen;
 
 /// Class for the profile avatar shown inside an outer widget
 class ProfileAvatar extends StatefulWidget {
@@ -32,28 +34,31 @@ class ProfileAvatar extends StatefulWidget {
 }
 
 class _ProfileAvatarState extends State<ProfileAvatar> with TickerProviderStateMixin {
+  // TODO: use only one instance of ProfileAvatar everywhere (or practically everywhere)
+
   late StorageService? _storageService;
   final double _circleAvatarRadius = 40.0;
   bool _uploadingReDownloadingFlag = false;
+  late Timer reloadTimer;
 
   // Auxiliary functions
   Future<void> _downloadAndUpdateProfileAvatar() async {
-    // if global_variables.updateUserProfileAvatar is false, we do nothing
-    if (!global_variables.updateUserProfileAvatar) return;
+    // if ProfileSyncGlobals.updateUserProfileAvatar is false, we do nothing
+    if (!ProfileSyncGlobals.updateUserProfileAvatar) return;
 
     // else ...
     // Turn off further downloads and updates
-    global_variables.updateUserProfileAvatar = false;
+    ProfileSyncGlobals.updateUserProfileAvatar = false;
 
     // [1] Downloading image
     // Download the image file and halt thread execution until we have a File object
     final File? downloadedFile = await StorageService.downloadUserFile(
       remoteFileRef: _storageService!.userDirRemoteRef!.child('remote-profile-picture.jpg'),
       localFileName: 'local-profile-picture.jpg',
-      localBytes: global_variables.userProfileAvatarBytes,
+      localBytes: ProfileSyncGlobals.userProfileAvatarBytes!,
     );
     // after download attempt ...
-    // turn _uploadingReDownloadingFlag to false
+    // Turn _uploadingReDownloadingFlag to false
     _uploadingReDownloadingFlag = false;
 
     // if the file was not downloaded
@@ -61,13 +66,10 @@ class _ProfileAvatarState extends State<ProfileAvatar> with TickerProviderStateM
 
     // else...
     // [2] Image downloaded
-    // Set _profileAvatarBytes as the downloaded file's bytes
-    final Uint8List _profileAvatarBytes = downloadedFile.readAsBytesSync();
-
-    // Update the global variable global_variables.userProfileAvatarBytes to the recently downloaded file (_profileAvatarBytes)
-    global_variables.userProfileAvatarBytes = _profileAvatarBytes;
-    // turn global_variables.updateUserProfileAvatar to false
-    global_variables.updateUserProfileAvatar = false;
+    // Update the global variable ProfileSyncGlobals.userProfileAvatarBytes to the recently downloaded file bytes
+    ProfileSyncGlobals.userProfileAvatarBytes = downloadedFile.readAsBytesSync();
+    // Turn ProfileSyncGlobals.updateUserProfileAvatar to false
+    ProfileSyncGlobals.updateUserProfileAvatar = false;
 
     // Asynchronously update UI with new profile avatar
     if (this.mounted) setState(() {});
@@ -95,7 +97,7 @@ class _ProfileAvatarState extends State<ProfileAvatar> with TickerProviderStateM
       imageUploadTask.whenComplete(() {
         // [3] Image downloaded
         // Force re-download and update UI
-        global_variables.updateUserProfileAvatar = true;
+        ProfileSyncGlobals.updateUserProfileAvatar = true;
         if (this.mounted) setState(() {});
       });
     });
@@ -107,12 +109,13 @@ class _ProfileAvatarState extends State<ProfileAvatar> with TickerProviderStateM
     // Initialize _storageService based on uid
     _storageService = StorageService(uid: widget.appUserData.uid);
 
+    debugPrint("Started timer");
     // each second, update const UI with changes (e.g., bottom navbar)
-    Timer.periodic(const Duration(seconds: 1), (Timer t) {
+    reloadTimer = Timer.periodic(const Duration(seconds: 1), (Timer t) {
       if (this.mounted) setState(() {});
     });
 
-    // TODO-MAYBE: instead, create listener to update global_variables.updateUserProfileAvatar, when the stored image changes on the back-end
+    // TODO-MAYBE: instead, create listener to update ProfileSyncGlobals.updateUserProfileAvatar, when the stored image changes on the back-end
     // TODO-BackEnd-MAYBE: notify this listener when stored image changes
   }
 
@@ -127,11 +130,9 @@ class _ProfileAvatarState extends State<ProfileAvatar> with TickerProviderStateM
     // Download the profile avatar
     _downloadAndUpdateProfileAvatar();
 
-    // check if image changed
-    final bool imageBytesChanged = !listEquals( global_variables.userProfileAvatarBytes, Uint8List.fromList(<int>[]) );
-
-    // if (!File('local-profile-picture.jpg').existsSync()) {
-    if (!imageBytesChanged) {
+    // check if image does not exist yet (null if no avatar was sent to the server, empty if
+    final bool imageNullOrEmpty = (ProfileSyncGlobals.userProfileAvatarBytes == null) || listEquals( ProfileSyncGlobals.userProfileAvatarBytes, Uint8List.fromList(<int>[]) );
+    if (imageNullOrEmpty) {
       defaultHeroChild = Material(
         color: Colors.transparent,
         child: Container(
@@ -154,24 +155,14 @@ class _ProfileAvatarState extends State<ProfileAvatar> with TickerProviderStateM
         child: defaultHeroChild,
       ) : defaultHeroChild;
     } else {
-      // TODO: use Image.network for any platform
       final Widget profileAvatarImage = SizedBox(
         width: 200, // circle avatar image width
         height: 200, // circle avatar image height
         child: Image.memory(
-          global_variables.userProfileAvatarBytes,
+          ProfileSyncGlobals.userProfileAvatarBytes!,
           fit: BoxFit.cover,
         ),
       );
-
-      /*final Widget profileAvatarImage = SizedBox(
-        width: 200, // circle avatar image width
-        height: 200, // circle avatar image height
-        child: Image.file(
-          File('local-profile-picture.jpg'),
-          fit: BoxFit.cover,
-        ),
-      );*/
 
       // Avatar Clip-Oval
       heroChild = ClipOval(
@@ -180,7 +171,7 @@ class _ProfileAvatarState extends State<ProfileAvatar> with TickerProviderStateM
             Positioned(
               child: ColorFiltered(
                 colorFilter: ColorFilter.mode(
-                  Colors.black.withOpacity(0.5),
+                  Colors.black.withOpacity(0.3),
                   BlendMode.darken,
                 ),
                 child: profileAvatarImage,
@@ -221,7 +212,7 @@ class _ProfileAvatarState extends State<ProfileAvatar> with TickerProviderStateM
                 child: SizedBox(
                   width: double.infinity,
                   height: double.infinity,
-                  child: (!imageBytesChanged)
+                  child: imageNullOrEmpty
                   ? GestureDetector(
                     onTap: () async {
                       // if no image was uploaded, the click on the profile avatar
@@ -297,68 +288,12 @@ class _ProfileAvatarState extends State<ProfileAvatar> with TickerProviderStateM
       ),
     );
   }
-}
-
-
-/// Class for the full screen profile avatar
-class ProfileAvatarFullScreen extends StatefulWidget {
-  final ProfileAvatar profileAvatar;
-
-  const ProfileAvatarFullScreen({Key? key, required this.profileAvatar}) : super(key: key);
 
   @override
-  _ProfileAvatarFullScreenState createState() => _ProfileAvatarFullScreenState();
-}
-
-class _ProfileAvatarFullScreenState extends State<ProfileAvatarFullScreen> with SingleTickerProviderStateMixin {
-  
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        leading: appBarButton(context: context, iconData: Icons.arrow_back, onPressedFunction: () {
-          Navigator.pop(context);
-        }, color: Colors.white),
-        title: const Text("Profile picture", style: TextStyle(color: Colors.white)),
-        elevation: 0.0,
-        actions: <Widget>[
-          appBarButton(context: context, iconData: Icons.edit, onPressedFunction: () async {
-            // TODO: call _handleProfileAvatarUploadIntent(context) here somehow
-          }, color: Colors.white),
-        ],
-      ),
-      body: Column(
-        children: <Widget>[
-          Expanded(
-            child: Container(color: Colors.black),
-          ),
-          Container(
-            color: Colors.black,
-            child: Hero(
-              tag: 'profileAvatarHero',
-              child: AspectRatio(
-                aspectRatio: 3 / 3,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.black,
-                    image: DecorationImage(
-                      image: MemoryImage(
-                        global_variables.userProfileAvatarBytes,
-                      ),
-                      fit: BoxFit.cover,
-                    )
-                  ),
-                ),
-              ),
-            ),
-          ),
-          Expanded(
-            child: Container(color: Colors.black),
-          ),
-        ],
-      ),
-    );
+  void dispose() {
+    debugPrint("Canceled timer");
+    reloadTimer.cancel();
+    super.dispose();
   }
 }
 

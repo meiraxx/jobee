@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:jobee/models/app_user.dart' show AppUserData;
-import 'package:jobee/screens/profile/submit_personal_profile_data.dart' show SubmitPersonalProfileData;
-import 'package:jobee/screens/screens-shared/logo.dart' show Logo;
+import 'package:jobee/screens/package2_user_details_registration/submit_personal_profile_data.dart' show SubmitPersonalProfileData;
+import 'package:jobee/screens/shared_screens/logo.dart' show Logo;
 import 'package:jobee/services/auth.dart' show AuthService;
 import 'package:jobee/services/database.dart' show DatabaseService;
-import 'package:jobee/utils/input_field_utils.dart' show openDropdownMethod2, validateNotEmpty;
-import 'package:jobee/widgets/loaders.dart' show TextLoader, InPlaceLoader;
+import 'package:jobee/utils/input_field_validation.dart' show validateNotEmpty;
+import 'package:jobee/widgets/widget_utils/input_fields.dart' show openDropdownMethod2;
+import 'package:jobee/widgets/loaders/text_loader.dart' show TextLoader;
+import 'package:jobee/widgets/loaders/in_place_loader.dart' show InPlaceLoader;
 import 'package:provider/provider.dart' show Provider;
 
 class SubmitPublicProfileData extends StatefulWidget {
@@ -150,10 +152,10 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
         appBar: AppBar(
             title: Wrap(
               crossAxisAlignment: WrapCrossAlignment.center,
-              children: <Widget>[
-                const Logo(),
-                const SizedBox(width: 16.0),
-                const Text(
+              children: const <Widget>[
+                Logo(),
+                SizedBox(width: 16.0),
+                Text(
                   "|   Public information",
                   style: TextStyle(
                     color: Colors.black,
@@ -458,10 +460,10 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
 
   @override
   void dispose() {
-    //_userNameController.dispose();
-    //_firstNameController.dispose();
-    //_lastNameController.dispose();
-    //_birthDayController.dispose();
+    _userNameController.dispose();
+    _firstNameController.dispose();
+    _lastNameController.dispose();
+    _birthDayController.dispose();
     super.dispose();
   }
 }

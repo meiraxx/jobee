@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:jobee/models/app_user.dart' show AppUser, AppUserData;
-import 'package:jobee/screens/profile/submit_public_profile_data.dart' show SubmitPublicProfileData;
+import 'package:jobee/screens/package2_user_details_registration/submit_public_profile_data.dart' show SubmitPublicProfileData;
 import 'package:jobee/services/database.dart' show DatabaseService;
 import 'package:provider/provider.dart' show Provider, StreamProvider;
-import 'authenticate/authenticate.dart' show Authenticate;
+import 'package1_authenticate/authenticate.dart' show Authenticate;
 
 class Wrapper extends StatelessWidget {
 

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
 import 'package:jobee/models/app_user.dart' show AppUserData;
-import 'package:jobee/screens/profile/profile_avatar.dart' show ProfileAvatar;
 import 'package:jobee/services/auth.dart' show AuthService;
-import 'package:jobee/shared/global_constants.dart' show appBarButton;
+
+import 'profile_avatar.dart' show ProfileAvatar;
 
 class ProfileDetailedBody extends StatefulWidget {
   final AppUserData? appUserData;
@@ -152,32 +152,3 @@ class _ProfileDetailedBodyState extends State<ProfileDetailedBody> {
     );
   }
 }
-
-class ProfileDetailedScreen extends StatefulWidget {
-  final AppUserData? appUserData;
-
-  const ProfileDetailedScreen({Key? key, required this.appUserData}) : super(key: key);
-
-  @override
-  _ProfileDetailedScreenState createState() => _ProfileDetailedScreenState();
-}
-
-class _ProfileDetailedScreenState extends State<ProfileDetailedScreen> {
-
-  @override
-  Widget build(BuildContext context) {
-
-    // Widget
-    return Scaffold(
-      appBar: AppBar(
-        leading: appBarButton(context: context, iconData: Icons.arrow_back, onPressedFunction: () {
-          Navigator.pop(context);
-        }),
-        title: const Text("Profile"),
-      ),
-      body: ProfileDetailedBody(appUserData: widget.appUserData, isHero: true, hasLogoutButton: true, isProfileScreenAvatar: true),
-      //bottomNavigationBar: bottomNavigationBar,
-    );
-  }
-}
-

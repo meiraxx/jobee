@@ -1,8 +1,9 @@
-import 'dart:async';
-
-import 'package:flutter/foundation.dart';
-import 'package:flutter/painting.dart';
-import 'package:flutter/services.dart';
+import 'dart:async' show Completer;
+//import 'package:flutter/foundation.dart' show debugPrint, FlutterError, FlutterErrorDetails, ErrorDescription, defaultTargetPlatform;
+import 'package:flutter/foundation.dart' show defaultTargetPlatform;
+import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart' show ImageProvider, ImageConfiguration, ImageStream, ImageStreamListener, ImageInfo;
+import 'package:flutter/services.dart' show rootBundle;
 
 Future<void> loadImage(ImageProvider provider) {
   final ImageConfiguration config = ImageConfiguration(

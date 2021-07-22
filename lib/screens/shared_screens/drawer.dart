@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart' show CupertinoPageRoute;
 import 'package:jobee/models/app_user.dart' show AppUserData;
-import 'package:jobee/screens/profile/profile_detailed.dart' show ProfileDetailedScreen;
-import 'package:jobee/screens/profile/profile_summarized.dart' show ProfileSummarized;
-import 'package:jobee/screens/screens-shared/logo.dart' show Logo;
-import 'package:jobee/shared/global_constants.dart' show appBarButton;
+import 'package:jobee/screens/package4_profile/profile_detailed.dart' show ProfileDetailedScreen;
+import 'package:jobee/screens/package4_profile/profile_summarized.dart' show ProfileSummarized;
+import 'package:jobee/screens/package5_jobee_services/jobee_service_list.dart' show JobeeServiceList;
+import 'package:jobee/screens/shared_screens/logo.dart' show Logo;
+import 'package:jobee/widgets/widget_utils/app_bar_button.dart' show appBarButton;
 import 'package:provider/provider.dart' show Provider;
-import 'loaders.dart' show TextLoader;
 
 class CustomDrawer extends StatefulWidget {
 
@@ -35,7 +35,6 @@ class _CustomDrawerState extends State<CustomDrawer> {
 
     // database service - app user data
     final AppUserData? appUserData = Provider.of<AppUserData?>(context);
-    if (appUserData==null) return const TextLoader(text: "Fetching user data...");
 
     return Container(
       // based on experiments, 0.739 is the drawer menu default width
@@ -83,6 +82,13 @@ class _CustomDrawerState extends State<CustomDrawer> {
             const Divider(height: 0.0),
             // - SERVICES
             appBarButton(context: context, text: "Services", iconData: Icons.pages_outlined, onPressedFunction: () async {
+              // pop the drawer menu
+              Navigator.pop(context);
+              // push the about us page
+              Navigator.push(context, CupertinoPageRoute<dynamic>(builder: (BuildContext context) => const JobeeServiceList()));
+            }),
+            // - SERVICES
+            appBarButton(context: context, text: "Settings", iconData: Icons.settings_outlined, onPressedFunction: () async {
               // pop the drawer menu
               Navigator.pop(context);
               // show the service panel widget

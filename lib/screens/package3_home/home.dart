@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:jobee/models/app_user.dart' show AppUserData;
 import 'package:jobee/models/profile.dart' show Profile;
-import 'package:jobee/screens/profile/profile_avatar.dart';
-import 'package:jobee/screens/profile/profile_detailed.dart';
-import 'package:jobee/screens/screens-shared/logo.dart' show Logo;
-import 'package:jobee/widgets/drawer.dart' show CustomDrawer;
+import 'package:jobee/screens/package4_profile/profile_avatar.dart';
+import 'package:jobee/screens/package4_profile/profile_detailed_body.dart';
+import 'package:jobee/screens/shared_screens/logo.dart' show Logo;
+import 'package:jobee/screens/shared_screens/drawer.dart' show CustomDrawer;
 import 'package:jobee/services/database.dart' show DatabaseService;
 import 'package:jobee/theme/jobee_theme_data.dart' show JobeeThemeData;
-import 'package:jobee/widgets/loaders.dart' show TextLoader;
 import 'package:provider/provider.dart' show Provider, StreamProvider;
-import 'package:jobee/shared/global_constants.dart' show appBarButton, iconSplashRadius;
+import 'package:jobee/widgets/widget_utils/app_bar_button.dart' show appBarButton, iconSplashRadius;
 import 'package:jobee/widgets/navigation_bar/navigation_bar_generator.dart' show bottomNavigationBarGenerator;
 
 class Home extends StatefulWidget {
@@ -27,7 +26,6 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     // database service - app user data
     final AppUserData? appUserData = Provider.of<AppUserData?>(context);
-    if (appUserData==null) return const TextLoader(text: "Fetching user data...");
 
     // - BOTTOM NAVIGATION BAR WIDGETS
     const Widget homeWidget = HomeBody(page: 'Page 1: Home (client posts for services based on location VS service posts for clients based on location)');
@@ -35,6 +33,8 @@ class _HomeState extends State<Home> {
     final Widget profileWidget = ProfileDetailedBody(appUserData: appUserData, isHero: false, hasLogoutButton: false, isProfileScreenAvatar: false);
 
     final List<Widget> bottomNavigationWidgetList = <Widget>[homeWidget, serviceWidget, profileWidget];
+
+    // TODO: unify all profile avatar widgets
 
     // else, return all
     return StreamProvider<List<Profile>>.value(
@@ -81,11 +81,7 @@ class _HomeState extends State<Home> {
         ),
         bottomNavigationBar: bottomNavigationBarGenerator(
           context: context,
-          onTap: (int newIndex) {
-            setState(() {
-              _bottomNavigationCurrentIndex = newIndex;
-            });
-          },
+          onTap: (int newIndex) => setState(() => _bottomNavigationCurrentIndex = newIndex),
           bottomNavigationCurrentIndex: _bottomNavigationCurrentIndex,
           inactiveIconList: <Widget>[
             const Icon(Icons.home_outlined),
@@ -96,7 +92,7 @@ class _HomeState extends State<Home> {
               height: 24.0,
               child: AbsorbPointer(
                 child: ProfileAvatar(
-                  appUserData: appUserData,
+                  appUserData: appUserData!,
                   borderColor: JobeeThemeData.lightInactiveItemColor,
                   isHero: false,
                   avatarTextFontSize: 9.0,
@@ -129,6 +125,8 @@ class _HomeState extends State<Home> {
           ],
           nItems: 3,
           inactiveColor: JobeeThemeData.lightInactiveItemColor,
+          activeColor: Theme.of(context).colorScheme.primary,
+          navBarType: 1,
         ),
       ),
     );

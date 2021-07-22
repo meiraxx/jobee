@@ -1,9 +1,5 @@
-import 'package:flutter/material.dart';
-import 'math_utils.dart' show generateRandomInteger;
+import 'math_operations.dart' show generateRandomInteger;
 
-/* --------------------------
-|         Validators        |
--------------------------- */
 String? validateNotEmpty({required String text, required String field, required String errorMessage, bool formNotSubmitted = false, String? currentlyFocusedField, Function()? successFunction, Function()? errorFunction}) {
   // formNotSubmitted must be used when using errorText instead of validator
   // formNotSubmitted defaults to false, so it is not needed when using validator
@@ -64,9 +60,9 @@ List<dynamic> validatePhoneNumber({required String phoneCountryDialCode, require
   final int numberLength = currentCountryCodeInfo['numberLength']! as int;
   final List<String> firstMobileDigitsList = currentCountryCodeInfo['firstMobileDigitsList']! as List<String>;
 
-  /* -------------
-  |  Validation  |
-  ------------- */
+  /* ----------------
+  |  PT Validation  |
+  ---------------- */
   // typed phone number's length cannot be different than numberLength
   if (phoneNumber.length != 9) {
     return <dynamic>[
@@ -95,43 +91,4 @@ List<dynamic> validatePhoneNumber({required String phoneCountryDialCode, require
   }
 
   return <dynamic>[true, ''];
-}
-
-/* ---------------------------
-|        Widget utils        |
---------------------------- */
-/*
-void openDropdownMethod1(GlobalKey dropdownButtonKey) {
-  dropdownButtonKey.currentContext!.visitChildElements((element) {
-    if (element.widget is Semantics) {
-      element.visitChildElements((element) {
-        debugPrint("hello1");
-        debugPrint(element);
-        if (element.widget is Actions) {
-          element.visitChildElements((element) {
-            debugPrint("hello");
-            debugPrint(element);
-          });
-        }
-      });
-    }
-  });
-}*/
-
-void openDropdownMethod2(GlobalKey dropdownButtonKey) {
-  GestureDetector? detector;
-  void searchForGestureDetector(BuildContext element) {
-    element.visitChildElements((Element element) {
-      if (element.widget is GestureDetector) {
-        detector = element.widget as GestureDetector?;
-      } else {
-        searchForGestureDetector(element);
-      }
-    });
-  }
-
-  searchForGestureDetector(dropdownButtonKey.currentContext!);
-  assert(detector != null);
-
-  detector!.onTap!();
 }

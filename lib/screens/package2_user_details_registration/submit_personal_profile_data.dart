@@ -4,14 +4,15 @@ import 'package:jobee/external-libs/intl_phone_field-2.0.0/phone_number.dart' sh
 //import 'package:intl_phone_field/intl_phone_field.dart' show IntlPhoneField;
 //import 'package:intl_phone_field/phone_number.dart' show PhoneNumber;
 import 'package:jobee/models/app_user.dart' show AppUserData;
-import 'package:jobee/screens/home/home.dart' show Home;
-import 'package:jobee/screens/screens-shared/logo.dart' show Logo;
+import 'package:jobee/screens/package3_home/home.dart' show Home;
+import 'package:jobee/screens/shared_screens/logo.dart' show Logo;
 import 'package:jobee/screens/wrapper.dart' show Wrapper;
 import 'package:jobee/services/auth.dart' show AuthService;
 import 'package:jobee/services/database.dart' show DatabaseService;
 import 'package:jobee/services/network.dart' show NetworkService;
-import 'package:jobee/utils/input_field_utils.dart' show validateNotEmpty, validatePhoneNumber;
-import 'package:jobee/widgets/loaders.dart' show TextLoader, InPlaceLoader;
+import 'package:jobee/utils/input_field_validation.dart' show validateNotEmpty, validatePhoneNumber;
+import 'package:jobee/widgets/loaders/text_loader.dart' show TextLoader;
+import 'package:jobee/widgets/loaders/in_place_loader.dart' show InPlaceLoader;
 import 'package:provider/provider.dart' show Provider;
 
 class SubmitPersonalProfileData extends StatefulWidget {
@@ -47,11 +48,6 @@ class _SubmitPersonalProfileDataState extends State<SubmitPersonalProfileData> {
   final Future<Map<String, dynamic>> _infoByIP = NetworkService.getInfoByIP()!;
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final MediaQueryData queryData = MediaQuery.of(context);
     // form info
@@ -64,9 +60,8 @@ class _SubmitPersonalProfileDataState extends State<SubmitPersonalProfileData> {
 
     // app user data
     final AppUserData? appUserData = Provider.of<AppUserData?>(context);
-    if (appUserData==null) return const TextLoader(text: "Fetching user data...");
 
-    return appUserData.hasRegisteredPersonalData
+    return appUserData!.hasRegisteredPersonalData
     ? const Home()
     : FutureBuilder<Map<String, dynamic>>(
       future: _infoByIP,
@@ -277,10 +272,5 @@ class _SubmitPersonalProfileDataState extends State<SubmitPersonalProfileData> {
         }
       },
     );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 }

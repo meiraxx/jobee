@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart' show FirebaseAuthException;
 import 'package:flutter/services.dart' show TextInput;
-import 'package:jobee/screens/screens-shared/logo.dart' show Logo;
+import 'package:jobee/screens/shared_screens/logo.dart' show Logo;
 import 'package:jobee/services/auth.dart' show AuthService;
-import 'package:jobee/shared/global_constants.dart' show appBarButton;
-import 'package:jobee/widgets/loaders.dart' show InPlaceLoader;
-import 'package:jobee/utils/input_field_utils.dart' show validateNotEmpty, validatePassword;
+import 'package:jobee/widgets/widget_utils/app_bar_button.dart' show appBarButton;
+import 'package:jobee/widgets/loaders/in_place_loader.dart' show InPlaceLoader;
+import 'package:jobee/utils/input_field_validation.dart' show validateNotEmpty, validatePassword;
 
 class RegMailPassword extends StatefulWidget {
   final Function toggleView;
