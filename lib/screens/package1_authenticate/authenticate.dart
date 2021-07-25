@@ -9,6 +9,8 @@ import 'package:jobee/widgets/ink_splash/custom_elevated_button_ink_splash.dart'
 import 'google_sign_in_button.dart' show GoogleSignInButton;
 
 class Authenticate extends StatefulWidget {
+  const Authenticate({Key? key}) : super(key: key);
+
   @override
   _AuthenticateState createState() => _AuthenticateState();
 }

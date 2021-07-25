@@ -5,7 +5,7 @@ import 'package:jobee/models/app_user.dart' show AppUserData;
 import 'profile_detailed_body.dart';
 
 class ProfileDetailedScreen extends StatefulWidget {
-  final AppUserData? appUserData;
+  final AppUserData appUserData;
 
   const ProfileDetailedScreen({Key? key, required this.appUserData}) : super(key: key);
 

@@ -6,7 +6,7 @@ import 'package:jobee/services/auth.dart' show AuthService;
 import 'profile_avatar.dart' show ProfileAvatar;
 
 class ProfileDetailedBody extends StatefulWidget {
-  final AppUserData? appUserData;
+  final AppUserData appUserData;
   final bool hasLogoutButton;
   final bool isHero;
   final bool isProfileScreenAvatar;
@@ -75,7 +75,7 @@ class _ProfileDetailedBodyState extends State<ProfileDetailedBody> {
             children: <Widget>[
               Center(
                 child: ProfileAvatar(
-                  appUserData: widget.appUserData!,
+                  appUserData: widget.appUserData,
                   borderColor: Theme.of(context).colorScheme.primary,
                   isHero: widget.isHero,
                   isProfileScreenAvatar: widget.isProfileScreenAvatar,
@@ -84,7 +84,7 @@ class _ProfileDetailedBodyState extends State<ProfileDetailedBody> {
               const SizedBox(height: 6.0),
               Center(
                 child: Text(
-                  widget.appUserData!.userName!,
+                  widget.appUserData.userName!,
                   style: GoogleFonts.montserrat().copyWith(
                     color: Colors.black,
                     fontSize: 18.0,
@@ -104,7 +104,7 @@ class _ProfileDetailedBodyState extends State<ProfileDetailedBody> {
                     ),
                     const SizedBox(width: 4.0),
                     Text(
-                      widget.appUserData!.email,
+                      widget.appUserData.email,
                       style: const TextStyle(
                           color: Colors.black,
                           fontSize: 16.0,

@@ -8,7 +8,7 @@ import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
 import 'package:image_picker/image_picker.dart' show PickedFile;
-import 'package:jobee/screens/package4_profile/global_variables_profile.dart' show ProfileSyncGlobals;
+import 'package:jobee/screens/package4_profile/global_variables_profile.dart' show ProfileAsyncGlobals, ProfileSyncGlobals;
 import 'package:jobee/models/app_user.dart' show AppUserData;
 import 'package:jobee/services/storage/storage.dart' show StorageService;
 import 'package:jobee/widgets/ink_splash/custom_icon_button_ink_splash.dart' show CustomIconButtonInkSplash;
@@ -51,12 +51,14 @@ class _ProfileAvatarState extends State<ProfileAvatar> with TickerProviderStateM
     ProfileSyncGlobals.updateUserProfileAvatar = false;
 
     // [1] Downloading image
+    final File localFile = await ProfileAsyncGlobals.getLocalUserProfileAvatarFile(widget.appUserData.uid);
     // Download the image file and halt thread execution until we have a File object
     final File? downloadedFile = await StorageService.downloadUserFile(
       remoteFileRef: _storageService!.userDirRemoteRef!.child('remote-profile-picture.jpg'),
-      localFileName: 'local-profile-picture.jpg',
+      localFile: localFile,
       localBytes: ProfileSyncGlobals.userProfileAvatarBytes!,
     );
+
     // after download attempt ...
     // Turn _uploadingReDownloadingFlag to false
     _uploadingReDownloadingFlag = false;
@@ -109,7 +111,7 @@ class _ProfileAvatarState extends State<ProfileAvatar> with TickerProviderStateM
     // Initialize _storageService based on uid
     _storageService = StorageService(uid: widget.appUserData.uid);
 
-    debugPrint("Started timer");
+    //debugPrint("Started timer");
     // each second, update const UI with changes (e.g., bottom navbar)
     reloadTimer = Timer.periodic(const Duration(seconds: 1), (Timer t) {
       if (this.mounted) setState(() {});
@@ -130,9 +132,9 @@ class _ProfileAvatarState extends State<ProfileAvatar> with TickerProviderStateM
     // Download the profile avatar
     _downloadAndUpdateProfileAvatar();
 
-    // check if image does not exist yet (null if no avatar was sent to the server, empty if
-    final bool imageNullOrEmpty = (ProfileSyncGlobals.userProfileAvatarBytes == null) || listEquals( ProfileSyncGlobals.userProfileAvatarBytes, Uint8List.fromList(<int>[]) );
-    if (imageNullOrEmpty) {
+    // check if image does not exist yet (empty if no avatar was sent to the server)
+    final bool imageEmpty = listEquals( ProfileSyncGlobals.userProfileAvatarBytes, Uint8List.fromList(<int>[]) );
+    if (imageEmpty) {
       defaultHeroChild = Material(
         color: Colors.transparent,
         child: Container(
@@ -212,7 +214,7 @@ class _ProfileAvatarState extends State<ProfileAvatar> with TickerProviderStateM
                 child: SizedBox(
                   width: double.infinity,
                   height: double.infinity,
-                  child: imageNullOrEmpty
+                  child: imageEmpty
                   ? GestureDetector(
                     onTap: () async {
                       // if no image was uploaded, the click on the profile avatar
@@ -291,7 +293,7 @@ class _ProfileAvatarState extends State<ProfileAvatar> with TickerProviderStateM
 
   @override
   void dispose() {
-    debugPrint("Canceled timer");
+    //debugPrint("Canceled timer");
     reloadTimer.cancel();
     super.dispose();
   }

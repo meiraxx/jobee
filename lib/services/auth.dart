@@ -75,7 +75,7 @@ class AuthService {
 
       // the user is registering for the first time if this is ever reached,
       // so we need to create a new document for the user with the uid
-      await DatabaseService(uid: user!.uid).createUserData(user.email!, 'Jobee');
+      await DatabaseService(uid: user!.uid, email: user.email!).createUserData('Jobee');
       return _appUserFromFirebaseUser(user);
     } on FirebaseAuthException {
       rethrow;
@@ -163,16 +163,6 @@ class AuthService {
     return (user!=null)?_appUserFromFirebaseUser(user):null;
   }
 
-  static SnackBar customSnackBar({required String content}) {
-    return SnackBar(
-      backgroundColor: Colors.black,
-      content: Text(
-        content,
-        style: const TextStyle(color: Colors.redAccent, letterSpacing: 0.5),
-      ),
-    );
-  }
-
   static Future<bool> handleGoogleLogout({required BuildContext context}) async {
     // if user is not signed-in with google, ignore
     if ( !(await _googleSignIn.isSignedIn()) ) {
@@ -186,10 +176,16 @@ class AuthService {
       }
       await FirebaseAuth.instance.signOut();
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        AuthService.customSnackBar(
-          content: 'Error signing out. Try again.',
+      const SnackBar signOutSnackBar = SnackBar(
+        backgroundColor: Colors.black,
+        content: Text(
+          'Error signing out. Try again.',
+          style: TextStyle(color: Colors.redAccent, letterSpacing: 0.5),
         ),
+      );
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        signOutSnackBar,
       );
     }
 

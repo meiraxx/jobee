@@ -3,7 +3,7 @@ import 'package:jobee/models/app_user.dart' show AppUserData;
 import 'package:jobee/screens/package4_profile/profile_avatar.dart' show ProfileAvatar;
 
 class ProfileSummarized extends StatefulWidget {
-  final AppUserData? appUserData;
+  final AppUserData appUserData;
 
   const ProfileSummarized({Key? key, required this.appUserData}) : super(key: key);
 
@@ -19,7 +19,7 @@ class _ProfileSummarizedState extends State<ProfileSummarized> {
         const SizedBox(height: 6.0),
         Center(
           child: ProfileAvatar(
-            appUserData: widget.appUserData!,
+            appUserData: widget.appUserData,
             borderColor: Theme.of(context).colorScheme.primary,
             isHero: false,
           ),
@@ -27,7 +27,7 @@ class _ProfileSummarizedState extends State<ProfileSummarized> {
         const SizedBox(height: 6.0),
         Center(
           child: Text(
-            "${widget.appUserData!.firstName!} ${widget.appUserData!.lastName!}",
+            "${widget.appUserData.firstName!} ${widget.appUserData.lastName!}",
             style: Theme.of(context).textTheme.subtitle1!.copyWith(
               fontSize: 20.0,
             ),
@@ -53,7 +53,7 @@ class _ProfileSummarizedState extends State<ProfileSummarized> {
                     const SizedBox(width: 4.0),
                     Expanded(
                       child: Text(
-                        widget.appUserData!.userName!,
+                        widget.appUserData.userName!,
                         style: Theme.of(context).textTheme.subtitle2!.copyWith(
                           fontSize: 13.0,
                         ),
@@ -71,7 +71,7 @@ class _ProfileSummarizedState extends State<ProfileSummarized> {
                         ),
                         const SizedBox(width: 4.0),
                         Text(
-                          "(${widget.appUserData!.phoneCountryDialCode!}) ${widget.appUserData!.phoneNumber!}",
+                          "(${widget.appUserData.phoneCountryDialCode!}) ${widget.appUserData.phoneNumber!}",
                           style: Theme.of(context).textTheme.bodyText2,
                         ),
                       ],
@@ -92,7 +92,7 @@ class _ProfileSummarizedState extends State<ProfileSummarized> {
                     const SizedBox(width: 4.0),
                     Expanded(
                       child: Text(
-                        widget.appUserData!.email,
+                        widget.appUserData.email,
                         style: Theme.of(context).textTheme.bodyText2,
                       ),
                     ),

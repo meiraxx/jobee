@@ -1,6 +1,6 @@
 import 'math_operations.dart' show generateRandomInteger;
 
-String? validateNotEmpty({required String text, required String field, required String errorMessage, bool formNotSubmitted = false, String? currentlyFocusedField, Function()? successFunction, Function()? errorFunction}) {
+String? validateNotEmpty({required String text, required String field, required String errorMessage, bool formNotSubmitted = false, Function()? successFunction, Function()? errorFunction}) {
   // formNotSubmitted must be used when using errorText instead of validator
   // formNotSubmitted defaults to false, so it is not needed when using validator
   if (formNotSubmitted) {
@@ -11,7 +11,6 @@ String? validateNotEmpty({required String text, required String field, required 
   // error case
   if (text.isEmpty) {
     if (errorFunction!=null) errorFunction();
-    //if (currentlyFocusedField != null && currentlyFocusedField!=field) return errorMessage;
     return errorMessage;
   }
 

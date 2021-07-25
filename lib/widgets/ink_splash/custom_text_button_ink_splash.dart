@@ -149,7 +149,6 @@ class CustomTextButtonInkSplash extends InteractiveInkFeature {
       ..addListener(controller.markNeedsPaint)
       ..addStatusListener(_handleAlphaOutStatusChanged);
 
-    //debugPrint(_alpha.value);
     controller.addInkFeature(this);
   }
 
@@ -187,18 +186,18 @@ class CustomTextButtonInkSplash extends InteractiveInkFeature {
 
   void _handleAlphaOutStatusChanged(AnimationStatus status) {
     if (status == AnimationStatus.forward) {
-      //debugPrint("Fade out is forward.");
+
     } else if (status == AnimationStatus.completed) {
-      //debugPrint("Fade out is completed: completely dispose of CustomTextButtonInkSplash.");
+      // fade out is completed: completely dispose of CustomTextButtonInkSplash
       this.dispose();
     }
   }
 
   void _handleAlphaInStatusChanged(AnimationStatus status) {
     if (status == AnimationStatus.forward) {
-      //debugPrint("Fade in is forward.");
+
     } else if (status == AnimationStatus.completed) {
-      //debugPrint("Fade in is completed: start fade-out animation");
+      // fade in is completed: start fade-out animation
       _startAlphaOutAnimation();
     }
   }

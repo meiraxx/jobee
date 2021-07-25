@@ -1,13 +1,12 @@
-import 'dart:io' show File, Directory;
+import 'dart:io' show File;
 import 'dart:typed_data' show Uint8List;
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:flutter/material.dart' show BuildContext, debugPrint;
+import 'package:flutter/material.dart' show BuildContext;
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart' show PickedFile;
-import 'package:path/path.dart' show join;
-import 'package:path_provider/path_provider.dart' show getApplicationDocumentsDirectory;
+import 'package:jobee/utils/file_utils.dart' show createFileRecursivelyAndWriteBytesSync;
 import 'package:jobee/utils/crypto_operations.dart' show calculateSHA256FromBytes;
 
 import 'save_as/save_as.dart' show saveAsBytes;
@@ -75,7 +74,7 @@ class StorageService {
     return <UploadTask>[fileUploadTask, sha256UploadTask];
   }
 
-  static Future<File?> downloadUserFile({required Reference remoteFileRef, required String localFileName, required Uint8List localBytes}) async {
+  static Future<File?> downloadUserFile({required Reference remoteFileRef, required File localFile, required Uint8List localBytes}) async {
     /// Signs in user with Google. If user already has a Jobee account with the same
     /// e-mail registered, it signs them in normally on their account. If user does
     /// not have an account
@@ -89,8 +88,6 @@ class StorageService {
     ///   4. an error occurred requesting a Get-URL from FireBase
     assert(remoteFileRef.parent!=null, 'downloadFile() error: remoteFileRef needs to be included in a directory');
     final Reference remoteSHA256Ref = remoteFileRef.parent!.child(remoteFileRef.name.replaceFirst(".jpg", ".sha256"));
-    final Directory documentDirectory = await getApplicationDocumentsDirectory();
-    final File localFile = File(join(documentDirectory.path, localFileName));
 
     /* ------------------------------- */
     /* DOWNLOAD SHA256 AND VALIDATE IT */
@@ -118,15 +115,14 @@ class StorageService {
 
       // get
       final String localSHA256Digest = calculateSHA256FromBytes(localBytes);
-      debugPrint('Remote SHA256 digest: $remoteSHA256Digest');
-      debugPrint('Local SHA256 digest: $localSHA256Digest');
+      //debugPrint('Remote SHA256 digest: $remoteSHA256Digest');
+      //debugPrint('Local SHA256 digest: $localSHA256Digest');
+
       // validate if the current sha256 stored in the server is the same as the local
       // file's sha256 we already have. If it is, this means we should not request
       // the download of the image, thus saving bandwidth and UI refresh time
       if (remoteSHA256Digest == localSHA256Digest) return null;
     }
-
-    debugPrint("Downloading file.");
 
     /* -------------------------- */
     /* DOWNLOAD FILE AND WRITE IT */
@@ -145,13 +141,11 @@ class StorageService {
     if (fileURL=='') return null;
 
     // else, success, so we go and download the file
-    // get http response from url
+    // fetch file from the server
     final http.Response fileResponse = await http.get(Uri.parse(fileURL));
+    // write file locally
+    createFileRecursivelyAndWriteBytesSync(localFile, fileResponse.bodyBytes);
 
-    // write to local file
-    localFile.writeAsBytesSync(fileResponse.bodyBytes);
-
-    debugPrint("File downloaded.");
     return localFile;
   }
 

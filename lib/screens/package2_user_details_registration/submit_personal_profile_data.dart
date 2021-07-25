@@ -6,7 +6,7 @@ import 'package:jobee/external-libs/intl_phone_field-2.0.0/phone_number.dart' sh
 import 'package:jobee/models/app_user.dart' show AppUserData;
 import 'package:jobee/screens/package3_home/home.dart' show Home;
 import 'package:jobee/screens/shared_screens/logo.dart' show Logo;
-import 'package:jobee/screens/wrapper.dart' show Wrapper;
+import 'package:jobee/screens/package0_wrapper/wrapper.dart' show Wrapper;
 import 'package:jobee/services/auth.dart' show AuthService;
 import 'package:jobee/services/database.dart' show DatabaseService;
 import 'package:jobee/services/network.dart' show NetworkService;
@@ -23,12 +23,10 @@ class SubmitPersonalProfileData extends StatefulWidget {
 }
 
 class _SubmitPersonalProfileDataState extends State<SubmitPersonalProfileData> {
-
   // Form constants
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _loading = false;
   bool _formNotSubmitted = true;
-  String? _currentlyFocusedField;
 
   // text field state
   String _phoneCountryDialCode = "+351";
@@ -50,6 +48,23 @@ class _SubmitPersonalProfileDataState extends State<SubmitPersonalProfileData> {
   @override
   Widget build(BuildContext context) {
     final MediaQueryData queryData = MediaQuery.of(context);
+    // WIDGETS
+    final PreferredSizeWidget appBar = AppBar(
+      title: Wrap(
+        crossAxisAlignment: WrapCrossAlignment.center,
+        children: const <Widget>[
+          Logo(),
+          SizedBox(width: 16.0),
+          Text(
+            "|   Personal information",
+            style: TextStyle(
+              color: Colors.black,
+            ),
+          )
+        ],
+      ),
+    );
+
     // form info
     final double defaultFormFieldSpacing = Theme.of(context).textTheme.caption!.fontSize!;
     final double defaultSubmissionErrorHeight = defaultFormFieldSpacing/2;
@@ -59,16 +74,27 @@ class _SubmitPersonalProfileDataState extends State<SubmitPersonalProfileData> {
     final double formWidth = queryData.size.width - formHorizontalPadding*2;
 
     // app user data
-    final AppUserData? appUserData = Provider.of<AppUserData?>(context);
+    final AppUserData appUserData = Provider.of<AppUserData>(context);
+    if (appUserData.hasRegisteredPersonalData == null) {
+      debugPrint("submit_personal_profile_data.dart: Loading initial user data...");
+      return const TextLoader(text: "Loading initial user data...");
+    }
+    if (appUserData.hasRegisteredPersonalData == true) {
+      debugPrint("submit_personal_profile_data.dart: SubmitPersonalData() -> Home()");
+      return const Home();
+    }
 
-    return appUserData!.hasRegisteredPersonalData
-    ? const Home()
-    : FutureBuilder<Map<String, dynamic>>(
+    // if appUserData.hasRegisteredPersonalData is false, then we present the personal data form
+    debugPrint("submit_personal_profile_data.dart: SubmitPersonalData() presented");
+    return FutureBuilder<Map<String, dynamic>>(
       future: _infoByIP,
       builder: (BuildContext context, AsyncSnapshot<Map<String, dynamic>> futureSnapshot) {
         switch (futureSnapshot.connectionState) {
-          case ConnectionState.none: return const Text('ConnectionState.none is not reached.');
-          case ConnectionState.waiting: return const TextLoader(text: "Personal information page loading");
+          case ConnectionState.none:
+            return const Text("ConnectionState.none is not reached.");
+          case ConnectionState.waiting:
+            debugPrint("submit_personal_profile_data.dart: Fetching user locale...");
+            return const TextLoader(text: "Loading language preferences...");
           default:
             if (futureSnapshot.hasError) {
               return Text('Error: ${futureSnapshot.error}');
@@ -76,35 +102,19 @@ class _SubmitPersonalProfileDataState extends State<SubmitPersonalProfileData> {
 
             // else, condition to validate that we received the expected data from the external API
             if ( futureSnapshot.data==null || !futureSnapshot.data!.containsKey("countryCode") ) {
-              // return to wrapper to retry connection
-              return Wrapper();
+              // if we didn't receive the expected result, return to wrapper to retry connection
+              return const Wrapper();
             }
 
             // else, return the personal information page
             return GestureDetector(
               onTap: () {
-                /* removes focus from focused node when
-                  * the AppBar or Scaffold are touched */
+                // removes focus from focused node when the AppBar or Scaffold are touched
                 FocusManager.instance.primaryFocus?.unfocus();
-                _currentlyFocusedField = null;
               },
               child: Scaffold(
                 resizeToAvoidBottomInset: false,
-                appBar: AppBar(
-                  title: Wrap(
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    children: const <Widget>[
-                      Logo(),
-                      SizedBox(width: 16.0),
-                      Text(
-                        "|   Personal information",
-                        style: TextStyle(
-                          color: Colors.black,
-                        ),
-                      )
-                    ],
-                  ),
-                ),
+                appBar: appBar,
                 body: Column(
                   children: <Widget>[
                     Container(
@@ -139,7 +149,6 @@ class _SubmitPersonalProfileDataState extends State<SubmitPersonalProfileData> {
                                         field: 'phoneNumber',
                                         errorMessage: "Enter your phone number",
                                         formNotSubmitted: _formNotSubmitted,
-                                        currentlyFocusedField: _currentlyFocusedField,
                                         successFunction: () {
                                           _errorSizedBoxSizePhoneNumber = defaultFormFieldSpacing;
                                         },
@@ -192,6 +201,9 @@ class _SubmitPersonalProfileDataState extends State<SubmitPersonalProfileData> {
                                 )
                                 : ElevatedButton(
                                   onPressed: () async {
+                                    // if appUserData.hasRegisteredPersonalData is still null, button doesn't work
+                                    if (appUserData.hasRegisteredPersonalData == null) return;
+
                                     _formNotSubmitted = false;
                                     if (_formKey.currentState!.validate()) {
                                       // while submitting data, set loading to true
@@ -199,9 +211,9 @@ class _SubmitPersonalProfileDataState extends State<SubmitPersonalProfileData> {
                                       _submissionErrorSizedBoxHeight = defaultFormFieldSpacing;
                                       if (this.mounted) setState(() {});
 
-                                      await InPlaceLoader.minimumLoadingSleep(const Duration(seconds: 1));
+                                      await InPlaceLoader.extendLoadingDuration(const Duration(seconds: 1));
                                       try {
-                                        await DatabaseService(uid: appUserData.uid).updatePersonalUserData(
+                                        await DatabaseService(uid: appUserData.uid, email: appUserData.email).updatePersonalUserData(
                                           hasRegisteredPersonalData: true,
                                           phoneCountryDialCode: _phoneCountryDialCode,
                                           phoneNumber: _phoneNumber,

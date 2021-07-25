@@ -1,5 +1,4 @@
 import 'dart:async' show Completer;
-//import 'package:flutter/foundation.dart' show debugPrint, FlutterError, FlutterErrorDetails, ErrorDescription, defaultTargetPlatform;
 import 'package:flutter/foundation.dart' show defaultTargetPlatform;
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart' show ImageProvider, ImageConfiguration, ImageStream, ImageStreamListener, ImageInfo;
@@ -17,7 +16,7 @@ Future<void> loadImage(ImageProvider provider) {
   late final ImageStreamListener listener;
 
   listener = ImageStreamListener((ImageInfo image, bool sync) {
-    debugPrint("Image ${image.debugLabel} finished loading");
+    debugPrint("preload_image.dart: Image ${image.debugLabel} finished loading");
     completer.complete();
     stream.removeListener(listener);
   }, onError: (Object exception, StackTrace? stackTrace) {

@@ -12,8 +12,8 @@ class AppUserData {
   final String email;
 
   // state variables
-  final bool hasRegisteredPublicData;
-  final bool hasRegisteredPersonalData;
+  final bool? hasRegisteredPublicData;
+  final bool? hasRegisteredPersonalData;
 
   // appUserData variables
   final String? userName;
@@ -24,9 +24,11 @@ class AppUserData {
   final String? phoneCountryDialCode;
   final String? phoneNumber;
 
-  AppUserData({ required this.uid, required this.email, required this.hasRegisteredPublicData,
-    required this.hasRegisteredPersonalData,
+  AppUserData({ required this.uid, required this.email, this.hasRegisteredPublicData,
+    this.hasRegisteredPersonalData,
     this.userName, this.firstName, this.lastName, this.gender, this.birthDay,
     this.phoneCountryDialCode, this.phoneNumber });
 
+  // TODO-BackEnd: transform all firstName and lastName first character to uppercase
+  // TODO-BackEnd: transform all userName characters to lowercase
 }

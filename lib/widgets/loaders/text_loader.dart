@@ -3,9 +3,10 @@ import 'package:flutter_spinkit/flutter_spinkit.dart' show SpinKitChasingDots;
 import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
 
 class TextLoader extends StatefulWidget {
-  final String? text;
+  final String text;
+  final double appBarHeight;
 
-  const TextLoader({Key? key, required String this.text}) : super(key: key);
+  const TextLoader({Key? key, required this.text, this.appBarHeight = 0.0}) : super(key: key);
 
   @override
   _TextLoaderState createState() => _TextLoaderState();
@@ -29,7 +30,7 @@ class _TextLoaderState extends State<TextLoader> {
       body: Container(
         color: Theme.of(context).colorScheme.background,
         padding: EdgeInsets.only(
-          top: queryData.size.height/2 - (loaderRadius + spacing + loadingTextStyle.fontSize!),
+          top: (queryData.size.height - widget.appBarHeight)/2 - (loaderRadius + spacing + loadingTextStyle.fontSize!),
         ),
         child: Column(
           children: <Widget>[
@@ -42,7 +43,7 @@ class _TextLoaderState extends State<TextLoader> {
             ),
             const SizedBox(height: spacing),
             Text(
-              widget.text!,
+              widget.text,
               style: loadingTextStyle,
             ),
           ],

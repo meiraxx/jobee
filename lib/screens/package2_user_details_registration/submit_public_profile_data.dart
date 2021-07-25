@@ -5,8 +5,8 @@ import 'package:jobee/screens/shared_screens/logo.dart' show Logo;
 import 'package:jobee/services/auth.dart' show AuthService;
 import 'package:jobee/services/database.dart' show DatabaseService;
 import 'package:jobee/utils/input_field_validation.dart' show validateNotEmpty;
+import 'package:jobee/widgets/loaders/text_loader.dart';
 import 'package:jobee/widgets/widget_utils/input_fields.dart' show openDropdownMethod2;
-import 'package:jobee/widgets/loaders/text_loader.dart' show TextLoader;
 import 'package:jobee/widgets/loaders/in_place_loader.dart' show InPlaceLoader;
 import 'package:provider/provider.dart' show Provider;
 
@@ -32,7 +32,6 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
   final List<String> _genders = <String>['Male', 'Female', 'Other', "I'd rather not say"];
   DateTime? _birthDay;
 
-
   // field error state
   double _errorSizedBoxSizeUserName = 0.0;
   double _errorSizedBoxSizeFirstName = 0.0;
@@ -54,6 +53,23 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
   @override
   Widget build(BuildContext context) {
     final MediaQueryData queryData = MediaQuery.of(context);
+    // WIDGETS
+    final PreferredSizeWidget appBar = AppBar(
+        title: Wrap(
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: const <Widget>[
+            Logo(),
+            SizedBox(width: 16.0),
+            Text(
+              "|   Public information",
+              style: TextStyle(
+                color: Colors.black,
+              ),
+            )
+          ],
+        )
+    );
+
     // form info
     final double defaultFormFieldSpacing = Theme.of(context).textTheme.caption!.fontSize!;
     final double defaultSubmissionErrorHeight = defaultFormFieldSpacing/2;
@@ -136,34 +152,26 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
     final Locale userLocale = Localizations.localeOf(context);
 
     // app user data
-    final AppUserData? appUserData = Provider.of<AppUserData?>(context);
-    if (appUserData==null) return const TextLoader(text: "Fetching user data...");
-
-    return appUserData.hasRegisteredPublicData
-    ? const SubmitPersonalProfileData()
-    : GestureDetector(
+    final AppUserData appUserData = Provider.of<AppUserData>(context);
+    if (appUserData.hasRegisteredPublicData == null) {
+      debugPrint("submit_public_profile_data.dart: Loading initial user data...");
+      return const TextLoader(text: "Loading initial user data...");
+    }
+    if (appUserData.hasRegisteredPersonalData == true) {
+      debugPrint("submit_public_profile_data.dart: SubmitPublicData() -> SubmitPersonalProfileData()");
+      return const SubmitPersonalProfileData();
+    }
+    //if (appUserData.hasRegisteredPublicData != null && appUserData.hasRegisteredPublicData == true) return const SubmitPersonalProfileData();
+    // if appUserData.hasRegisteredPublicData false, then we present the public data form
+    debugPrint("submit_public_profile_data.dart: SubmitPublicData() presented");
+    return GestureDetector(
       onTap: () {
-        /* removes focus from focused node when
-            * the AppBar or Scaffold are touched */
+        // removes focus from focused node when the AppBar or Scaffold are touched
         FocusManager.instance.primaryFocus?.unfocus();
       },
       child: Scaffold(
         resizeToAvoidBottomInset: false,
-        appBar: AppBar(
-            title: Wrap(
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: const <Widget>[
-                Logo(),
-                SizedBox(width: 16.0),
-                Text(
-                  "|   Public information",
-                  style: TextStyle(
-                    color: Colors.black,
-                  ),
-                )
-              ],
-            )
-        ),
+        appBar: appBar,
         body: Column(
           children: <Widget>[
             Container(
@@ -191,12 +199,8 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
                               ),
                               textAlignVertical: TextAlignVertical.center,
                               // cleanse errors by rebuilding widget on... :
-                              onTap: () {
-                                setState(() {});
-                              },
-                              onChanged: (String usernameVal) {
-                                setState(() {});
-                              },
+                              onTap: () => setState(() {}),
+                              onChanged: (String usernameVal) => setState(() {}),
                             ),
                           ),
                           SizedBox(height: _errorSizedBoxSizeUserName),
@@ -224,12 +228,8 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
                               textAlignVertical: TextAlignVertical.center,
                               autofillHints: const <String>[AutofillHints.givenName],
                               // cleanse errors by rebuilding widget on... :
-                              onTap: () {
-                                setState(() {});
-                              },
-                              onChanged: (String firstNameVal) {
-                                setState(() {});
-                              },
+                              onTap: () => setState(() {}),
+                              onChanged: (String firstNameVal) => setState(() {}),
                             ),
                           ),
                           SizedBox(height: _errorSizedBoxSizeFirstName),
@@ -248,12 +248,8 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
                               textAlignVertical: TextAlignVertical.center,
                               autofillHints: const <String>[AutofillHints.familyName],
                               // cleanse errors by rebuilding widget on... :
-                              onTap: () {
-                                setState(() {});
-                              },
-                              onChanged: (String lastNameVal) {
-                                setState(() {});
-                              },
+                              onTap: () => setState(() {}),
+                              onChanged: (String lastNameVal) => setState(() {}),
                             ),
                           ),
                           SizedBox(height: _errorSizedBoxSizeLastName),
@@ -270,8 +266,8 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
                           // - Gender
                           GestureDetector(
                             onTap: () {
-                              // debugPrint("Manually activate dropdown button");
-                              openDropdownMethod2(_dropdownButtonKey); // manually activate dropdown button
+                              // manually activate dropdown button
+                              openDropdownMethod2(_dropdownButtonKey);
                             },
                             child: SizedBox(
                               width: formWidth/2 - defaultFormFieldSpacing/2,
@@ -328,13 +324,13 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
                                       locale: userLocale,
                                     );
                                     /* if date isn't null and isn't the same picked before,
-                                        * build the page again with the picked value */
+                                                  * build the page again with the picked value */
                                     if(picked != null && picked != _birthDay) {
                                       _birthDay = picked;
                                       _birthDayController.value = TextEditingValue(
-                                        text: "${picked.year}"
-                                          "/${picked.month>=10?picked.month:('0${picked.month}')}"
-                                          "/${picked.day>=10?picked.day:('0${picked.day}')}"
+                                          text: "${picked.year}"
+                                              "/${picked.month>=10?picked.month:('0${picked.month}')}"
+                                              "/${picked.day>=10?picked.day:('0${picked.day}')}"
                                       );
                                       if (this.mounted) setState(() {});
                                     }
@@ -366,14 +362,15 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
                       ],
                       Center(
                         child: Builder(builder: (BuildContext context) {
-                          return _loading
-                          ? InPlaceLoader(
+                          return _loading ? InPlaceLoader(
                             baseSize: const Size(48.0, 48.0),
                             correctionSize: Size(defaultSubmissionErrorHeight*2, defaultSubmissionErrorHeight*2),
                             padding: EdgeInsets.only(top: defaultSubmissionErrorHeight),
-                          )
-                          : ElevatedButton(
+                          ) : ElevatedButton(
                             onPressed: () async {
+                              // if appUserData.hasRegisteredPublicData is still null, button doesn't work
+                              if (appUserData.hasRegisteredPublicData == null) return;
+
                               _formNotSubmitted = false;
                               if (allFormFieldsValidated()) {
                                 // while submitting data, set loading to true
@@ -381,9 +378,9 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
                                 _submissionErrorSizedBoxHeight = defaultFormFieldSpacing;
                                 if (this.mounted) setState(() {});
 
-                                await InPlaceLoader.minimumLoadingSleep(const Duration(seconds: 1));
+                                await InPlaceLoader.extendLoadingDuration(const Duration(seconds: 1));
                                 try {
-                                  await DatabaseService(uid: appUserData.uid).updatePublicUserData(
+                                  await DatabaseService(uid: appUserData.uid, email: appUserData.email).updatePublicUserData(
                                     hasRegisteredPublicData: true,
                                     userName: _userNameController.text,
                                     firstName: _firstNameController.text,
@@ -410,9 +407,7 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
                               children: const <Widget>[
                                 Icon(Icons.public),
                                 SizedBox(width: 4.0),
-                                Text(
-                                  "Submit data",
-                                ),
+                                Text("Submit data"),
                               ],
                             ),
                           );

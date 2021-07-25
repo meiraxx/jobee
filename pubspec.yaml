@@ -50,6 +50,7 @@ dependencies:
   # Provider
   provider: ^5.0.0
   image: ^3.0.2
+  shimmer: ^2.0.0
 
 
 dev_dependencies:

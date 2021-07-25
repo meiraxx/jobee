@@ -25,7 +25,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     // database service - app user data
-    final AppUserData? appUserData = Provider.of<AppUserData?>(context);
+    final AppUserData appUserData = Provider.of<AppUserData>(context);
 
     // - BOTTOM NAVIGATION BAR WIDGETS
     const Widget homeWidget = HomeBody(page: 'Page 1: Home (client posts for services based on location VS service posts for clients based on location)');
@@ -39,7 +39,7 @@ class _HomeState extends State<Home> {
     // else, return all
     return StreamProvider<List<Profile>>.value(
       initialData: const <Profile>[],
-      value: DatabaseService().profiles,
+      value: DatabaseService.profiles,
       // - THEME OF SCAFFOLD
       child: Scaffold(
         //drawerEnableOpenDragGesture: true,
@@ -92,7 +92,7 @@ class _HomeState extends State<Home> {
               height: 24.0,
               child: AbsorbPointer(
                 child: ProfileAvatar(
-                  appUserData: appUserData!,
+                  appUserData: appUserData,
                   borderColor: JobeeThemeData.lightInactiveItemColor,
                   isHero: false,
                   avatarTextFontSize: 9.0,

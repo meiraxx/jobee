@@ -1,23 +1,25 @@
 import 'dart:io' show Directory, File;
 import 'dart:typed_data' show Uint8List;
+
 import 'package:path_provider/path_provider.dart' show getApplicationDocumentsDirectory;
 import 'package:path/path.dart' show join;
 
 class ProfileAsyncGlobals {
-  static Future<File?> getLocalUserProfileFile() async {
+  static Future<File> getLocalUserProfileAvatarFile(String userId) async {
     final Directory applicationDocumentDirectory = await getApplicationDocumentsDirectory();
-    final String localUserProfilePicturePath = join(applicationDocumentDirectory.path, 'local-profile-picture.jpg');
-    return File(localUserProfilePicturePath).existsSync()
-        ? File(localUserProfilePicturePath)
-        : null;
+    final String localUserProfileAvatarPath = join(userId, 'local-profile-picture.jpg');
+    //debugPrint(join(applicationDocumentDirectory.path, localUserProfileAvatarPath));
+    final String localUserProfilePicturePath = join(applicationDocumentDirectory.path, localUserProfileAvatarPath);
+    return File(localUserProfilePicturePath);
   }
 
   /// get bytes of the user's current profile avatar
-  static Future<Uint8List> getLocalUserProfileAvatarBytes() async {
-    final File? userProfileFile = await getLocalUserProfileFile();
-    return userProfileFile==null
-        ? Uint8List.fromList(<int>[])
-        : userProfileFile.readAsBytesSync();
+  static Future<Uint8List> getLocalUserProfileAvatarBytes(String userId) async {
+    final File userProfileFile = await getLocalUserProfileAvatarFile(userId);
+
+    if (userProfileFile.existsSync()) return userProfileFile.readAsBytesSync();
+
+    return Uint8List.fromList(<int>[]);
   }
 }
 

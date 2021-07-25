@@ -39,8 +39,7 @@ class _AuthMailPasswordState extends State<AuthMailPassword> {
 
     return GestureDetector(
       onTap: () {
-        /* removes focus from focused node when
-            * the AppBar or Scaffold are touched */
+        // removes focus from focused node when the AppBar or Scaffold are touched
         FocusManager.instance.primaryFocus?.unfocus();
       },
       child: Scaffold(
@@ -146,7 +145,7 @@ class _AuthMailPasswordState extends State<AuthMailPassword> {
                                 _submissionErrorSizedBoxHeight = defaultFormFieldSpacing;
                                 if (this.mounted) setState(() {});
 
-                                await InPlaceLoader.minimumLoadingSleep(const Duration(seconds: 1));
+                                await InPlaceLoader.extendLoadingDuration(const Duration(seconds: 1));
                                 try {
                                   await AuthService.loginWithEmailAndPassword(_email, _password);
                                 } on FirebaseAuthException catch (e) {

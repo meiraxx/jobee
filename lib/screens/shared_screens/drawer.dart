@@ -34,7 +34,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
     final double maxDrawerWidth = queryData.size.width*_drawerMenuWidthRatio;
 
     // database service - app user data
-    final AppUserData? appUserData = Provider.of<AppUserData?>(context);
+    final AppUserData appUserData = Provider.of<AppUserData>(context);
 
     return Container(
       // based on experiments, 0.739 is the drawer menu default width

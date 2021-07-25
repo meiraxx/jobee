@@ -21,7 +21,6 @@ class InPlaceLoader extends StatelessWidget {
     );
   }
 
-  // waiting 1-3 seconds showing the loading widget animation is recommended because
-  // it looks neater than an almost-instant animation
-  static Future<void> minimumLoadingSleep(Duration duration) async => Future<void>.delayed(duration);
+  // waiting 1-3 seconds showing the loading widget animation is recommended because it looks neater than an almost-instant animation
+  static Future<void> extendLoadingDuration(Duration duration) async => Future<void>.delayed(duration);
 }

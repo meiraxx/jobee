@@ -3,15 +3,17 @@ import 'package:jobee/models/app_user.dart' show AppUserData;
 import 'package:jobee/models/profile.dart' show Profile;
 
 class DatabaseService {
-  // uid
-  final String? uid;
-  // collection reference
-  final CollectionReference<Map<String, dynamic>> userCollection = FirebaseFirestore.instance.collection('users');
+  // AppUser essential parameters
+  final String uid;
+  final String email;
 
-  DatabaseService({ this.uid });
+  // collection reference
+  static final CollectionReference<Map<String, dynamic>> userCollection = FirebaseFirestore.instance.collection('users');
+
+  DatabaseService({ required this.uid, required this.email });
 
   // TODO-BackEnd: Firestore must throw an error when a document not owned by the user is write-accessed
-  Future<void> createUserData(String email, String authProvider) async {
+  Future<void> createUserData(String authProvider) async {
     final DocumentSnapshot<Map<String, dynamic>> ds = await userCollection.doc(uid).get();
     if (ds.exists) return;
 
@@ -19,7 +21,7 @@ class DatabaseService {
     // TODO-BackEnd: Firestore must keep track of the values of 'hasRegisteredPublicData' and 'hasRegisteredPersonalData' to enforce that they change only once to true,
     //  and only with the expected set fields, as explained in the updatePublicUserData() and updatePersonalUserData() back-end to do list
     await userCollection.doc(uid).set(<String, dynamic>{
-      'email': email,
+      'email': this.email,
       'authProvider': authProvider,
       'hasRegisteredPublicData': false,
       'hasRegisteredPersonalData': false,
@@ -79,7 +81,7 @@ class DatabaseService {
 
   /* STATIC METHODS */
   static Future<bool> _isUserNameAvailable(String userName) async {
-    return (await FirebaseFirestore.instance.collection('users').where('userName', isEqualTo: userName).get()).docs.isEmpty;
+    return (await FirebaseFirestore.instance.collection('users').where('userName', isEqualTo: userName.toLowerCase()).get()).docs.isEmpty;
   }
 
   static Future<bool> _isPhoneCompleteNumberAvailable(String phoneCountryDialCode, String phoneNumber) async {
@@ -91,7 +93,7 @@ class DatabaseService {
 
   /* PRIVATE METHODS */
   // profile list from snapshot
-  List<Profile> _profileListFromSnapshot(QuerySnapshot<dynamic> snapshot) {
+  static List<Profile> _profileListFromSnapshot(QuerySnapshot<dynamic> snapshot) {
     return snapshot.docs.map((QueryDocumentSnapshot<dynamic> doc) {
       final Map<dynamic, dynamic> docDataMap = doc.data()! as Map<dynamic, dynamic>;
       return Profile(
@@ -101,38 +103,47 @@ class DatabaseService {
   }
 
   // userData from snapshot
-  AppUserData? _appUserDataFromSnapshot(DocumentSnapshot<dynamic> snapshot) {
+  AppUserData _appUserDataFromSnapshot(DocumentSnapshot<dynamic> snapshot) {
     final Map<String, dynamic>? snapshotDataMap = snapshot.data() as Map<String, dynamic>?;
     if (snapshotDataMap==null) {
-      return null;
+      return AppUserData(
+        uid: this.uid,
+        email: this.email,
+      );
     }
 
     return AppUserData(
-      uid: uid!,
-      email: snapshotDataMap['email'] as String,
-      hasRegisteredPublicData: snapshotDataMap['hasRegisteredPublicData'] as bool,
-      hasRegisteredPersonalData: snapshotDataMap['hasRegisteredPersonalData'] as bool,
-      userName: snapshotDataMap['userName'] as String,
-      firstName: snapshotDataMap['firstName'] as String,
-      lastName: snapshotDataMap['lastName'] as String,
-      gender: snapshotDataMap['gender'] as String,
-      birthDay: snapshotDataMap['birthDay'] as String,
-      phoneCountryDialCode: snapshotDataMap['phoneCountryDialCode'] as String,
-      phoneNumber: snapshotDataMap['phoneNumber'] as String,
+      uid: this.uid,
+      email: snapshotDataMap['email']! as String,
+      hasRegisteredPublicData: snapshotDataMap['hasRegisteredPublicData']! as bool,
+      hasRegisteredPersonalData: snapshotDataMap['hasRegisteredPersonalData']! as bool,
+      userName: snapshotDataMap['userName'] as String?,
+      firstName: snapshotDataMap['firstName'] as String?,
+      lastName: snapshotDataMap['lastName'] as String?,
+      gender: snapshotDataMap['gender'] as String?,
+      birthDay: snapshotDataMap['birthDay'] as String?,
+      phoneCountryDialCode: snapshotDataMap['phoneCountryDialCode'] as String?,
+      phoneNumber: snapshotDataMap['phoneNumber'] as String?,
     );
   }
 
   /* GETTERS */
   // get profiles stream
-  Stream<List<Profile>> get profiles {
+  static Stream<List<Profile>> get profiles {
     return userCollection.snapshots().map(_profileListFromSnapshot);
   }
 
-  // get user doc stream
-  Stream<AppUserData?> get appUserData {
+  // get user doc stream as AppUserData
+  Stream<AppUserData> get appUserData {
     return userCollection.doc(uid).snapshots().map( (DocumentSnapshot<Map<String, dynamic>> snapshot) {
-      return _appUserDataFromSnapshot(snapshot);
+      final AppUserData appUserData = _appUserDataFromSnapshot(snapshot);
+      return appUserData;
     });
+  }
+
+  // get initial AppUserData
+  AppUserData get initialAppUserData {
+    return AppUserData(uid: this.uid, email: this.email);
   }
 
 }

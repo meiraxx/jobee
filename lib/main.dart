@@ -9,19 +9,17 @@ import 'package:flutter_localizations/flutter_localizations.dart' show GlobalMat
 import 'package:jobee/models/app_user.dart' show AppUser;
 import 'package:jobee/screens/package1_authenticate/authenticate.dart' show Authenticate;
 import 'package:jobee/screens/package3_home/home.dart' show Home;
-import 'package:jobee/screens/wrapper.dart' show Wrapper;
+import 'package:jobee/screens/package0_wrapper/wrapper.dart' show Wrapper;
 import 'package:jobee/services/auth.dart' show AuthService;
 import 'package:jobee/widgets/widget_utils/preload_image.dart' show loadImage;
 import 'package:provider/provider.dart' show MultiProvider, StreamProvider;
 import 'package:jobee/theme/jobee_theme_data.dart' show JobeeThemeData;
 import 'package:provider/single_child_widget.dart' show SingleChildWidget;
-import 'package:jobee/screens/package4_profile/global_variables_profile.dart'
-    show ProfileAsyncGlobals, ProfileSyncGlobals;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // [1] Initialize firebase app
+  // - Initialize firebase app
   await Firebase.initializeApp();
 
   // use emulators rather than real firebase for testing purposes,
@@ -30,17 +28,12 @@ Future<void> main() async {
   //FirebaseFunctions.instance.useFunctionsEmulator('localhost', 5001);
   //await FirebaseStorage.instance.useStorageEmulator('localhost', 9199);
 
-  // [2] Set needed global variables
-  // set avatar bytes to the local file bytes if file exists, else remain null
-  ProfileSyncGlobals.userProfileAvatarBytes ??= await ProfileAsyncGlobals.getLocalUserProfileAvatarBytes();
 
-  // [3] Pre-load essential images
+  // - Pre-load essential images
   // Asset images
   await loadImage(const AssetImage('images/dude-call.png'));
   await loadImage(const AssetImage('images/bee-logo-07.png'));
-  // Memory images
-  await loadImage(MemoryImage(ProfileSyncGlobals.userProfileAvatarBytes!));
-
+  await loadImage(const AssetImage('images/google-logo-1080x1080.png'));
 
   runApp(MyApp());
 }
@@ -50,8 +43,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Map<String, Widget Function(BuildContext)> routes = <String, Widget Function(BuildContext)>{
-      '/': (BuildContext context) => Wrapper(),
-      '/authenticate': (BuildContext context) => Authenticate(),
+      '/': (BuildContext context) => const Wrapper(),
+      '/authenticate': (BuildContext context) => const Authenticate(),
       '/home': (BuildContext context) => const Home(),
     };
 
