@@ -103,8 +103,8 @@ class DatabaseService {
   }
 
   // userData from snapshot
-  AppUserData _appUserDataFromSnapshot(DocumentSnapshot<dynamic> snapshot) {
-    final Map<String, dynamic>? snapshotDataMap = snapshot.data() as Map<String, dynamic>?;
+  AppUserData _appUserDataFromDocumentSnapshot(DocumentSnapshot<dynamic> documentSnapshot) {
+    final Map<String, dynamic>? snapshotDataMap = documentSnapshot.data() as Map<String, dynamic>?;
     if (snapshotDataMap==null) {
       return AppUserData(
         uid: this.uid,
@@ -135,15 +135,28 @@ class DatabaseService {
 
   // get user doc stream as AppUserData
   Stream<AppUserData> get appUserData {
-    return userCollection.doc(uid).snapshots().map( (DocumentSnapshot<Map<String, dynamic>> snapshot) {
-      final AppUserData appUserData = _appUserDataFromSnapshot(snapshot);
+    return userCollection.doc(uid).snapshots().map( (DocumentSnapshot<Map<String, dynamic>> documentSnapshot) {
+      final AppUserData appUserData = _appUserDataFromDocumentSnapshot(documentSnapshot);
       return appUserData;
     });
   }
 
   // get initial AppUserData
-  AppUserData get initialAppUserData {
+  /*AppUserData get initialAppUserData {
     return AppUserData(uid: this.uid, email: this.email);
+  }*/
+
+  Future<AppUserData> getInitialAppUserDataFuture() async {
+    DocumentSnapshot<Map<String, dynamic>> documentSnapshot = await userCollection.doc(uid).get();
+    // while the user document doesn't exist (in case of a user registry)
+    while (!documentSnapshot.exists) {
+      // continuously ask for the user document until we get it
+      documentSnapshot = await userCollection.doc(uid).get();
+      // cap network requests per second to 5 (200 ms)
+      if (!documentSnapshot.exists) await Future<void>.delayed(const Duration(milliseconds: 200));
+    }
+
+    return _appUserDataFromDocumentSnapshot(documentSnapshot);
   }
 
 }

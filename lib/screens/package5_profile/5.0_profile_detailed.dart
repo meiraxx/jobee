@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:jobee/widgets/widget_utils/app_bar_button.dart' show appBarButton;
 import 'package:jobee/models/app_user.dart' show AppUserData;
 
-import 'profile_detailed_body.dart';
+import 'aux_profile_detailed_body.dart';
 
 class ProfileDetailedScreen extends StatefulWidget {
   final AppUserData appUserData;

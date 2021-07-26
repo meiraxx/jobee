@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:jobee/models/app_user.dart' show AppUserData;
-import 'package:jobee/screens/package4_profile/profile_avatar.dart' show ProfileAvatar;
+
+import 'aux_profile_avatar.dart' show ProfileAvatar;
 
 class ProfileSummarized extends StatefulWidget {
   final AppUserData appUserData;

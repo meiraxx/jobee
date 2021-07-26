@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:jobee/models/app_user.dart' show AppUserData;
 import 'package:jobee/models/profile.dart' show Profile;
-import 'package:jobee/screens/package4_profile/profile_avatar.dart';
-import 'package:jobee/screens/package4_profile/profile_detailed_body.dart';
-import 'package:jobee/screens/shared_screens/logo.dart' show Logo;
-import 'package:jobee/screens/shared_screens/drawer.dart' show CustomDrawer;
+import 'package:jobee/screens/package5_profile/aux_profile_avatar.dart';
+import 'package:jobee/screens/package5_profile/aux_profile_detailed_body.dart';
+import 'package:jobee/widgets/jobee/logo.dart' show Logo;
+import 'package:jobee/widgets/jobee/drawer.dart' show CustomDrawer;
 import 'package:jobee/services/database.dart' show DatabaseService;
 import 'package:jobee/theme/jobee_theme_data.dart' show JobeeThemeData;
 import 'package:provider/provider.dart' show Provider, StreamProvider;

@@ -32,6 +32,7 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
         // else, if the user logged in:
         // - if the user does not exist yet, we need to create a new document for the user with the returned uid
         await DatabaseService(uid: appUser.uid, email: appUser.email).createUserData('Google');
+        // - load image data
       },
       overlayColor: MaterialStateProperty.all(Colors.lightBlueAccent.withAlpha(0x7F)),
       highlightColor: Colors.lightBlueAccent.withAlpha(0x7F),

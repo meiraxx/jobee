@@ -69,8 +69,10 @@ class AuthService {
     /// @throws FireBaseAuthException If there is an error with
     ///   firebase authentication.
     try {
-      final UserCredential userCredential = await FirebaseAuth.instance.
-      createUserWithEmailAndPassword(email: email, password: password);
+      final UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: email,
+        password: password
+      );
       final User? user = userCredential.user;
 
       // the user is registering for the first time if this is ever reached,

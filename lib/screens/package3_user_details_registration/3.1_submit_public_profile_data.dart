@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:jobee/models/app_user.dart' show AppUserData;
-import 'package:jobee/screens/package2_user_details_registration/submit_personal_profile_data.dart' show SubmitPersonalProfileData;
-import 'package:jobee/screens/shared_screens/logo.dart' show Logo;
+import 'package:jobee/widgets/jobee/logo.dart' show Logo;
 import 'package:jobee/services/auth.dart' show AuthService;
 import 'package:jobee/services/database.dart' show DatabaseService;
 import 'package:jobee/utils/input_field_validation.dart' show validateNotEmpty;
+import 'package:jobee/widgets/loaders/in_place_loader.dart' show InPlaceLoader;
 import 'package:jobee/widgets/loaders/text_loader.dart';
 import 'package:jobee/widgets/widget_utils/input_fields.dart' show openDropdownMethod2;
-import 'package:jobee/widgets/loaders/in_place_loader.dart' show InPlaceLoader;
 import 'package:provider/provider.dart' show Provider;
+
+import '3.2_submit_personal_profile_data.dart' show SubmitPersonalProfileData;
 
 class SubmitPublicProfileData extends StatefulWidget {
   const SubmitPublicProfileData({Key? key}) : super(key: key);
@@ -153,17 +154,10 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
 
     // app user data
     final AppUserData appUserData = Provider.of<AppUserData>(context);
-    if (appUserData.hasRegisteredPublicData == null) {
-      debugPrint("submit_public_profile_data.dart: Loading initial user data...");
-      return const TextLoader(text: "Loading initial user data...");
-    }
-    if (appUserData.hasRegisteredPersonalData == true) {
-      debugPrint("submit_public_profile_data.dart: SubmitPublicData() -> SubmitPersonalProfileData()");
-      return const SubmitPersonalProfileData();
-    }
-    //if (appUserData.hasRegisteredPublicData != null && appUserData.hasRegisteredPublicData == true) return const SubmitPersonalProfileData();
+    if (appUserData.hasRegisteredPublicData == null) return const TextLoader(text: "Loading initial user data...");
+    if (appUserData.hasRegisteredPersonalData == true) return const SubmitPersonalProfileData();
+
     // if appUserData.hasRegisteredPublicData false, then we present the public data form
-    debugPrint("submit_public_profile_data.dart: SubmitPublicData() presented");
     return GestureDetector(
       onTap: () {
         // removes focus from focused node when the AppBar or Scaffold are touched
@@ -438,7 +432,7 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
                 TextButton(
                   onPressed: () async {
                     await AuthService.signOut(context: context);
-                    Navigator.pushReplacementNamed(context, '/');
+                    //Navigator.pushReplacementNamed(context, '/');
                   },
                   child: const Text(
                     "Sign out",

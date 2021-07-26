@@ -1,33 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart' show FirebaseAuthException;
 import 'package:flutter/services.dart' show TextInput;
-import 'package:jobee/screens/shared_screens/logo.dart' show Logo;
+import 'package:jobee/widgets/jobee/logo.dart' show Logo;
 import 'package:jobee/services/auth.dart' show AuthService;
 import 'package:jobee/widgets/widget_utils/app_bar_button.dart' show appBarButton;
 import 'package:jobee/widgets/loaders/in_place_loader.dart' show InPlaceLoader;
-import 'package:jobee/utils/input_field_validation.dart' show validateNotEmpty;
+import 'package:jobee/utils/input_field_validation.dart' show validateNotEmpty, validatePassword;
 
-class AuthMailPassword extends StatefulWidget {
+class RegMailPassword extends StatefulWidget {
   final Function toggleView;
 
-  const AuthMailPassword({ required this.toggleView });
+  const RegMailPassword({ required this.toggleView });
 
   @override
-  _AuthMailPasswordState createState() => _AuthMailPasswordState();
+  _RegMailPasswordState createState() => _RegMailPasswordState();
 }
 
-class _AuthMailPasswordState extends State<AuthMailPassword> {
+class _RegMailPasswordState extends State<RegMailPassword> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _loading = false;
   bool _passwordVisible = false;
+  bool _confirmPasswordVisible = false;
 
   // text field state
   String _email = '';
   String _password = '';
+  final int _passwordMinLength = 8;
 
   // error state
   double _errorSizedBoxHeightEmail = 0.0;
   double _errorSizedBoxHeightPassword = 0.0;
+  double _errorSizedBoxHeightConfirmPassword = 0.0;
+
   String _submissionError = '';
   double _submissionErrorSizedBoxHeight = 0.0;
 
@@ -54,7 +58,7 @@ class _AuthMailPasswordState extends State<AuthMailPassword> {
               Logo(),
               SizedBox(width: 16.0),
               Text(
-                "|   Sign in",
+                "|   Register",
               )
             ],
           )
@@ -70,14 +74,11 @@ class _AuthMailPasswordState extends State<AuthMailPassword> {
                     children: <Widget>[
                       const SizedBox(height: 20.0),
                       TextFormField(
-                        decoration: const InputDecoration(
-                          labelText: "Email",
-                        ),
+                        decoration: const InputDecoration(labelText: 'Email'),
                         textAlignVertical: TextAlignVertical.center,
                         autofillHints: const <String>[AutofillHints.email],
                         keyboardType: TextInputType.emailAddress,
                         validator: (String? emailVal) {
-                          setState(() => _errorSizedBoxHeightEmail = defaultFormFieldSpacing);
                           return validateNotEmpty(
                             text: emailVal!,
                             field: 'Email',
@@ -90,13 +91,20 @@ class _AuthMailPasswordState extends State<AuthMailPassword> {
                             },
                           );
                         },
-                        onChanged: (String emailVal) { setState(() => _email = emailVal); },
+                        // cleanse errors by rebuilding widget on... :
+                        onTap: () {
+                          setState(() {});
+                        },
+                        onChanged: (String emailVal) {
+                          setState(() => _email = emailVal);
+                        },
                       ),
                       SizedBox(height: _errorSizedBoxHeightEmail),
                       SizedBox(height: defaultFormFieldSpacing),
                       TextFormField(
                         decoration: InputDecoration(
                           labelText: 'Password',
+                          counterText: (_password.length<_passwordMinLength) ? "${_password.length} / $_passwordMinLength characters required minimum" : '',
                           suffixIcon: IconButton(
                             icon: Icon(
                               _passwordVisible?Icons.visibility:Icons.visibility_off,
@@ -107,16 +115,15 @@ class _AuthMailPasswordState extends State<AuthMailPassword> {
                             },
                           ),
                         ),
-                        obscureText: !_passwordVisible,
                         textAlignVertical: TextAlignVertical.center,
                         autofillHints: const <String>[AutofillHints.password],
                         keyboardType: TextInputType.text,
                         onEditingComplete: () => TextInput.finishAutofillContext(),
+                        obscureText: !_passwordVisible,
                         validator: (String? passwordVal) {
-                          return validateNotEmpty(
-                            text: passwordVal!,
-                            field: 'Password',
-                            errorMessage: "Enter your password",
+                          final String? passwordCheck = validatePassword(
+                            password: passwordVal!,
+                            minLength: _passwordMinLength,
                             successFunction: () {
                               setState(() => _errorSizedBoxHeightPassword = defaultFormFieldSpacing);
                             },
@@ -124,57 +131,93 @@ class _AuthMailPasswordState extends State<AuthMailPassword> {
                               setState(() => _errorSizedBoxHeightPassword = 0.0);
                             },
                           );
+
+                          // if the password does not check the requirements
+                          if (passwordCheck!=null) return passwordCheck;
                         },
-                        onChanged: (String passwordVal) { setState(() => _password = passwordVal); },
+                        // cleanse errors by rebuilding widget on... :
+                        onTap: () {
+                          setState(() {});
+                        },
+                        onChanged: (String passwordVal) {
+                          setState(() => _password = passwordVal);
+                        },
                       ),
                       SizedBox(height: _errorSizedBoxHeightPassword),
                       SizedBox(height: defaultFormFieldSpacing),
-                      Builder(
-                        builder: (BuildContext context) {
-                          return _loading
-                          ? InPlaceLoader(
+                      TextFormField(
+                        decoration: InputDecoration(
+                          labelText: "Confirm Password",
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _confirmPasswordVisible?Icons.visibility:Icons.visibility_off,
+                            ),
+                            onPressed: () {
+                              // Update the state, i.e., toggle the state of _confirmPasswordVisible variable
+                              setState(() => _confirmPasswordVisible = !_confirmPasswordVisible);
+                            },
+                          ),
+                        ),
+                        textAlignVertical: TextAlignVertical.center,
+                        autofillHints: const <String>[AutofillHints.password],
+                        keyboardType: TextInputType.text,
+                        obscureText: !_confirmPasswordVisible,
+                        validator: (String? confirmPasswordVal) {
+                          /* simply need to check if it's equal to the password */
+                          if (_password!=confirmPasswordVal) {
+                            setState(() => _errorSizedBoxHeightConfirmPassword = defaultFormFieldSpacing);
+                            return "Passwords do not match";
+                          } else {
+                            setState(() => _errorSizedBoxHeightConfirmPassword = 0.0);
+                            return null;
+                          }
+                        },
+                        // cleanse errors by rebuilding widget on... :
+                        onTap: () {
+                          setState(() {});
+                        },
+                        onChanged: (String confirmPasswordVal) {
+                          setState(() {});
+                        },
+                      ),
+                      SizedBox(height: _errorSizedBoxHeightConfirmPassword),
+                      SizedBox(height: defaultFormFieldSpacing),
+                      Builder(builder: (BuildContext context) {
+                        return _loading ? InPlaceLoader(
                             baseSize: const Size(48.0, 48.0),
                             correctionSize: Size(defaultSubmissionErrorHeight*2, defaultSubmissionErrorHeight*2),
                             padding: EdgeInsets.only(top: defaultSubmissionErrorHeight),
                           )
-                          : ElevatedButton(
-                            onPressed: () async {
-                              if (_formKey.currentState!.validate()) {
-                                // while logging in, set _loading to true
-                                _loading = true;
-                                _submissionErrorSizedBoxHeight = defaultFormFieldSpacing;
-                                if (this.mounted) setState(() {});
+                        : ElevatedButton(
+                          onPressed: () async {
+                            if (_formKey.currentState!.validate()) {
+                              // while registering, set _loading to true
+                              _loading = true;
+                              _submissionErrorSizedBoxHeight = defaultFormFieldSpacing;
+                              if (this.mounted) setState(() {});
 
-                                await InPlaceLoader.extendLoadingDuration(const Duration(seconds: 1));
-                                try {
-                                  await AuthService.loginWithEmailAndPassword(_email, _password);
-                                } on FirebaseAuthException catch (e) {
-                                  if (e.message == "The email address is badly formatted.") {
-                                    _submissionError = e.message!;
-                                  } else {
-                                    // This ELSE condition merges two conditions, for security reasons:
-                                    // 1 - e.message == "There is no user record corresponding to this identifier. The user may have been deleted."
-                                    // 2 - e.message == "The password is invalid or the user does not have a password."
-                                    _submissionError = 'The email and/or password provided are incorrect.';
-                                  }
-                                  _submissionErrorSizedBoxHeight = defaultSubmissionErrorHeight;
-                                  // if there was an error, set _loading back to false
-                                  _loading = false;
-                                  if (this.mounted) setState(() {});
-                                }
+                              await InPlaceLoader.extendLoadingDuration(const Duration(seconds: 1));
+                              try {
+                                await AuthService.registerWithEmailAndPassword(_email, _password);
+                              } on FirebaseAuthException catch (e) {
+                                _submissionError = e.message!;
+                                _submissionErrorSizedBoxHeight = defaultSubmissionErrorHeight;
+                                // if there was an error, set _loading back to false
+                                _loading = false;
+                                if (this.mounted) setState(() {});
                               }
-                            },
-                            child: Wrap(
-                              crossAxisAlignment: WrapCrossAlignment.center,
-                              children: const <Widget>[
-                                Icon(Icons.login),
-                                SizedBox(width: 4.0),
-                                Text("Sign in"),
-                              ],
-                            ),
-                          );
-                        }
-                      ),
+                            }
+                          },
+                          child: Wrap(
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            children: const <Widget>[
+                              Icon(Icons.person),
+                              SizedBox(width: 4.0),
+                              Text('Register'),
+                            ],
+                          ),
+                        );
+                      }),
                       SizedBox(height: _submissionErrorSizedBoxHeight),
                       Text(
                         _submissionError,
@@ -183,7 +226,7 @@ class _AuthMailPasswordState extends State<AuthMailPassword> {
                           fontWeight: FontWeight.bold,
                           fontSize: 12.0,
                         ),
-                      ),
+                      )
                     ],
                   ),
                 ),
@@ -194,13 +237,13 @@ class _AuthMailPasswordState extends State<AuthMailPassword> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
-                  const Text("Still don't have an account?"),
+                  const Text("Already have an account?"),
                   TextButton(
                     onPressed: () {
                       widget.toggleView();
                     },
                     child: const Text(
-                      'Register',
+                      "Sign in",
                       style: TextStyle(color: Colors.blue),
                     ),
                   )
@@ -213,5 +256,3 @@ class _AuthMailPasswordState extends State<AuthMailPassword> {
     );
   }
 }
-
-

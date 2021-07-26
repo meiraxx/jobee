@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart' show CupertinoPageRoute;
 import 'package:jobee/models/app_user.dart' show AppUserData;
-import 'package:jobee/screens/package4_profile/profile_detailed.dart' show ProfileDetailedScreen;
-import 'package:jobee/screens/package4_profile/profile_summarized.dart' show ProfileSummarized;
-import 'package:jobee/screens/package5_jobee_services/jobee_service_list.dart' show JobeeServiceList;
-import 'package:jobee/screens/shared_screens/logo.dart' show Logo;
+import 'package:jobee/screens/package5_profile/5.0_profile_detailed.dart' show ProfileDetailedScreen;
+import 'package:jobee/screens/package5_profile/5.1_profile_summarized.dart' show ProfileSummarized;
+import 'package:jobee/screens/package6_jobee_services/jobee_service_list.dart' show JobeeServiceList;
+import 'package:jobee/widgets/jobee/logo.dart' show Logo;
 import 'package:jobee/widgets/widget_utils/app_bar_button.dart' show appBarButton;
 import 'package:provider/provider.dart' show Provider;
 

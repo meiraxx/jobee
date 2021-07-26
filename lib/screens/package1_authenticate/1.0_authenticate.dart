@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
-import 'package:jobee/screens/package1_authenticate/jobee_login.dart' show AuthMailPassword;
-import 'package:jobee/screens/package1_authenticate/jobee_register.dart' show RegMailPassword;
+import 'package:jobee/screens/package1_authenticate/1.2_jobee_login.dart' show AuthMailPassword;
+import 'package:jobee/screens/package1_authenticate/1.1_jobee_register.dart'
+    show RegMailPassword;
 import 'package:jobee/theme/jobee_theme_data.dart' show JobeeThemeData;
 import 'package:jobee/widgets/ink_splash/custom_elevated_button_ink_splash.dart'
     show CustomElevatedButtonInkSplash;
 
-import 'google_sign_in_button.dart' show GoogleSignInButton;
+import 'aux_google_sign_in_button.dart' show GoogleSignInButton;
 
 class Authenticate extends StatefulWidget {
   const Authenticate({Key? key}) : super(key: key);

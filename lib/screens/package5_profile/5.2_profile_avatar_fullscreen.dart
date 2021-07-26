@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:jobee/widgets/widget_utils/app_bar_button.dart' show appBarButton;
-import 'package:jobee/screens/package4_profile/global_variables_profile.dart'
+import 'package:jobee/screens/package5_profile/global_variables_profile.dart'
     show ProfileSyncGlobals;
 
-import 'profile_avatar.dart' show ProfileAvatar;
+import 'aux_profile_avatar.dart' show ProfileAvatar;
 
 /// Class for the full screen profile avatar
 class ProfileAvatarFullScreen extends StatefulWidget {

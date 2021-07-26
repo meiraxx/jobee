@@ -7,9 +7,9 @@ import 'package:firebase_core/firebase_core.dart' show Firebase;
 //import 'package:firebase_storage/firebase_storage.dart' show FirebaseStorage;
 import 'package:flutter_localizations/flutter_localizations.dart' show GlobalMaterialLocalizations, GlobalWidgetsLocalizations;
 import 'package:jobee/models/app_user.dart' show AppUser;
-import 'package:jobee/screens/package1_authenticate/authenticate.dart' show Authenticate;
-import 'package:jobee/screens/package3_home/home.dart' show Home;
-import 'package:jobee/screens/package0_wrapper/wrapper.dart' show Wrapper;
+import 'package:jobee/screens/package1_authenticate/1.0_authenticate.dart' show Authenticate;
+import 'package:jobee/screens/package4_home/4.0_home.dart' show Home;
+import 'package:jobee/screens/package0_wrapper/0.0_auth_wrapper.dart' show AuthWrapper;
 import 'package:jobee/services/auth.dart' show AuthService;
 import 'package:jobee/widgets/widget_utils/preload_image.dart' show loadImage;
 import 'package:provider/provider.dart' show MultiProvider, StreamProvider;
@@ -28,7 +28,6 @@ Future<void> main() async {
   //FirebaseFunctions.instance.useFunctionsEmulator('localhost', 5001);
   //await FirebaseStorage.instance.useStorageEmulator('localhost', 9199);
 
-
   // - Pre-load essential images
   // Asset images
   await loadImage(const AssetImage('images/dude-call.png'));
@@ -43,7 +42,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Map<String, Widget Function(BuildContext)> routes = <String, Widget Function(BuildContext)>{
-      '/': (BuildContext context) => const Wrapper(),
+      '/': (BuildContext context) => const AuthWrapper(),
       '/authenticate': (BuildContext context) => const Authenticate(),
       '/home': (BuildContext context) => const Home(),
     };
@@ -52,7 +51,9 @@ class MyApp extends StatelessWidget {
     // TODO: Code Packaging
     // TODO: Code Testing
 
+    // Non-authenticated MultiProvider
     return MultiProvider(
+      // Non-Authenticated providers
       providers: <SingleChildWidget>[
         StreamProvider<AppUser?>.value(initialData: null, value: AuthService.user),
       ],

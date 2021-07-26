@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
 import 'package:jobee/models/app_user.dart' show AppUserData;
 import 'package:jobee/services/auth.dart' show AuthService;
 
-import 'profile_avatar.dart' show ProfileAvatar;
+import 'aux_profile_avatar.dart' show ProfileAvatar;
 
 class ProfileDetailedBody extends StatefulWidget {
   final AppUserData appUserData;
@@ -27,7 +27,8 @@ class _ProfileDetailedBodyState extends State<ProfileDetailedBody> {
 
     // else, user wants to sign out
     await AuthService.signOut(context: context);
-    Navigator.pushReplacementNamed(context, '/');
+    Navigator.pop(context);
+    //Navigator.pushReplacementNamed(context, '/');
   }
 
   /// Show confirmation box for logout
@@ -132,7 +133,7 @@ class _ProfileDetailedBodyState extends State<ProfileDetailedBody> {
                 child: Builder(builder: (BuildContext context) {
                   return OutlinedButton(
                     onPressed: () async {
-                      _handleLogout(context);
+                      await _handleLogout(context);
                     },
                     child: Wrap(
                       crossAxisAlignment: WrapCrossAlignment.center,

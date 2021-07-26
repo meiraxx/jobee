@@ -4,9 +4,9 @@ import 'package:jobee/external-libs/intl_phone_field-2.0.0/phone_number.dart' sh
 //import 'package:intl_phone_field/intl_phone_field.dart' show IntlPhoneField;
 //import 'package:intl_phone_field/phone_number.dart' show PhoneNumber;
 import 'package:jobee/models/app_user.dart' show AppUserData;
-import 'package:jobee/screens/package3_home/home.dart' show Home;
-import 'package:jobee/screens/shared_screens/logo.dart' show Logo;
-import 'package:jobee/screens/package0_wrapper/wrapper.dart' show Wrapper;
+import 'package:jobee/screens/package4_home/4.0_home.dart' show Home;
+import 'package:jobee/widgets/jobee/logo.dart' show Logo;
+import 'package:jobee/screens/package0_wrapper/0.0_auth_wrapper.dart' show AuthWrapper;
 import 'package:jobee/services/auth.dart' show AuthService;
 import 'package:jobee/services/database.dart' show DatabaseService;
 import 'package:jobee/services/network.dart' show NetworkService;
@@ -76,25 +76,19 @@ class _SubmitPersonalProfileDataState extends State<SubmitPersonalProfileData> {
     // app user data
     final AppUserData appUserData = Provider.of<AppUserData>(context);
     if (appUserData.hasRegisteredPersonalData == null) {
-      debugPrint("submit_personal_profile_data.dart: Loading initial user data...");
       return const TextLoader(text: "Loading initial user data...");
     }
     if (appUserData.hasRegisteredPersonalData == true) {
-      debugPrint("submit_personal_profile_data.dart: SubmitPersonalData() -> Home()");
       return const Home();
     }
 
     // if appUserData.hasRegisteredPersonalData is false, then we present the personal data form
-    debugPrint("submit_personal_profile_data.dart: SubmitPersonalData() presented");
     return FutureBuilder<Map<String, dynamic>>(
       future: _infoByIP,
       builder: (BuildContext context, AsyncSnapshot<Map<String, dynamic>> futureSnapshot) {
         switch (futureSnapshot.connectionState) {
-          case ConnectionState.none:
-            return const Text("ConnectionState.none is not reached.");
-          case ConnectionState.waiting:
-            debugPrint("submit_personal_profile_data.dart: Fetching user locale...");
-            return const TextLoader(text: "Loading language preferences...");
+          case ConnectionState.none: return const Text("ConnectionState.none is not reached.");
+          case ConnectionState.waiting: return const TextLoader(text: "Loading region preferences...");
           default:
             if (futureSnapshot.hasError) {
               return Text('Error: ${futureSnapshot.error}');
@@ -103,7 +97,7 @@ class _SubmitPersonalProfileDataState extends State<SubmitPersonalProfileData> {
             // else, condition to validate that we received the expected data from the external API
             if ( futureSnapshot.data==null || !futureSnapshot.data!.containsKey("countryCode") ) {
               // if we didn't receive the expected result, return to wrapper to retry connection
-              return const Wrapper();
+              return const AuthWrapper();
             }
 
             // else, return the personal information page
@@ -268,7 +262,7 @@ class _SubmitPersonalProfileDataState extends State<SubmitPersonalProfileData> {
                         TextButton(
                           onPressed: () async {
                             await AuthService.signOut(context: context);
-                            Navigator.pushReplacementNamed(context, '/');
+                            //Navigator.pushReplacementNamed(context, '/');
                           },
                           child: const Text(
                             "Sign out",

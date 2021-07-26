@@ -8,15 +8,15 @@ import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
 import 'package:image_picker/image_picker.dart' show PickedFile;
-import 'package:jobee/screens/package4_profile/global_variables_profile.dart' show ProfileAsyncGlobals, ProfileSyncGlobals;
 import 'package:jobee/models/app_user.dart' show AppUserData;
 import 'package:jobee/services/storage/storage.dart' show StorageService;
 import 'package:jobee/widgets/ink_splash/custom_icon_button_ink_splash.dart' show CustomIconButtonInkSplash;
 import 'package:jobee/widgets/loaders/in_place_loader.dart' show InPlaceLoader;
 import 'package:jobee/widgets/media_files.dart' show showImageSourceActionSheet;
 
-import 'profile_avatar_fullscreen.dart' show ProfileAvatarFullScreen;
-import 'profile_detailed.dart' show ProfileDetailedScreen;
+import '5.0_profile_detailed.dart' show ProfileDetailedScreen;
+import '5.2_profile_avatar_fullscreen.dart' show ProfileAvatarFullScreen;
+import 'global_variables_profile.dart' show ProfileAsyncGlobals, ProfileSyncGlobals;
 
 /// Class for the profile avatar shown inside an outer widget
 class ProfileAvatar extends StatefulWidget {
