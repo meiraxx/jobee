@@ -3,10 +3,10 @@ import 'dart:typed_data';
 import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/material.dart';
 import 'package:jobee/services/service01_database/aux_app_user_data.dart' show AppUserData;
-import 'package:jobee/screens/screen04_home/4.0_home.dart' show Home;
+import 'package:jobee/screens/screen04_home/4.0_home_screen.dart' show HomeScreen;
 import 'package:jobee/screens/screen05_profile/global_variables_profile.dart' show ProfileAsyncGlobals, ProfileSyncGlobals;
-import 'package:jobee/widgets/loaders/text_loader.dart' show TextLoader;
-import 'package:jobee/widgets/widget_utils/preload_image.dart' show loadImage;
+import 'package:jobee/screens/widgets/loaders/text_loader.dart' show TextLoader;
+import 'package:jobee/screens/widgets/widget_utils/preload_image.dart' show loadImage;
 import 'package:provider/provider.dart' show Provider;
 
 class UserResourceLoader extends StatefulWidget {
@@ -65,7 +65,7 @@ class _UserResourceLoaderState extends State<UserResourceLoader> {
           // at this point, futureBoolSnapshot.data should be true
           assert(futureBoolSnapshot.data == true);
 
-          return const Home();
+          return const HomeScreen();
         }
         throw Exception("Error: This code shouldn't ever be reached.");
       },

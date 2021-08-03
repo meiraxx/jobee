@@ -14,6 +14,7 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
 
   @override
   Widget build(BuildContext context) {
+    final BorderRadius buttonBorderRadius = BorderRadius.circular(4.0);
     final Widget button = InkWell(
       onTap: () async {
         _isSigningIn = true;
@@ -36,9 +37,10 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
       },
       overlayColor: MaterialStateProperty.all(Colors.lightBlueAccent.withAlpha(0x7F)),
       highlightColor: Colors.lightBlueAccent.withAlpha(0x7F),
+      borderRadius: buttonBorderRadius,
       child: Ink(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(4.0),
+          borderRadius: buttonBorderRadius,
           color: const Color(0xFF397AF3),
         ),
         child: Padding(
@@ -51,7 +53,7 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
                 height: 32.0,
                 child: Container(
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(4.0),
+                    borderRadius: buttonBorderRadius,
                     color: Colors.white,
                   ),
                   child: Image.asset(

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
-import 'package:jobee/screens/screen01_authenticate/1.2_jobee_login.dart' show AuthMailPassword;
-import 'package:jobee/screens/screen01_authenticate/1.1_jobee_register.dart'
-    show RegMailPassword;
-import 'package:jobee/theme/jobee_theme_data.dart' show JobeeThemeData;
-import 'package:jobee/widgets/ink_splash/custom_elevated_button_ink_splash.dart'
+import 'package:jobee/screens/screen01_authenticate/1.2_mail_password_login_screen.dart'
+    show MailPasswordLoginScreen;
+import 'package:jobee/screens/screen01_authenticate/1.1_mail_password_register_screen.dart'
+    show MailPasswordRegisterScreen;
+import 'package:jobee/screens/theme/jobee_theme_data.dart' show JobeeThemeData;
+import 'package:jobee/screens/widgets/custom_material_widgets/ink_splash/custom_elevated_button_ink_splash.dart'
     show CustomElevatedButtonInkSplash;
 
 import 'aux_google_sign_in_button.dart' show GoogleSignInButton;
@@ -19,7 +20,7 @@ class Authenticate extends StatefulWidget {
 class _AuthenticateState extends State<Authenticate> {
   bool? showSignIn;
 
-  void toggleView() {
+  void toggleAuthView() {
     setState( () => showSignIn = !showSignIn! );
   }
 
@@ -33,7 +34,7 @@ class _AuthenticateState extends State<Authenticate> {
     final MediaQueryData queryData = MediaQuery.of(context);
 
     if (showSignIn != null) {
-      return (showSignIn!)?AuthMailPassword(toggleView: toggleView):RegMailPassword(toggleView: toggleView);
+      return (showSignIn!)?MailPasswordLoginScreen(toggleAuthViewCallback: toggleAuthView):MailPasswordRegisterScreen(toggleAuthViewCallback: toggleAuthView);
     }
 
     return Scaffold(
@@ -87,76 +88,7 @@ class _AuthenticateState extends State<Authenticate> {
             const SizedBox(height: 40.0),
             // - Create account Button
             Center(
-              child: InkWell(
-                onTap: () {
-                  setState(() {
-                    setState(() => showSignIn = false);
-                  });
-                },
-                overlayColor: MaterialStateProperty.all(JobeeThemeData.lightPaletteColors["yellow"]!.withAlpha(0x7F)),
-                highlightColor: JobeeThemeData.lightPaletteColors["yellow"]!.withAlpha(0x7F),
-                splashColor: JobeeThemeData.lightPaletteColors["yellow"]!.withAlpha(0x7F),
-                splashFactory: CustomElevatedButtonInkSplash.splashFactory,
-                child: Ink(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(4.0),
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(4.0, 4.0, 10.0, 4.0),
-                    child: Wrap(
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      children: <Widget>[
-                        SizedBox(
-                          width: 32.0,
-                          height: 32.0,
-                          child: Container(
-                            padding: const EdgeInsets.all(2.0),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(4.0),
-                              color: Colors.white,
-                            ),
-                            child: Image.asset(
-                              "images/bee-logo-07.png",
-                              semanticLabel: "Jobee logo",
-                              width: 24.0, // default icon width
-                              height: 24.0, // default icon height
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 12.0),
-                        Text(
-                          "Sign up a ",
-                          style: GoogleFonts.montserrat(
-                            //fontFamily: Theme.of(context).textTheme.button!.fontFamily,
-                            fontSize: Theme.of(context).textTheme.button!.fontSize,
-                            fontWeight: FontWeight.w400,
-                            color: Theme.of(context).textTheme.button!.color,
-                          ),
-                        ),
-                        Text(
-                          "Jobee",
-                          style: GoogleFonts.museoModerno().copyWith(
-                            fontSize: Theme.of(context).textTheme.button!.fontSize,
-                            color: Theme.of(context).textTheme.button!.color,
-                            fontWeight: FontWeight.w700,
-                            //fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        Text(
-                          " account",
-                          style: GoogleFonts.montserrat(
-                            //fontFamily: Theme.of(context).textTheme.button!.fontFamily,
-                            fontSize: Theme.of(context).textTheme.button!.fontSize,
-                            fontWeight: FontWeight.w400,
-                            color: Theme.of(context).textTheme.button!.color,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
+              child: buildMailPasswordRegisterButton(),
             ),
             const SizedBox(height: 20.0),
             // - OR Rectangle
@@ -221,6 +153,81 @@ class _AuthenticateState extends State<Authenticate> {
               ],
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildMailPasswordRegisterButton() {
+    final BorderRadius buttonBorderRadius = BorderRadius.circular(4.0);
+    return InkWell(
+      onTap: () {
+        setState(() {
+          setState(() => showSignIn = false);
+        });
+      },
+      overlayColor: MaterialStateProperty.all(JobeeThemeData.lightPaletteColors["yellow"]!.withAlpha(0x7F)),
+      highlightColor: JobeeThemeData.lightPaletteColors["yellow"]!.withAlpha(0x7F),
+      splashColor: JobeeThemeData.lightPaletteColors["yellow"]!.withAlpha(0x7F),
+      splashFactory: CustomElevatedButtonInkSplash.splashFactory,
+      borderRadius: buttonBorderRadius,
+      child: Ink(
+        decoration: BoxDecoration(
+          borderRadius: buttonBorderRadius,
+          color: Theme.of(context).colorScheme.primary,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(4.0, 4.0, 10.0, 4.0),
+          child: Wrap(
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: <Widget>[
+              SizedBox(
+                width: 32.0,
+                height: 32.0,
+                child: Container(
+                  padding: const EdgeInsets.all(2.0),
+                  decoration: BoxDecoration(
+                    borderRadius: buttonBorderRadius,
+                    color: Colors.white,
+                  ),
+                  child: Image.asset(
+                    "images/bee-logo-07.png",
+                    semanticLabel: "Jobee logo",
+                    width: 24.0, // default icon width
+                    height: 24.0, // default icon height
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12.0),
+              Text(
+                "Sign up a ",
+                style: GoogleFonts.montserrat(
+                  //fontFamily: Theme.of(context).textTheme.button!.fontFamily,
+                  fontSize: Theme.of(context).textTheme.button!.fontSize,
+                  fontWeight: FontWeight.w400,
+                  color: Theme.of(context).textTheme.button!.color,
+                ),
+              ),
+              Text(
+                "Jobee",
+                style: GoogleFonts.museoModerno().copyWith(
+                  fontSize: Theme.of(context).textTheme.button!.fontSize,
+                  color: Theme.of(context).textTheme.button!.color,
+                  fontWeight: FontWeight.w700,
+                  //fontWeight: FontWeight.w700,
+                ),
+              ),
+              Text(
+                " account",
+                style: GoogleFonts.montserrat(
+                  //fontFamily: Theme.of(context).textTheme.button!.fontFamily,
+                  fontSize: Theme.of(context).textTheme.button!.fontSize,
+                  fontWeight: FontWeight.w400,
+                  color: Theme.of(context).textTheme.button!.color,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

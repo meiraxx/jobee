@@ -1,31 +1,35 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart' show CupertinoPageRoute;
+import 'package:jobee/screens/theme/navigation.dart';
 import 'package:jobee/services/service01_database/aux_app_user_data.dart' show AppUserData;
-import 'package:jobee/screens/screen05_profile/5.0_profile_detailed.dart' show ProfileDetailedScreen;
 import 'package:jobee/screens/screen05_profile/5.1_profile_summarized.dart' show ProfileSummarized;
-import 'package:jobee/screens/screen06_jobee_services/jobee_service_list.dart' show JobeeServiceList;
-import 'package:jobee/widgets/jobee/logo.dart' show Logo;
-import 'package:jobee/widgets/widget_utils/app_bar_button.dart' show appBarButton;
+import 'package:jobee/screens/screen07_jobee_services/jobee_service_list.dart' show JobeeServiceList;
+import 'package:jobee/screens/widgets/jobee/logo.dart' show Logo;
+import 'package:jobee/screens/widgets/buttons/app_bar_button.dart' show appBarButton;
 import 'package:provider/provider.dart' show Provider;
 
-class CustomDrawer extends StatefulWidget {
+class HomeDrawer extends StatefulWidget {
 
-  const CustomDrawer({Key? key}) : super(key: key);
+  const HomeDrawer({Key? key}) : super(key: key);
 
   @override
-  _CustomDrawerState createState() => _CustomDrawerState();
+  _HomeDrawerState createState() => _HomeDrawerState();
 }
 
-class _CustomDrawerState extends State<CustomDrawer> {
+class _HomeDrawerState extends State<HomeDrawer> {
   final double _drawerMenuWidthRatio = 0.739;
 
-  void _showServicePanel(BuildContext context) {
+  void _showSettingsPanel(BuildContext context) {
     showModalBottomSheet(context: context, builder: (BuildContext context) {
       return Container(
         padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 60.0),
         child: Container(),
       );
     });
+  }
+
+  // Out-callable setState function
+  void updateWidgetState() {
+    if (this.mounted) setState(() {});
   }
 
   @override
@@ -60,39 +64,31 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 Positioned(
                   child: Container(
                     padding: const EdgeInsets.fromLTRB(8.0, 12.0*3, 8.0, 12.0),
-                    child: const Logo(),
+                    child: Logo(updateWidgetStateCallback: this.updateWidgetState, defaultLogoColor: Theme.of(context).colorScheme.onPrimary),
                   ),
                 ),
               ],
             ),
-            //Divider(height: 0.0),
-            //Divider(height: 0.0),
             // - SUMMARIZED PROFILE
             ProfileSummarized(appUserData: appUserData),
             const Divider(height: 0.0),
             const Divider(height: 0.0),
-            // - ACCOUNT
-            appBarButton(context: context, text: "View profile", iconData: Icons.account_circle_outlined, onPressedFunction: () async {
-              // pop the drawer menu
-              Navigator.pop(context);
-              // push the profile page
-              Navigator.push(context, CupertinoPageRoute<dynamic>(builder: (BuildContext context) => ProfileDetailedScreen(appUserData: appUserData)));
+            // - SERVICES
+            appBarButton(context: context, text: "Services", iconData: Icons.pages_outlined, onClicked: () async {
+              // push the service list page
+              //Navigator.push(context, CupertinoPageRoute<dynamic>(builder: (_) => const JobeeServiceList()));
+              await slideFromLeftNavigatorPush(context, const JobeeServiceList());
+              // rather than popping the drawer menu, close it without pop AFTER the requested action has completed
+              Scaffold.of(context).openEndDrawer();
             }),
             const Divider(height: 0.0),
             const Divider(height: 0.0),
-            // - SERVICES
-            appBarButton(context: context, text: "Services", iconData: Icons.pages_outlined, onPressedFunction: () async {
+            // - SETTINGS
+            appBarButton(context: context, text: "Settings", iconData: Icons.settings_outlined, onClicked: () {
               // pop the drawer menu
               Navigator.pop(context);
-              // push the about us page
-              Navigator.push(context, CupertinoPageRoute<dynamic>(builder: (BuildContext context) => const JobeeServiceList()));
-            }),
-            // - SERVICES
-            appBarButton(context: context, text: "Settings", iconData: Icons.settings_outlined, onPressedFunction: () async {
-              // pop the drawer menu
-              Navigator.pop(context);
-              // show the service panel widget
-              _showServicePanel(context);
+              // show the settings panel widget
+              _showSettingsPanel(context);
             }),
             const Divider(height: 0.0),
             const Divider(height: 0.0)

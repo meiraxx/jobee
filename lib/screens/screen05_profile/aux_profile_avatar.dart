@@ -10,11 +10,11 @@ import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
 import 'package:image_picker/image_picker.dart' show PickedFile;
 import 'package:jobee/services/service01_database/aux_app_user_data.dart' show AppUserData;
 import 'package:jobee/services/service03_storage/3.0_storage.dart' show StorageService;
-import 'package:jobee/widgets/ink_splash/custom_icon_button_ink_splash.dart' show CustomIconButtonInkSplash;
-import 'package:jobee/widgets/loaders/in_place_loader.dart' show InPlaceLoader;
-import 'package:jobee/widgets/media_files.dart' show showImageSourceActionSheet;
+import 'package:jobee/screens/widgets/custom_material_widgets/ink_splash/custom_icon_button_ink_splash.dart' show CustomIconButtonInkSplash;
+import 'package:jobee/screens/widgets/loaders/in_place_loader.dart' show InPlaceLoader;
+import 'package:jobee/screens/widgets/media_files.dart' show showImageSourceActionSheet;
 
-import '5.0_profile_detailed.dart' show ProfileDetailedScreen;
+import '5.0_profile_detailed_screen.dart' show ProfileDetailedScreen;
 import '5.2_profile_avatar_fullscreen.dart' show ProfileAvatarFullScreen;
 import 'global_variables_profile.dart' show ProfileAsyncGlobals, ProfileSyncGlobals;
 
@@ -23,11 +23,15 @@ class ProfileAvatar extends StatefulWidget {
   final AppUserData appUserData;
   final Color borderColor;
   final bool isHero;
-  final bool isProfileScreenAvatar;
+  final String? heroTag;
+  final bool isProfileDetailedAvatar;
+
+  final double borderWidth;
   final double avatarTextFontSize;
 
   const ProfileAvatar({Key? key, required this.appUserData, required this.borderColor,
-    required this.isHero, this.isProfileScreenAvatar = false, this.avatarTextFontSize = 28.0}) : super(key: key);
+    this.isProfileDetailedAvatar = false, this.borderWidth = 3.0, this.isHero = false,
+    this.heroTag, this.avatarTextFontSize = 28.0}) : super(key: key);
 
   @override
   _ProfileAvatarState createState() => _ProfileAvatarState();
@@ -123,77 +127,8 @@ class _ProfileAvatarState extends State<ProfileAvatar> with TickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
-    // - WIDGETS
-    Widget? defaultHeroChild;
-    Widget? defaultProfileAvatarHero;
-    Widget? heroChild;
-    Widget? profileAvatarHero;
-
     // Download the profile avatar
     _downloadAndUpdateProfileAvatar();
-
-    // check if image does not exist yet (empty if no avatar was sent to the server)
-    final bool imageEmpty = listEquals( ProfileSyncGlobals.userProfileAvatarBytes, Uint8List.fromList(<int>[]) );
-    if (imageEmpty) {
-      defaultHeroChild = Material(
-        color: Colors.transparent,
-        child: Container(
-          decoration: const BoxDecoration(
-            shape: BoxShape.circle,
-          ),
-          alignment: Alignment.center,
-          child: Text(
-            "${widget.appUserData.firstName![0]}${widget.appUserData.lastName![0]}",
-            style: GoogleFonts.montserrat(
-              fontWeight: FontWeight.w500,
-              fontSize: widget.avatarTextFontSize,
-              color: Colors.white,
-            ),
-          ),
-        ),
-      );
-      defaultProfileAvatarHero = widget.isHero ? Hero(
-        tag: 'profileAvatarHero',
-        child: defaultHeroChild,
-      ) : defaultHeroChild;
-    } else {
-      final Widget profileAvatarImage = SizedBox(
-        width: 200, // circle avatar image width
-        height: 200, // circle avatar image height
-        child: Image.memory(
-          ProfileSyncGlobals.userProfileAvatarBytes!,
-          fit: BoxFit.cover,
-        ),
-      );
-
-      // Avatar Clip-Oval
-      heroChild = ClipOval(
-        child: _uploadingReDownloadingFlag ? Stack(
-          children: <Widget>[
-            Positioned(
-              child: ColorFiltered(
-                colorFilter: ColorFilter.mode(
-                  Colors.black.withOpacity(0.3),
-                  BlendMode.darken,
-                ),
-                child: profileAvatarImage,
-              ),
-            ),
-            const Positioned(
-              child: InPlaceLoader(
-                baseSize: Size(40.0, 40.0),
-                padding: EdgeInsets.only(top: 20.0, left: 20.0),
-              ),
-            ),
-          ],
-        ) : profileAvatarImage,
-      );
-      // Avatar
-      profileAvatarHero = widget.isHero ? Hero(
-        tag: 'profileAvatarHero',
-        child: heroChild,
-      ) : heroChild;
-    }
 
     return Container(
       decoration: BoxDecoration(
@@ -201,94 +136,166 @@ class _ProfileAvatarState extends State<ProfileAvatar> with TickerProviderStateM
         shape: BoxShape.circle,
         border: Border.all(
           color: widget.borderColor,
-          width: 3.0,
+          width: widget.borderWidth,
         ),
       ),
       child: Stack(
         children: <Widget>[
-          Positioned(
-            child: CircleAvatar(
-              backgroundColor: Theme.of(context).colorScheme.primary,
-              radius: _circleAvatarRadius,
-              child: Center(
-                child: SizedBox(
-                  width: double.infinity,
-                  height: double.infinity,
-                  child: imageEmpty
-                  ? GestureDetector(
-                    onTap: () async {
-                      // if no image was uploaded, the click on the profile avatar
-                      // widget will assume the user wants to upload an image
-                      _handleProfileAvatarUploadIntent();
-                    },
-                    child: defaultProfileAvatarHero,
-                  )
-                  : GestureDetector(
-                    onTap: () async {
-                      // if we're in the profile view:
-                      if (widget.isProfileScreenAvatar) {
-                        // navigate to a widget with a full-screen image
-                        Navigator.push(
-                          context,
-                          PageRouteBuilder<dynamic>(
-                            pageBuilder: (BuildContext context, Animation<double> a, Animation<double> b) => ProfileAvatarFullScreen(profileAvatar: widget),
-                            transitionDuration: const Duration(milliseconds: 500),
-                          ),
-                        );
-                        return;
-                      }
-
-                      // else, we assume the user wants to navigate to the profile screen
-                      Navigator.push(
-                        context,
-                        CupertinoPageRoute<dynamic>(builder: (BuildContext context) => ProfileDetailedScreen(appUserData: widget.appUserData)),
-                      );
-                    },
-                    child: profileAvatarHero,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          Positioned(
-            top: _circleAvatarRadius + 17,
-            left: _circleAvatarRadius + 17,
-            child: Material(
-              color: Colors.transparent,
-              child: Ink(
-                width: 23,
-                height: 23,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  //color: const Color(0xFF128C7E), // Teal Green
-                  //color: const Color(0xFF34B7F1), // Blue
-                  color: Theme.of(context).colorScheme.secondary,
-                ),
-                child: InkResponse(
-                  splashFactory: CustomIconButtonInkSplash.splashFactory,
-                  overlayColor: MaterialStateProperty.all( Theme.of(context).colorScheme.primary ),
-                  highlightColor: Theme.of(context).colorScheme.primary,
-                  splashColor: Theme.of(context).colorScheme.primary,
-                  customBorder: const CircleBorder(),
-                  containedInkWell: true,
-                  onTap: () async {
-                    // handle click on the camera icon
-                    _handleProfileAvatarUploadIntent();
-                  },
-                  child: const InkWell(
-                    child: Icon(
-                      Icons.camera_alt_rounded,
-                      size: 15,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
+          buildCircleAvatar(),
+          buildAvatarActionButton(),
         ],
       ),
     );
+  }
+
+  Widget buildCircleAvatar() {
+    // check if image does not exist yet (empty if no avatar was sent to the server)
+    final bool imageEmpty = listEquals( ProfileSyncGlobals.userProfileAvatarBytes, Uint8List.fromList(<int>[]) );
+
+    return Positioned(
+      child: CircleAvatar(
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        radius: _circleAvatarRadius,
+        child: Center(
+          child: SizedBox(
+            width: double.infinity,
+            height: double.infinity,
+            child: imageEmpty ? GestureDetector(
+              onTap: () async {
+                // if no image was uploaded, the click on the profile avatar
+                // widget will assume the user wants to upload an image
+                _handleProfileAvatarUploadIntent();
+              },
+              child: buildDefaultProfileAvatarHero(),
+            ) : buildProfileAvatarHero(),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildAvatarActionButton() => Positioned(
+    top: _circleAvatarRadius + 17,
+    left: _circleAvatarRadius + 17,
+    child: Material(
+      color: Colors.transparent,
+      child: Ink(
+        width: 23,
+        height: 23,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(100),
+            border: Border.all(width: 2, color: Colors.white)
+        ),
+        child: Ink(
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Theme.of(context).colorScheme.secondary,
+          ),
+          child: InkResponse(
+            splashFactory: CustomIconButtonInkSplash.splashFactory,
+            overlayColor: MaterialStateProperty.all( Theme.of(context).colorScheme.primary ),
+            highlightColor: Theme.of(context).colorScheme.primary,
+            splashColor: Theme.of(context).colorScheme.primary,
+            customBorder: const CircleBorder(),
+            containedInkWell: true,
+            onTap: () async {
+              // handle click on the camera icon
+              _handleProfileAvatarUploadIntent();
+            },
+            child: const InkWell(
+              child: Icon(
+                Icons.camera_alt_rounded,
+                size: 15,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+
+  Widget buildDefaultProfileAvatarHero() {
+    final Widget defaultHeroChild = Material(
+      color: Colors.transparent,
+      child: Container(
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          "${widget.appUserData.firstName![0]}${widget.appUserData.lastName![0]}",
+          style: GoogleFonts.montserrat(
+            fontWeight: FontWeight.w500,
+            fontSize: widget.avatarTextFontSize,
+            color: Colors.white,
+          ),
+        ),
+      ),
+    );
+
+    return widget.isHero ? Hero(
+      tag: widget.heroTag!,
+      child: defaultHeroChild,
+    ) : defaultHeroChild;
+  }
+
+  Widget buildProfileAvatarHero() {
+    final Widget profileAvatarImage = Material(
+      color: Colors.transparent,
+      child: Ink.image(
+        image: MemoryImage(ProfileSyncGlobals.userProfileAvatarBytes!),
+        fit: BoxFit.cover,
+        width: 200,
+        height: 200,
+        child: InkWell(
+          onTap: () {
+            // if we're already in the detailed profile view
+            if (widget.isProfileDetailedAvatar) {
+              // navigate to a widget with a full-screen image
+              Navigator.push(
+                context,
+                PageRouteBuilder<dynamic>(
+                  pageBuilder: (BuildContext context, Animation<double> a, Animation<double> b) => ProfileAvatarFullScreen(profileAvatar: widget, heroTag: widget.heroTag!),
+                  transitionDuration: const Duration(milliseconds: 500),
+                ),
+              );
+              return;
+            }
+            // else, we assume the user wants to navigate to the detailed profile view
+            Navigator.push(context, CupertinoPageRoute<dynamic>(builder: (_) => ProfileDetailedScreen(appUserData: widget.appUserData)));
+          },
+        ),
+      ),
+    );
+
+    // Avatar Clip-Oval
+    final Widget heroChild = ClipOval(
+      child: _uploadingReDownloadingFlag ? Stack(
+        children: <Widget>[
+          Positioned(
+            child: ColorFiltered(
+              colorFilter: ColorFilter.mode(
+                Colors.black.withOpacity(0.3),
+                BlendMode.darken,
+              ),
+              child: profileAvatarImage,
+            ),
+          ),
+          const Positioned(
+            child: InPlaceLoader(
+              baseSize: Size(40.0, 40.0),
+              padding: EdgeInsets.only(top: 20.0, left: 20.0),
+            ),
+          ),
+        ],
+      ) : profileAvatarImage,
+    );
+
+    return widget.isHero ? Hero(
+      tag: widget.heroTag!,
+      child: heroChild,
+    ) : heroChild;
   }
 
   @override

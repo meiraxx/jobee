@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:jobee/widgets/widget_utils/app_bar_button.dart' show appBarButton;
+import 'package:jobee/screens/widgets/buttons/app_bar_button.dart' show appBarButton;
 import 'package:jobee/screens/screen05_profile/global_variables_profile.dart' show ProfileSyncGlobals;
 
 import 'aux_profile_avatar.dart' show ProfileAvatar;
@@ -7,8 +7,9 @@ import 'aux_profile_avatar.dart' show ProfileAvatar;
 /// Class for the full screen profile avatar
 class ProfileAvatarFullScreen extends StatefulWidget {
   final ProfileAvatar profileAvatar;
+  final String heroTag;
 
-  const ProfileAvatarFullScreen({Key? key, required this.profileAvatar}) : super(key: key);
+  const ProfileAvatarFullScreen({Key? key, required this.profileAvatar, required this.heroTag}) : super(key: key);
 
   @override
   _ProfileAvatarFullScreenState createState() => _ProfileAvatarFullScreenState();
@@ -21,13 +22,13 @@ class _ProfileAvatarFullScreenState extends State<ProfileAvatarFullScreen> with 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
-        leading: appBarButton(context: context, iconData: Icons.arrow_back, onPressedFunction: () {
+        leading: appBarButton(context: context, iconData: Icons.arrow_back, onClicked: () {
           Navigator.pop(context);
         }, color: Colors.white),
         title: const Text("Profile picture", style: TextStyle(color: Colors.white)),
         elevation: 0.0,
         actions: <Widget>[
-          appBarButton(context: context, iconData: Icons.edit, onPressedFunction: () async {
+          appBarButton(context: context, iconData: Icons.edit, onClicked: () {
             // TODO: call _handleProfileAvatarUploadIntent(context) here somehow
           }, color: Colors.white),
         ],
@@ -40,7 +41,7 @@ class _ProfileAvatarFullScreenState extends State<ProfileAvatarFullScreen> with 
           Container(
             color: Colors.black,
             child: Hero(
-              tag: 'profileAvatarHero',
+              tag: widget.heroTag,
               child: AspectRatio(
                 aspectRatio: 3 / 3,
                 child: Container(

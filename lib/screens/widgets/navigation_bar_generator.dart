@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'custom_animated_bottom_bar.dart';
-import 'custom_bottom_navigation_bar.dart';
-import 'custom_bottom_navigation_bar_item.dart';
+import 'custom_material_widgets/navigation_bar/custom_animated_bottom_bar.dart';
+import 'custom_material_widgets/navigation_bar/custom_bottom_navigation_bar.dart';
+import 'custom_material_widgets/navigation_bar/custom_bottom_navigation_bar_item.dart';
 
 Widget bottomNavigationBarGenerator({ required BuildContext context, required Function(int) onTap,
   required int bottomNavigationCurrentIndex, required List<Widget> activeIconList, required List<Widget> inactiveIconList,

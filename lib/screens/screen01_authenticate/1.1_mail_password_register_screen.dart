@@ -1,22 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart' show FirebaseAuthException;
 import 'package:flutter/services.dart' show TextInput;
+import 'package:jobee/screens/screen00_wrapper/0.0_auth_wrapper.dart' show AuthWrapper;
+import 'package:jobee/screens/theme/navigation.dart' show slideFromRightNavigatorPush;
 import 'package:jobee/services/service00_authentication/0.1_email_password_auth.dart' show EmailPasswordAuthService;
-import 'package:jobee/widgets/jobee/logo.dart' show Logo;
-import 'package:jobee/widgets/widget_utils/app_bar_button.dart' show appBarButton;
-import 'package:jobee/widgets/loaders/in_place_loader.dart' show InPlaceLoader;
+import 'package:jobee/screens/widgets/jobee/logo.dart' show Logo;
+import 'package:jobee/screens/widgets/buttons/app_bar_button.dart' show appBarButton;
+import 'package:jobee/screens/widgets/loaders/in_place_loader.dart' show InPlaceLoader;
 import 'package:jobee/utils/input_field_validation.dart' show validateNotEmpty, validatePassword;
 
-class RegMailPassword extends StatefulWidget {
-  final Function toggleView;
+class MailPasswordRegisterScreen extends StatefulWidget {
+  final void Function() toggleAuthViewCallback;
 
-  const RegMailPassword({ required this.toggleView });
+  const MailPasswordRegisterScreen({ required this.toggleAuthViewCallback });
 
   @override
-  _RegMailPasswordState createState() => _RegMailPasswordState();
+  _MailPasswordRegisterScreenState createState() => _MailPasswordRegisterScreenState();
 }
 
-class _RegMailPasswordState extends State<RegMailPassword> {
+class _MailPasswordRegisterScreenState extends State<MailPasswordRegisterScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _loading = false;
   bool _passwordVisible = false;
@@ -35,6 +37,12 @@ class _RegMailPasswordState extends State<RegMailPassword> {
   String _submissionError = '';
   double _submissionErrorSizedBoxHeight = 0.0;
 
+  // Out-callable setState function
+  void updateWidgetState() {
+    if (this.mounted) setState(() {});
+  }
+
+
   @override
   Widget build(BuildContext context) {
     // form info
@@ -49,15 +57,15 @@ class _RegMailPasswordState extends State<RegMailPassword> {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          leading: appBarButton(context: context, iconData: Icons.arrow_back, onPressedFunction: () {
-            Navigator.pushReplacementNamed(context, '/');
+          leading: appBarButton(context: context, iconData: Icons.arrow_back, onClicked: () {
+            slideFromRightNavigatorPush(context, const AuthWrapper());
           }),
           title: Wrap(
             crossAxisAlignment: WrapCrossAlignment.center,
-            children: const <Widget>[
-              Logo(),
-              SizedBox(width: 16.0),
-              Text(
+            children: <Widget>[
+              Logo(updateWidgetStateCallback: this.updateWidgetState, defaultLogoColor: Theme.of(context).colorScheme.onPrimary),
+              const SizedBox(width: 16.0),
+              const Text(
                 "|   Register",
               )
             ],
@@ -240,7 +248,7 @@ class _RegMailPasswordState extends State<RegMailPassword> {
                   const Text("Already have an account?"),
                   TextButton(
                     onPressed: () {
-                      widget.toggleView();
+                      widget.toggleAuthViewCallback();
                     },
                     child: const Text(
                       "Sign in",

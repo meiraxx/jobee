@@ -1,0 +1,43 @@
+Android:
+```android/app/google-services.json
+*Created google-services.json file*
+```
+
+```android/app/src/main/res/{values,values-night}/styles.xml
+<style name="NormalTheme" parent="@android:style/Theme.Light.NoTitleBar">
+    <item name="android:windowBackground">?android:colorBackground</item>
+    <item name="android:windowAnimationStyle">@null</item>
+</style>
+<!-- FIXME: Apply this only to authenticate screen -->
+<style name="noAnimTheme" parent="android:Theme">
+    <item name="android:windowAnimationStyle">@null</item>
+</style>
+```
+
+```android/app/src/main/AndroidManifest.xml
+<queries>
+      <intent>
+           <action android:name="android.media.action.IMAGE_CAPTURE" />
+      </intent>
+</queries>
+```
+
+
+iOS:
+```ios/Runner/Info.plist
+<key>NSAppTransportSecurity</key>
+<dict>
+    <key>NSExceptionDomains</key>
+    <dict>
+        <key>localhost</key>
+        <dict>
+            <key>NSExceptionAllowsInsecureHTTPLoads</key>
+            <true/>
+        </dict>
+    </dict>
+</dict>
+<key>NSPhotoLibraryUsageDescription</key>
+<string>To choose a profile image from the photo library</string>
+<key>NSCameraUsageDescription</key>
+<string>To take a profile photo using the camera</string>
+```

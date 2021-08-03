@@ -63,7 +63,7 @@ Future<PickedFile?> showImageSourceActionSheet(BuildContext context) async {
       context: context,
       builder: (BuildContext context) => Wrap(children: <Widget>[
         ListTile(
-          leading: const Icon(Icons.camera_alt),
+          leading: Icon(Icons.camera_alt_outlined, color: Theme.of(context).colorScheme.onBackground),
           title: const Text("Take a photo"),
           onTap: () async {
             pickedImage = await _getImageFromSource(ImageSource.camera);
@@ -71,7 +71,7 @@ Future<PickedFile?> showImageSourceActionSheet(BuildContext context) async {
           },
         ),
         ListTile(
-          leading: const Icon(Icons.image),
+          leading: Icon(Icons.image_outlined, color: Theme.of(context).colorScheme.onBackground),
           title: const Text("Pick from gallery"),
           onTap: () async {
             pickedImage = await _getImageFromSource(ImageSource.gallery);
@@ -79,7 +79,7 @@ Future<PickedFile?> showImageSourceActionSheet(BuildContext context) async {
           },
         ),
         ListTile(
-          leading: const Icon(Icons.delete),
+          leading: Icon(Icons.delete_outline, color: Theme.of(context).colorScheme.onBackground),
           title: const Text("Remove image"),
           onTap: () async {
             // TODO: implement remove image

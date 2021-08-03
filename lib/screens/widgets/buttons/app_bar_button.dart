@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:jobee/theme/jobee_theme_data.dart' show JobeeThemeData;
 
 Widget appBarButton({ required BuildContext context, String? text, IconData? iconData, Image? image,
-  String? tooltip, Color? color, required Function() onPressedFunction }) {
+  String? tooltip, Color? color, required Function() onClicked }) {
   assert(text!=null || iconData!=null || image != null);
-
-  color ??= Theme.of(context).colorScheme.onPrimary;
   
   if (text != null) {
     if (iconData != null) {
+      color ??= Theme.of(context).colorScheme.onBackground;
       // IconText button
       return TextButton.icon(
         icon: Icon(
@@ -24,7 +22,7 @@ Widget appBarButton({ required BuildContext context, String? text, IconData? ico
           ),
           textAlign: TextAlign.left,
         ),
-        onPressed: onPressedFunction,
+        onPressed: onClicked,
         style: ButtonStyle(
           overlayColor: MaterialStateProperty.all( Theme.of(context).colorScheme.primary ),
         ),
@@ -34,7 +32,7 @@ Widget appBarButton({ required BuildContext context, String? text, IconData? ico
       return Center(
         child: InkWell(
           onTap: () {
-            onPressedFunction();
+            onClicked();
           },
           borderRadius: BorderRadius.circular(4.0),
           child: Padding(
@@ -67,7 +65,7 @@ Widget appBarButton({ required BuildContext context, String? text, IconData? ico
     } else {
       // TextButton
       return TextButton(
-        onPressed: onPressedFunction,
+        onPressed: onClicked,
         child: Text(
           text,
           textAlign: TextAlign.left,
@@ -78,6 +76,7 @@ Widget appBarButton({ required BuildContext context, String? text, IconData? ico
       );
     }
   } else {
+    color ??= Theme.of(context).colorScheme.onPrimary;
     if (iconData != null) {
       // IconButton
       return IconButton(
@@ -86,16 +85,13 @@ Widget appBarButton({ required BuildContext context, String? text, IconData? ico
         ),
         tooltip: tooltip,
         color: color,
-        splashColor: JobeeThemeData.darkSplashColor,
-        highlightColor: JobeeThemeData.darkHighlightColor,
-        splashRadius: iconSplashRadius,
-        onPressed: onPressedFunction,
+        splashColor: Theme.of(context).splashColor,
+        highlightColor: Theme.of(context).highlightColor,
+        splashRadius: 20.0,
+        onPressed: onClicked,
       );
     }
   }
 
   return Container();
 }
-
-// global icon splash radius
-double iconSplashRadius = 20.0;

@@ -4,25 +4,25 @@ import 'package:jobee/external-libs/intl_phone_field-2.0.0/phone_number.dart' sh
 //import 'package:intl_phone_field/intl_phone_field.dart' show IntlPhoneField;
 //import 'package:intl_phone_field/phone_number.dart' show PhoneNumber;
 import 'package:jobee/services/service01_database/aux_app_user_data.dart' show AppUserData;
-import 'package:jobee/screens/screen04_home/4.0_home.dart' show Home;
-import 'package:jobee/widgets/jobee/logo.dart' show Logo;
+import 'package:jobee/screens/screen04_home/4.0_home_screen.dart' show HomeScreen;
+import 'package:jobee/screens/widgets/jobee/logo.dart' show Logo;
 import 'package:jobee/screens/screen00_wrapper/0.0_auth_wrapper.dart' show AuthWrapper;
 import 'package:jobee/services/service00_authentication/0.0_auth.dart' show AuthService;
 import 'package:jobee/services/service01_database/1.0_database.dart' show DatabaseService;
 import 'package:jobee/services/service02_network/2.0_network.dart' show NetworkService;
 import 'package:jobee/utils/input_field_validation.dart' show validateNotEmpty, validatePhoneNumber;
-import 'package:jobee/widgets/loaders/text_loader.dart' show TextLoader;
-import 'package:jobee/widgets/loaders/in_place_loader.dart' show InPlaceLoader;
+import 'package:jobee/screens/widgets/loaders/text_loader.dart' show TextLoader;
+import 'package:jobee/screens/widgets/loaders/in_place_loader.dart' show InPlaceLoader;
 import 'package:provider/provider.dart' show Provider;
 
-class SubmitPersonalProfileData extends StatefulWidget {
-  const SubmitPersonalProfileData({Key? key}) : super(key: key);
+class SubmitPersonalProfileDataScreen extends StatefulWidget {
+  const SubmitPersonalProfileDataScreen({Key? key}) : super(key: key);
 
   @override
-  _SubmitPersonalProfileDataState createState() => _SubmitPersonalProfileDataState();
+  _SubmitPersonalProfileDataScreenState createState() => _SubmitPersonalProfileDataScreenState();
 }
 
-class _SubmitPersonalProfileDataState extends State<SubmitPersonalProfileData> {
+class _SubmitPersonalProfileDataScreenState extends State<SubmitPersonalProfileDataScreen> {
   // Form constants
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _loading = false;
@@ -45,6 +45,11 @@ class _SubmitPersonalProfileDataState extends State<SubmitPersonalProfileData> {
   // user info
   final Future<Map<String, dynamic>> _infoByIP = NetworkService.getInfoByIP()!;
 
+  // Out-callable setState function
+  void updateWidgetState() {
+    if (this.mounted) setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     final MediaQueryData queryData = MediaQuery.of(context);
@@ -52,10 +57,10 @@ class _SubmitPersonalProfileDataState extends State<SubmitPersonalProfileData> {
     final PreferredSizeWidget appBar = AppBar(
       title: Wrap(
         crossAxisAlignment: WrapCrossAlignment.center,
-        children: const <Widget>[
-          Logo(),
-          SizedBox(width: 16.0),
-          Text(
+        children: <Widget>[
+          Logo(updateWidgetStateCallback: this.updateWidgetState, defaultLogoColor: Theme.of(context).colorScheme.onPrimary),
+          const SizedBox(width: 16.0),
+          const Text(
             "|   Personal information",
             style: TextStyle(
               color: Colors.black,
@@ -79,7 +84,7 @@ class _SubmitPersonalProfileDataState extends State<SubmitPersonalProfileData> {
       return const TextLoader(text: "Loading initial user data...");
     }
     if (appUserData.hasRegisteredPersonalData == true) {
-      return const Home();
+      return const HomeScreen();
     }
 
     // if appUserData.hasRegisteredPersonalData is false, then we present the personal data form
@@ -262,7 +267,6 @@ class _SubmitPersonalProfileDataState extends State<SubmitPersonalProfileData> {
                         TextButton(
                           onPressed: () async {
                             await AuthService.signOut();
-                            //Navigator.pushReplacementNamed(context, '/');
                           },
                           child: const Text(
                             "Sign out",

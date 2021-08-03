@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:jobee/services/service01_database/aux_app_user_data.dart' show AppUserData;
 import 'package:jobee/services/service01_database/1.0_database.dart' show DatabaseService;
-import 'package:jobee/widgets/loaders/text_loader.dart' show TextLoader;
+import 'package:jobee/screens/widgets/loaders/text_loader.dart' show TextLoader;
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
 import '2.1_after_auth_wrapper.dart' show AfterAuthWrapper;
 
-class AppUserDataBuilder extends StatefulWidget {
+class AppUserDataLoader extends StatefulWidget {
   final DatabaseService userDatabaseService;
 
-  const AppUserDataBuilder({Key? key, required this.userDatabaseService}) : super(key: key);
+  const AppUserDataLoader({Key? key, required this.userDatabaseService}) : super(key: key);
 
   @override
-  _AppUserDataBuilderState createState() => _AppUserDataBuilderState();
+  _AppUserDataLoaderState createState() => _AppUserDataLoaderState();
 }
 
-class _AppUserDataBuilderState extends State<AppUserDataBuilder> {
+class _AppUserDataLoaderState extends State<AppUserDataLoader> {
   /// future used to store userDatabaseService.initialAppUserDataFuture getter result
   Future<AppUserData>? _initialAppUserDataFuture;
 

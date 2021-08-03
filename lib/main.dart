@@ -7,14 +7,16 @@ import 'package:firebase_core/firebase_core.dart' show Firebase;
 //import 'package:firebase_storage/firebase_storage.dart' show FirebaseStorage;
 import 'package:flutter_localizations/flutter_localizations.dart' show GlobalMaterialLocalizations, GlobalWidgetsLocalizations;
 import 'package:jobee/services/service00_authentication/aux_app_user.dart' show AppUser;
-import 'package:jobee/screens/screen01_authenticate/1.0_authenticate.dart' show Authenticate;
-import 'package:jobee/screens/screen04_home/4.0_home.dart' show Home;
+import 'package:jobee/screens/screen01_authenticate/1.0_authenticate_screen.dart'
+    show Authenticate;
+import 'package:jobee/screens/screen04_home/4.0_home_screen.dart' show HomeScreen;
 import 'package:jobee/screens/screen00_wrapper/0.0_auth_wrapper.dart' show AuthWrapper;
 import 'package:jobee/services/service00_authentication/0.0_auth.dart' show AuthService;
-import 'package:jobee/widgets/widget_utils/preload_image.dart' show loadImage;
+import 'package:jobee/screens/widgets/widget_utils/preload_image.dart' show loadImage;
 import 'package:provider/provider.dart' show MultiProvider, StreamProvider;
-import 'package:jobee/theme/jobee_theme_data.dart' show JobeeThemeData;
+import 'package:jobee/screens/theme/jobee_theme_data.dart' show JobeeThemeData;
 import 'package:provider/single_child_widget.dart' show SingleChildWidget;
+import 'package:flutter/scheduler.dart' show timeDilation;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,7 +35,7 @@ Future<void> main() async {
   await loadImage(const AssetImage('images/dude-call.png'));
   await loadImage(const AssetImage('images/bee-logo-07.png'));
   await loadImage(const AssetImage('images/google-logo-1080x1080.png'));
-
+  timeDilation = 1.0;
   runApp(MyApp());
 }
 
@@ -44,7 +46,7 @@ class MyApp extends StatelessWidget {
     final Map<String, Widget Function(BuildContext)> routes = <String, Widget Function(BuildContext)>{
       '/': (BuildContext context) => const AuthWrapper(),
       '/authenticate': (BuildContext context) => const Authenticate(),
-      '/home': (BuildContext context) => const Home(),
+      '/home': (BuildContext context) => const HomeScreen(),
     };
 
     // DONE: Code Linting (using the 'link' package)

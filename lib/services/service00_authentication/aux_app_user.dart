@@ -4,4 +4,11 @@ class AppUser {
 
   AppUser({ required this.uid, required this.email });
 
+  @override
+  String toString() {
+    return 'AppUser('
+        'uid: ${this.uid}, '
+        'email: ${this.email})';
+  }
+
 }

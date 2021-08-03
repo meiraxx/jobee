@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:jobee/services/service00_authentication/aux_app_user.dart' show AppUser;
-import 'package:jobee/screens/screen01_authenticate/1.0_authenticate.dart' show Authenticate;
-import 'package:jobee/screens/screen02_after_auth/2.0_app_user_data_builder.dart' show AppUserDataBuilder;
+import 'package:jobee/screens/screen01_authenticate/1.0_authenticate_screen.dart'
+    show Authenticate;
+import 'package:jobee/screens/screen02_after_auth/2.0_app_user_data_loader.dart'
+    show AppUserDataLoader;
 import 'package:jobee/services/service01_database/1.0_database.dart' show DatabaseService;
 import 'package:provider/provider.dart' show Provider;
 
@@ -26,7 +28,7 @@ class _AuthWrapperState extends State<AuthWrapper> {
     }
     // when login is performed, allows access to the app
     else {
-      return AppUserDataBuilder(userDatabaseService: DatabaseService(uid: appUser.uid, email: appUser.email));
+      return AppUserDataLoader(userDatabaseService: DatabaseService(uid: appUser.uid, email: appUser.email));
     }
   }
 }

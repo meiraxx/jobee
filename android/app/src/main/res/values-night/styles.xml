@@ -14,5 +14,11 @@
          This Theme is only used starting with V2 of Flutter's Android embedding. -->
     <style name="NormalTheme" parent="@android:style/Theme.Black.NoTitleBar">
         <item name="android:windowBackground">?android:colorBackground</item>
+        <item name="android:windowAnimationStyle">@null</item>
+    </style>
+
+    <!-- FIXME: Apply this only to authenticate screen -->
+    <style name="noAnimTheme" parent="android:Theme">
+        <item name="android:windowAnimationStyle">@null</item>
     </style>
 </resources>

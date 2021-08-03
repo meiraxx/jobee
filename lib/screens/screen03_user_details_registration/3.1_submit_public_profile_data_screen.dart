@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:jobee/services/service01_database/aux_app_user_data.dart' show AppUserData;
-import 'package:jobee/widgets/jobee/logo.dart' show Logo;
+import 'package:jobee/screens/widgets/jobee/logo.dart' show Logo;
 import 'package:jobee/services/service00_authentication/0.0_auth.dart' show AuthService;
 import 'package:jobee/services/service01_database/1.0_database.dart' show DatabaseService;
 import 'package:jobee/utils/input_field_validation.dart' show validateNotEmpty;
-import 'package:jobee/widgets/loaders/in_place_loader.dart' show InPlaceLoader;
-import 'package:jobee/widgets/loaders/text_loader.dart';
-import 'package:jobee/widgets/widget_utils/input_fields.dart' show openDropdownMethod2;
+import 'package:jobee/screens/widgets/loaders/in_place_loader.dart' show InPlaceLoader;
+import 'package:jobee/screens/widgets/loaders/text_loader.dart';
+import 'package:jobee/screens/widgets/widget_utils/input_fields.dart' show openDropdownMethod2;
 import 'package:provider/provider.dart' show Provider;
 
-import '3.2_submit_personal_profile_data.dart' show SubmitPersonalProfileData;
+import '3.2_submit_personal_profile_data_screen.dart' show SubmitPersonalProfileDataScreen;
 
-class SubmitPublicProfileData extends StatefulWidget {
-  const SubmitPublicProfileData({Key? key}) : super(key: key);
+class SubmitPublicProfileDataScreen extends StatefulWidget {
+  const SubmitPublicProfileDataScreen({Key? key}) : super(key: key);
 
   @override
-  _SubmitPublicProfileDataState createState() => _SubmitPublicProfileDataState();
+  _SubmitPublicProfileDataScreenState createState() => _SubmitPublicProfileDataScreenState();
 }
 
-class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
+class _SubmitPublicProfileDataScreenState extends State<SubmitPublicProfileDataScreen> {
   // Form constants
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _loading = false;
@@ -51,6 +51,11 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
   // Open Dropdown
   final GlobalKey _dropdownButtonKey = GlobalKey();
 
+  // Out-callable setState function
+  void updateWidgetState() {
+    if (this.mounted) setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     final MediaQueryData queryData = MediaQuery.of(context);
@@ -58,10 +63,10 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
     final PreferredSizeWidget appBar = AppBar(
         title: Wrap(
           crossAxisAlignment: WrapCrossAlignment.center,
-          children: const <Widget>[
-            Logo(),
-            SizedBox(width: 16.0),
-            Text(
+          children: <Widget>[
+            Logo(updateWidgetStateCallback: this.updateWidgetState, defaultLogoColor: Theme.of(context).colorScheme.onPrimary),
+            const SizedBox(width: 16.0),
+            const Text(
               "|   Public information",
               style: TextStyle(
                 color: Colors.black,
@@ -155,7 +160,7 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
     // app user data
     final AppUserData appUserData = Provider.of<AppUserData>(context);
     if (appUserData.hasRegisteredPublicData == null) return const TextLoader(text: "Loading initial user data...");
-    if (appUserData.hasRegisteredPersonalData == true) return const SubmitPersonalProfileData();
+    if (appUserData.hasRegisteredPersonalData == true) return const SubmitPersonalProfileDataScreen();
 
     // if appUserData.hasRegisteredPublicData false, then we present the public data form
     return GestureDetector(
@@ -432,7 +437,6 @@ class _SubmitPublicProfileDataState extends State<SubmitPublicProfileData> {
                 TextButton(
                   onPressed: () async {
                     await AuthService.signOut();
-                    //Navigator.pushReplacementNamed(context, '/');
                   },
                   child: const Text(
                     "Sign out",
