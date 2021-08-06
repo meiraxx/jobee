@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:jobee/services/service01_database/aux_app_user_data.dart' show AppUserData;
 import 'package:jobee/services/service01_database/1.0_database.dart' show DatabaseService;
 import 'package:jobee/screens/widgets/loaders/text_loader.dart' show TextLoader;
+import 'package:jobee/services/service03_storage/3.0_storage.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
@@ -43,6 +44,9 @@ class _AppUserDataLoaderState extends State<AppUserDataLoader> {
 
             // at this point, futureAppUserDataSnapshot.data should not be null
             assert(futureAppUserDataSnapshot.data != null);
+
+            // Initialize storageService based on uid
+            storageService = StorageService(uid: futureAppUserDataSnapshot.data!.uid);
 
             // Authenticated MultiProvider
             return MultiProvider(

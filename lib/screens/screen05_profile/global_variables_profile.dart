@@ -1,6 +1,7 @@
 import 'dart:io' show Directory, File;
 import 'dart:typed_data' show Uint8List;
 
+import 'package:jobee/utils/file_utils.dart';
 import 'package:path_provider/path_provider.dart' show getApplicationDocumentsDirectory;
 import 'package:path/path.dart' show join;
 
@@ -20,6 +21,15 @@ class ProfileAsyncGlobals {
     if (userProfileFile.existsSync()) return userProfileFile.readAsBytesSync();
 
     return Uint8List.fromList(<int>[]);
+  }
+
+  /// reset user's current profile avatar file and bytes
+  static Future<void> deleteLocalUserProfileAvatarFileAndBytes(String userId) async {
+    // delete local profile avatar bytes
+    ProfileSyncGlobals.userProfileAvatarBytes = Uint8List.fromList(<int>[]);
+    // delete local profile avatar file
+    final File localFile = await ProfileAsyncGlobals.getLocalUserProfileAvatarFile(userId);
+    createFileRecursivelyAndWriteBytesSync(localFile, Uint8List.fromList(<int>[]));
   }
 }
 

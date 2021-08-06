@@ -3,6 +3,7 @@ import 'dart:io' show Platform;
 import 'package:flutter/cupertino.dart' show CupertinoActionSheet, CupertinoActionSheetAction, showCupertinoModalPopup;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:jobee/services/service03_storage/3.0_storage.dart';
 
 
 Future<PickedFile?> _getImageFromSource(ImageSource imageSource) async {
@@ -24,7 +25,7 @@ Future<PickedFile?> _getImageFromSource(ImageSource imageSource) async {
   return pickedImage;
 }
 
-Future<PickedFile?> showImageSourceActionSheet(BuildContext context) async {
+Future<PickedFile?> showProfileImageActionSheet(BuildContext context, {Function()? onRemoveImageClicked}) async {
   PickedFile? pickedImage;
   Future<dynamic> userActionsFuture;
 
@@ -48,13 +49,12 @@ Future<PickedFile?> showImageSourceActionSheet(BuildContext context) async {
             },
             child: const Text("Pick from gallery"),
           ),
-          CupertinoActionSheetAction(
-            onPressed: () async {
-              // TODO: implement remove image
-              Navigator.pop(context);
-            },
-            child: const Text("Remove image"),
-          ),
+          if (onRemoveImageClicked != null) ... <CupertinoActionSheetAction>[
+            CupertinoActionSheetAction(
+              onPressed: onRemoveImageClicked,
+              child: const Text("Remove image"),
+            )
+          ],
         ],
       ),
     );
@@ -78,14 +78,13 @@ Future<PickedFile?> showImageSourceActionSheet(BuildContext context) async {
             Navigator.pop(context);
           },
         ),
-        ListTile(
-          leading: Icon(Icons.delete_outline, color: Theme.of(context).colorScheme.onBackground),
-          title: const Text("Remove image"),
-          onTap: () async {
-            // TODO: implement remove image
-            Navigator.pop(context);
-          },
-        ),
+        if (onRemoveImageClicked != null) ... <ListTile>[
+          ListTile(
+            leading: Icon(Icons.delete_outline, color: Theme.of(context).colorScheme.onBackground),
+            title: const Text("Remove image"),
+            onTap: onRemoveImageClicked,
+          ),
+        ],
       ]),
     );
   }

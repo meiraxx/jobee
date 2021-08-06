@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
 import 'package:jobee/services/service00_authentication/aux_app_user.dart' show AppUser;
 import 'package:jobee/services/service00_authentication/0.2_google_auth.dart' show GoogleAuthService;
 import 'package:jobee/services/service01_database/1.0_database.dart' show DatabaseService;
+import 'package:jobee/services/service03_storage/3.0_storage.dart';
 
 class GoogleSignInButton extends StatefulWidget {
   @override
@@ -30,10 +31,12 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
           return;
         }
 
-        // else, if the user logged in:
-        // - if the user does not exist yet, we need to create a new document for the user with the returned uid
+        // else, if the user successfully logged in:
+        // - if the user did not exist yet:
+        // - we need to create a new document for the user with the returned uid
         await DatabaseService(uid: appUser.uid, email: appUser.email).createUserData('Google');
-        // - load image data
+        // - we need to create the user's directory
+        await StorageService(uid: appUser.uid).createUserDirectory();
       },
       overlayColor: MaterialStateProperty.all(Colors.lightBlueAccent.withAlpha(0x7F)),
       highlightColor: Colors.lightBlueAccent.withAlpha(0x7F),

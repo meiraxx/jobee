@@ -28,15 +28,12 @@ class StorageService {
   }
 
   /// Create a directory in Firebase Storage
-  /*Future<void> _createUserDirectory(Reference remoteDirRef) async {
+  Future<void> createUserDirectory() async {
+    // Create a Reference to the user directory
+    final Reference remoteDirRef = FirebaseStorage.instance.ref().child(this.uid!);
     // the only way to create a folder on firebase storage is to put a file there
-    remoteDirRef.child('temp.txt').putString(DateTime.now().toString());
-    // wait 10 seconds for the previous action to register on the server
-    Future<void>.delayed(const Duration(seconds: 10)).then((void onValue) {
-      // to delete the file
-      remoteDirRef.child('temp.txt').delete();
-    });
-  }*/
+    remoteDirRef.child('user-created.txt').putString(DateTime.now().toString());
+  }
 
   /// The user selects a file, and the task is added to the list.
   Future<List<UploadTask>?> uploadUserFile({PickedFile? pickedFile, required String remoteFileName}) async {
@@ -44,22 +41,26 @@ class StorageService {
     UploadTask fileUploadTask;
     UploadTask sha256UploadTask;
 
+    final int remoteFileExtensionIndex = remoteFileName.lastIndexOf('.');
+    final String remoteFileNameWithoutExtension = remoteFileName.replaceRange(remoteFileExtensionIndex, null, '');
+    //final String remoteFileExtension = remoteFileName.substring(remoteFileExtensionIndex);
+
     // Create a Reference to the file
     final Reference remoteFileRef = FirebaseStorage.instance
-        .ref()
-        .child(this.uid!)
-        .child(remoteFileName);
+      .ref()
+      .child(this.uid!)
+      .child(remoteFileName);
 
     // TODO-BackEnd: disallow users with certain uid to write outside of their directory
     final SettableMetadata metadata = SettableMetadata(
-        contentType: 'image/jpeg',
-        customMetadata: <String, String>{'picked-file-path': pickedFile.path});
+      customMetadata: <String, String>{'picked-file-path': pickedFile.path}
+    );
 
     final String sha256Digest = calculateSHA256FromBytes(await pickedFile.readAsBytes());
     final Reference remoteSHA256Ref = FirebaseStorage.instance
       .ref()
       .child(this.uid!)
-      .child(remoteFileName.replaceFirst(".jpg", ".sha256"));
+      .child("$remoteFileNameWithoutExtension.sha256");
 
     // if/else for web (html) and other platforms
     if (kIsWeb) {
@@ -73,7 +74,7 @@ class StorageService {
     return <UploadTask>[fileUploadTask, sha256UploadTask];
   }
 
-  static Future<File?> downloadUserFile({required Reference remoteFileRef, required File localFile, required Uint8List localBytes}) async {
+  Future<File?> downloadUserFile({required String remoteFileName, required File localFile, required Uint8List localBytes}) async {
     /// Signs in user with Google. If user already has a Jobee account with the same
     /// e-mail registered, it signs them in normally on their account. If user does
     /// not have an account
@@ -85,6 +86,11 @@ class StorageService {
     ///   2. user still did not download picture once on this platform
     ///   3. the server picture is the same as the local picture
     ///   4. an error occurred requesting a Get-URL from FireBase
+    // Create a Reference to the file
+    final Reference remoteFileRef = FirebaseStorage.instance
+      .ref()
+      .child(this.uid!)
+      .child(remoteFileName);
     assert(remoteFileRef.parent!=null, 'downloadFile() error: remoteFileRef needs to be included in a directory');
     final Reference remoteSHA256Ref = remoteFileRef.parent!.child(remoteFileRef.name.replaceFirst(".jpg", ".sha256"));
 
@@ -129,8 +135,7 @@ class StorageService {
     String fileURL;
     final bool remoteFileExistsInDirectory = await _checkIfRemoteFileExists(remoteFileRef);
 
-    /* if the target remote file reference of the file points to
-     * a file that does not exist in its directory, return null */
+    // if the target remote file reference of the file points to a file that does not exist in its directory
     if (!remoteFileExistsInDirectory) return null;
 
     // else, obtain url from firebase (return empty string if there's an error getting profile picture)
@@ -146,6 +151,30 @@ class StorageService {
     createFileRecursivelyAndWriteBytesSync(localFile, fileResponse.bodyBytes);
 
     return localFile;
+  }
+
+  /// The user selects a file, and the task is added to the list.
+  Future<void> deleteUserFile({required String remoteFileName}) async {
+    // Create a Reference to the file
+    final Reference remoteFileRef = FirebaseStorage.instance
+      .ref()
+      .child(this.uid!)
+      .child(remoteFileName);
+
+    final int remoteFileExtensionIndex = remoteFileName.lastIndexOf('.');
+    final String remoteFileNameWithoutExtension = remoteFileName.replaceRange(remoteFileExtensionIndex, null, '');
+    final Reference remoteSHA256Ref = FirebaseStorage.instance
+      .ref()
+      .child(this.uid!)
+      .child("$remoteFileNameWithoutExtension.sha256");
+
+    final bool remoteFileExistsInDirectory = await _checkIfRemoteFileExists(remoteFileRef);
+
+    // if the target remote file reference of the file points to a file that does not exist in its directory
+    if (!remoteFileExistsInDirectory) return;
+
+    remoteFileRef.delete();
+    remoteSHA256Ref.delete();
   }
 
   /// Lists the child references of a remote directory
@@ -170,6 +199,7 @@ class StorageService {
     return exists;
   }
 
+  /// Disabled function
   static Future<void> downloadBytes({required Reference remoteRef, required String localFileName}) async {
     final Uint8List? bytes = await remoteRef.getData();
     if (bytes==null) return;
@@ -182,3 +212,5 @@ class StorageService {
   }
 
 }
+
+late StorageService storageService;

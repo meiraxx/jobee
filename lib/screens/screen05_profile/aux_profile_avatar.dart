@@ -9,10 +9,10 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
 import 'package:image_picker/image_picker.dart' show PickedFile;
 import 'package:jobee/services/service01_database/aux_app_user_data.dart' show AppUserData;
-import 'package:jobee/services/service03_storage/3.0_storage.dart' show StorageService;
+import 'package:jobee/services/service03_storage/3.0_storage.dart' show storageService;
 import 'package:jobee/screens/widgets/custom_material_widgets/ink_splash/custom_icon_button_ink_splash.dart' show CustomIconButtonInkSplash;
 import 'package:jobee/screens/widgets/loaders/in_place_loader.dart' show InPlaceLoader;
-import 'package:jobee/screens/widgets/media_files.dart' show showImageSourceActionSheet;
+import 'package:jobee/screens/widgets/media_files.dart' show showProfileImageActionSheet;
 
 import '5.0_profile_detailed_screen.dart' show ProfileDetailedScreen;
 import '5.2_profile_avatar_fullscreen.dart' show ProfileAvatarFullScreen;
@@ -40,7 +40,6 @@ class ProfileAvatar extends StatefulWidget {
 class _ProfileAvatarState extends State<ProfileAvatar> with TickerProviderStateMixin {
   // TODO: use only one instance of ProfileAvatar everywhere (or practically everywhere)
 
-  late StorageService? _storageService;
   final double _circleAvatarRadius = 40.0;
   bool _uploadingReDownloadingFlag = false;
   late Timer reloadTimer;
@@ -57,8 +56,8 @@ class _ProfileAvatarState extends State<ProfileAvatar> with TickerProviderStateM
     // [1] Downloading image
     final File localFile = await ProfileAsyncGlobals.getLocalUserProfileAvatarFile(widget.appUserData.uid);
     // Download the image file and halt thread execution until we have a File object
-    final File? downloadedFile = await StorageService.downloadUserFile(
-      remoteFileRef: _storageService!.userDirRemoteRef!.child('remote-profile-picture.jpg'),
+    final File? downloadedFile = await storageService.downloadUserFile(
+      remoteFileName: 'remote-profile-picture.jpg',
       localFile: localFile,
       localBytes: ProfileSyncGlobals.userProfileAvatarBytes!,
     );
@@ -82,9 +81,13 @@ class _ProfileAvatarState extends State<ProfileAvatar> with TickerProviderStateM
   }
 
   Future<void> _handleProfileAvatarUploadIntent() async {
-    final PickedFile? pickedImageFile = await showImageSourceActionSheet(context);
+    final PickedFile? pickedImageFile = await showProfileImageActionSheet(context, onRemoveImageClicked: () async {
+      await ProfileAsyncGlobals.deleteLocalUserProfileAvatarFileAndBytes(widget.appUserData.uid);
+      await storageService.deleteUserFile(remoteFileName: 'remote-profile-picture.jpg');
+      Navigator.pop(context);
+    });
     // [1] Uploading image
-    final List<UploadTask>? userFileUploadTasks = await _storageService!.uploadUserFile(pickedFile: pickedImageFile, remoteFileName: 'remote-profile-picture.jpg');
+    final List<UploadTask>? userFileUploadTasks = await storageService.uploadUserFile(pickedFile: pickedImageFile, remoteFileName: 'remote-profile-picture.jpg');
     if (userFileUploadTasks == null) return;
 
     // else...
@@ -112,9 +115,6 @@ class _ProfileAvatarState extends State<ProfileAvatar> with TickerProviderStateM
   @override
   void initState() {
     super.initState();
-    // Initialize _storageService based on uid
-    _storageService = StorageService(uid: widget.appUserData.uid);
-
     //debugPrint("Started timer");
     // each second, update const UI with changes (e.g., bottom navbar)
     reloadTimer = Timer.periodic(const Duration(seconds: 1), (Timer t) {
@@ -216,7 +216,7 @@ class _ProfileAvatarState extends State<ProfileAvatar> with TickerProviderStateM
   );
 
   Widget buildDefaultProfileAvatarHero() {
-    final Widget defaultHeroChild = Material(
+    final Widget defaultProfileAvatarImage = Material(
       color: Colors.transparent,
       child: Container(
         decoration: const BoxDecoration(
@@ -234,6 +234,46 @@ class _ProfileAvatarState extends State<ProfileAvatar> with TickerProviderStateM
       ),
     );
 
+    final Widget defaultHeroChild = _uploadingReDownloadingFlag ? ClipOval(
+      child: Stack(
+        children: <Widget>[
+          Positioned(
+            child: ColorFiltered(
+              colorFilter: ColorFilter.mode(
+                Colors.black.withOpacity(0.3),
+                BlendMode.darken,
+              ),
+              child: defaultProfileAvatarImage,
+            ),
+          ),
+          const Positioned(
+            child: InPlaceLoader(
+              baseSize: Size(40.0, 40.0),
+              padding: EdgeInsets.only(top: 20.0, left: 20.0),
+            ),
+          ),
+        ],
+      ),
+    ) : ClipOval(child: defaultProfileAvatarImage);
+
+    /*final Widget defaultHeroChild = Material(
+      color: Colors.transparent,
+      child: Container(
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          "${widget.appUserData.firstName![0]}${widget.appUserData.lastName![0]}",
+          style: GoogleFonts.montserrat(
+            fontWeight: FontWeight.w500,
+            fontSize: widget.avatarTextFontSize,
+            color: Colors.white,
+          ),
+        ),
+      ),
+    );
+    */
     return widget.isHero ? Hero(
       tag: widget.heroTag!,
       child: defaultHeroChild,
@@ -270,27 +310,27 @@ class _ProfileAvatarState extends State<ProfileAvatar> with TickerProviderStateM
     );
 
     // Avatar Clip-Oval
-    final Widget heroChild = ClipOval(
-      child: _uploadingReDownloadingFlag ? Stack(
-        children: <Widget>[
-          Positioned(
-            child: ColorFiltered(
-              colorFilter: ColorFilter.mode(
-                Colors.black.withOpacity(0.3),
-                BlendMode.darken,
+    final Widget heroChild = _uploadingReDownloadingFlag ? ClipOval(
+      child: Stack(
+          children: <Widget>[
+            Positioned(
+              child: ColorFiltered(
+                colorFilter: ColorFilter.mode(
+                  Colors.black.withOpacity(0.3),
+                  BlendMode.darken,
+                ),
+                child: profileAvatarImage,
               ),
-              child: profileAvatarImage,
             ),
-          ),
-          const Positioned(
-            child: InPlaceLoader(
-              baseSize: Size(40.0, 40.0),
-              padding: EdgeInsets.only(top: 20.0, left: 20.0),
+            const Positioned(
+              child: InPlaceLoader(
+                baseSize: Size(40.0, 40.0),
+                padding: EdgeInsets.only(top: 20.0, left: 20.0),
+              ),
             ),
-          ),
-        ],
-      ) : profileAvatarImage,
-    );
+          ],
+        ),
+    ) : ClipOval(child: profileAvatarImage);
 
     return widget.isHero ? Hero(
       tag: widget.heroTag!,
