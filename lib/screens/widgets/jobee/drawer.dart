@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:jobee/screens/theme/navigation.dart';
 import 'package:jobee/services/service01_database/aux_app_user_data.dart' show AppUserData;
-import 'package:jobee/screens/screen05_profile/5.1_profile_summarized.dart' show ProfileSummarized;
+import 'package:jobee/screens/screen05_profile/aux_profile_summarized.dart' show ProfileSummarized;
 import 'package:jobee/screens/screen07_jobee_services/7.0_jobee_service_list.dart'
     show JobeeServiceList;
 import 'package:jobee/screens/widgets/jobee/logo.dart' show Logo;

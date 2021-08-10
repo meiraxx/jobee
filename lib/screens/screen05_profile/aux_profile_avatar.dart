@@ -11,11 +11,12 @@ import 'package:image_picker/image_picker.dart' show PickedFile;
 import 'package:jobee/services/service01_database/aux_app_user_data.dart' show AppUserData;
 import 'package:jobee/services/service03_storage/3.0_storage.dart' show storageService;
 import 'package:jobee/screens/widgets/custom_material_widgets/ink_splash/custom_icon_button_ink_splash.dart' show CustomIconButtonInkSplash;
+import 'package:jobee/screens/widgets/dialogs/confirmation_dialog.dart' show showConfirmationDialog;
 import 'package:jobee/screens/widgets/loaders/in_place_loader.dart' show InPlaceLoader;
 import 'package:jobee/screens/widgets/media_files.dart' show showProfileImageActionSheet;
 
 import '5.0_profile_detailed_screen.dart' show ProfileDetailedScreen;
-import '5.2_profile_avatar_fullscreen.dart' show ProfileAvatarFullScreen;
+import '5.1_profile_avatar_fullscreen.dart' show ProfileAvatarFullScreen;
 import 'global_variables_profile.dart' show ProfileAsyncGlobals, ProfileSyncGlobals;
 
 /// Class for the profile avatar shown inside an outer widget
@@ -80,17 +81,36 @@ class _ProfileAvatarState extends State<ProfileAvatar> with TickerProviderStateM
     if (this.mounted) setState(() {});
   }
 
-  Future<void> _handleProfileAvatarUploadIntent() async {
+  Future<bool> _handleProfileAvatarUploadIntent() async {
+    bool imageRemoved = false;
+
     final PickedFile? pickedImageFile = await showProfileImageActionSheet(context, onRemoveImageClicked: () async {
-      await ProfileAsyncGlobals.deleteLocalUserProfileAvatarFileAndBytes(widget.appUserData.uid);
-      await storageService.deleteUserFile(remoteFileName: 'remote-profile-picture.jpg');
+      final bool? removeImageChoice = await showConfirmationDialog(
+        context,
+        "Are you sure you want to remove your current profile image?",
+        "No, do not remove my image",
+        "Yes, I want to remove my image",
+      );
+
+      // if user chose to remove image, we remove it
+      if (removeImageChoice == true) {
+        imageRemoved = true;
+        await ProfileAsyncGlobals.deleteLocalUserProfileAvatarFileAndBytes(widget.appUserData.uid);
+        await storageService.deleteUserFile(remoteFileName: 'remote-profile-picture.jpg');
+      }
+
+      // close confirmation dialog
       Navigator.pop(context);
     });
-    // [1] Uploading image
-    final List<UploadTask>? userFileUploadTasks = await storageService.uploadUserFile(pickedFile: pickedImageFile, remoteFileName: 'remote-profile-picture.jpg');
-    if (userFileUploadTasks == null) return;
 
-    // else...
+    // if image was deleted, return true (requires update)
+    if (imageRemoved == true) return true;
+    // else, if no image was picked, return false (does not require update)
+    if (pickedImageFile == null) return false;
+
+    // [1] Uploading image
+    final List<UploadTask> userFileUploadTasks = await storageService.uploadUserFile(pickedFile: pickedImageFile, remoteFileName: 'remote-profile-picture.jpg');
+
     // on upload start:
     // turn _uploadingReDownloadingFlag to true
     _uploadingReDownloadingFlag = true;
@@ -110,6 +130,8 @@ class _ProfileAvatarState extends State<ProfileAvatar> with TickerProviderStateM
         if (this.mounted) setState(() {});
       });
     });
+
+    return true;
   }
 
   @override
@@ -256,24 +278,6 @@ class _ProfileAvatarState extends State<ProfileAvatar> with TickerProviderStateM
       ),
     ) : ClipOval(child: defaultProfileAvatarImage);
 
-    /*final Widget defaultHeroChild = Material(
-      color: Colors.transparent,
-      child: Container(
-        decoration: const BoxDecoration(
-          shape: BoxShape.circle,
-        ),
-        alignment: Alignment.center,
-        child: Text(
-          "${widget.appUserData.firstName![0]}${widget.appUserData.lastName![0]}",
-          style: GoogleFonts.montserrat(
-            fontWeight: FontWeight.w500,
-            fontSize: widget.avatarTextFontSize,
-            color: Colors.white,
-          ),
-        ),
-      ),
-    );
-    */
     return widget.isHero ? Hero(
       tag: widget.heroTag!,
       child: defaultHeroChild,
@@ -296,7 +300,11 @@ class _ProfileAvatarState extends State<ProfileAvatar> with TickerProviderStateM
               Navigator.push(
                 context,
                 PageRouteBuilder<dynamic>(
-                  pageBuilder: (BuildContext context, Animation<double> a, Animation<double> b) => ProfileAvatarFullScreen(profileAvatar: widget, heroTag: widget.heroTag!),
+                  pageBuilder: (BuildContext context, Animation<double> a, Animation<double> b) => ProfileAvatarFullScreen(
+                    profileAvatar: widget,
+                    heroTag: widget.heroTag!,
+                    handleProfileAvatarUploadIntent: _handleProfileAvatarUploadIntent,
+                  ),
                   transitionDuration: const Duration(milliseconds: 500),
                 ),
               );

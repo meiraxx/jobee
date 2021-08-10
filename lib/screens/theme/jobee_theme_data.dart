@@ -146,7 +146,7 @@ class JobeeThemeData {
   static const FontWeight _semiBold = FontWeight.w600;
   static const FontWeight _bold = FontWeight.w700;
 
-  static final TextTheme _textTheme = TextTheme(
+  static final TextTheme _oldTextTheme = TextTheme(
     headline4: GoogleFonts.montserrat(fontWeight: _bold, fontSize: 20.0),
     caption: GoogleFonts.roboto(fontWeight: _regular, fontSize: 12.0),
     headline5: GoogleFonts.montserrat(fontWeight: _bold, fontSize: 18.0),
@@ -157,6 +157,19 @@ class JobeeThemeData {
     bodyText2: GoogleFonts.montserrat(fontWeight: _regular, fontSize: 13.0),
     headline6: GoogleFonts.montserrat(fontWeight: _semiBold, fontSize: 18.0),
     button: GoogleFonts.montserrat(fontWeight: _medium, fontSize: 14.0),
+  );
+
+  static final TextTheme _textTheme = TextTheme(
+    headline4: GoogleFonts.roboto(fontWeight: _bold, fontSize: 20.0),
+    caption: GoogleFonts.roboto(fontWeight: _regular, fontSize: 12.0),
+    headline5: GoogleFonts.roboto(fontWeight: _bold, fontSize: 18.0),
+    subtitle1: GoogleFonts.roboto(fontWeight: _regular, fontSize: 18.0),
+    overline: GoogleFonts.roboto(fontWeight: _medium, fontSize: 12.0),
+    bodyText1: GoogleFonts.roboto(fontWeight: _regular, fontSize: 16.0),
+    subtitle2: GoogleFonts.roboto(fontWeight: _medium, fontSize: 14.0),
+    bodyText2: GoogleFonts.roboto(fontWeight: _regular, fontSize: 13.0),
+    headline6: GoogleFonts.roboto(fontWeight: _semiBold, fontSize: 18.0),
+    button: GoogleFonts.roboto(fontWeight: _medium, fontSize: 14.0),
   );
 
   /// LIGHT COLOR SCHEME

@@ -8,8 +8,9 @@ import 'aux_profile_avatar.dart' show ProfileAvatar;
 class ProfileAvatarFullScreen extends StatefulWidget {
   final ProfileAvatar profileAvatar;
   final String heroTag;
+  final Future<bool> Function() handleProfileAvatarUploadIntent;
 
-  const ProfileAvatarFullScreen({Key? key, required this.profileAvatar, required this.heroTag}) : super(key: key);
+  const ProfileAvatarFullScreen({Key? key, required this.profileAvatar, required this.heroTag, required this.handleProfileAvatarUploadIntent}) : super(key: key);
 
   @override
   _ProfileAvatarFullScreenState createState() => _ProfileAvatarFullScreenState();
@@ -28,8 +29,10 @@ class _ProfileAvatarFullScreenState extends State<ProfileAvatarFullScreen> with 
         title: const Text("Profile picture", style: TextStyle(color: Colors.white)),
         elevation: 0.0,
         actions: <Widget>[
-          appBarButton(context: context, iconData: Icons.edit, onClicked: () {
-            // TODO: call _handleProfileAvatarUploadIntent(context) here somehow
+          appBarButton(context: context, iconData: Icons.edit, onClicked: () async {
+            final bool requiresUpdate = await widget.handleProfileAvatarUploadIntent();
+            print(requiresUpdate);
+            if (requiresUpdate) Navigator.pop(context);
           }, color: Colors.white),
         ],
       ),

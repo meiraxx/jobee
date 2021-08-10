@@ -36,8 +36,7 @@ class StorageService {
   }
 
   /// The user selects a file, and the task is added to the list.
-  Future<List<UploadTask>?> uploadUserFile({PickedFile? pickedFile, required String remoteFileName}) async {
-    if (pickedFile == null) return null;
+  Future<List<UploadTask>> uploadUserFile({required PickedFile pickedFile, required String remoteFileName}) async {
     UploadTask fileUploadTask;
     UploadTask sha256UploadTask;
 
