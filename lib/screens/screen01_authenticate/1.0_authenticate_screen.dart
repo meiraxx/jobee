@@ -88,7 +88,7 @@ class _AuthenticateState extends State<Authenticate> {
             const SizedBox(height: 40.0),
             // - Create account Button
             Center(
-              child: buildMailPasswordRegisterButton(),
+              child: _buildMailPasswordRegisterButton(),
             ),
             const SizedBox(height: 20.0),
             // - OR Rectangle
@@ -158,7 +158,7 @@ class _AuthenticateState extends State<Authenticate> {
     );
   }
 
-  Widget buildMailPasswordRegisterButton() {
+  Widget _buildMailPasswordRegisterButton() {
     final BorderRadius buttonBorderRadius = BorderRadius.circular(4.0);
     return InkWell(
       onTap: () {

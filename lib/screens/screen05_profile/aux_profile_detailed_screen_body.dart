@@ -24,7 +24,7 @@ class _ProfileDetailedScreenBodyState extends State<ProfileDetailedScreenBody> {
     const double topPadding = 15.0;
     final double profilePageWidth = queryData.size.width - horizontalPadding*2;
     final double profilePageHeight = queryData.size.height;
-    final double profileAvatarDiameter = 86.0;
+    const double profileAvatarDiameter = 86.0;
 
     return Scaffold(
       body: Column(
@@ -64,26 +64,26 @@ class _ProfileDetailedScreenBodyState extends State<ProfileDetailedScreenBody> {
                   ],
                 ),
                 const SizedBox(height: 6.0),
-                buildName(),
+                _buildName(),
                 const Divider(
                   color: Colors.black,
-                  height: 50.0,
+                  height: 35.0,
                 ),
                 const SizedBox(height: 6.0),
                 //buildUpgradeButton(),
                 //const SizedBox(height: 24.0),
                 //buildUserName(),
                 //const SizedBox(height: 1.0),
-                buildGender(),
+                _buildGender(),
                 const SizedBox(height: 1.0),
-                buildBirthDay(),
+                _buildBirthDay(),
                 const SizedBox(height: 12.0),
-                buildAbout(profilePageWidth),
+                _buildAbout(profilePageWidth),
               ],
             ),
           ),
           const Expanded(child: SizedBox()),
-          buildLogoutButton(),
+          _buildLogoutButton(),
         ],
       ),
     );
@@ -97,17 +97,10 @@ class _ProfileDetailedScreenBodyState extends State<ProfileDetailedScreenBody> {
     isProfileDetailedAvatar: true,
   );
 
-  Widget buildName() => Text(
+  Widget _buildName() => Text(
     "${widget.appUserData.firstName!} ${widget.appUserData.lastName!}",
     style: Theme.of(context).textTheme.subtitle1!.copyWith(
       fontSize: 20.0,
-    ),
-  );
-
-  Widget buildContactInfo() => Text(
-    "${widget.appUserData.email} | (${widget.appUserData.phoneCountryDialCode}) ${widget.appUserData.phoneNumber!}",
-    style: Theme.of(context).textTheme.bodyText2!.copyWith(
-      color: Colors.grey,
     ),
   );
 
@@ -183,7 +176,7 @@ class _ProfileDetailedScreenBodyState extends State<ProfileDetailedScreenBody> {
     ],
   );
 
-  Widget buildGender() => Row(
+  Widget _buildGender() => Row(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: <Widget>[
       Text(
@@ -197,7 +190,7 @@ class _ProfileDetailedScreenBodyState extends State<ProfileDetailedScreenBody> {
     ],
   );
 
-  Widget buildBirthDay() => Row(
+  Widget _buildBirthDay() => Row(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: <Widget>[
       Text(
@@ -211,7 +204,7 @@ class _ProfileDetailedScreenBodyState extends State<ProfileDetailedScreenBody> {
     ],
   );
 
-  Widget buildAbout(double profilePageWidth) => Column(
+  Widget _buildAbout(double profilePageWidth) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: <Widget>[
       Text(
@@ -221,36 +214,31 @@ class _ProfileDetailedScreenBodyState extends State<ProfileDetailedScreenBody> {
           fontWeight: FontWeight.w600,
         ),
       ),
-      const SizedBox(height: 4),
-      Card(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              minWidth: profilePageWidth,
-              //maxWidth: _kMenuMaxWidth,
-            ),
-            child: Text(
-              "Hello! I am Sonic, the HedgeHog. I'm still not a db field, but I will be soon! Stay tuned ;)",
-              style: Theme.of(context).textTheme.bodyText2!.copyWith(
-                  fontSize: 14,
-                  height: 1.4
-              ),
-            ),
+      const SizedBox(height: 1.0),
+      ConstrainedBox(
+        constraints: BoxConstraints(
+          minWidth: profilePageWidth,
+          //maxWidth: _kMenuMaxWidth,
+        ),
+        child: Text(
+          "Hello! I am Sonic, the HedgeHog. I'm still not a db field, but I will be soon! Stay tuned ;)",
+          style: Theme.of(context).textTheme.bodyText2!.copyWith(
+              fontSize: 14,
+              height: 1.4
           ),
         ),
       ),
     ],
   );
 
-  Widget buildUpgradeButton() => Center(
+  Widget _buildUpgradeButton() => Center(
     child: ElevatedButtonWidget(
       text: 'Upgrade To PRO',
       onClicked: () {},
     ),
   );
 
-  Widget buildLogoutButton() {
+  Widget _buildLogoutButton() {
     // if widget is not supposed to have a logout button
     if (!widget.hasLogoutButton) {
       // return "nothing" (a.k.a., a sized box)

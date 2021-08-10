@@ -163,14 +163,14 @@ class _ProfileAvatarState extends State<ProfileAvatar> with TickerProviderStateM
       ),
       child: Stack(
         children: <Widget>[
-          buildCircleAvatar(),
-          buildAvatarActionButton(),
+          _buildCircleAvatar(),
+          _buildAvatarActionButton(),
         ],
       ),
     );
   }
 
-  Widget buildCircleAvatar() {
+  Widget _buildCircleAvatar() {
     // check if image does not exist yet (empty if no avatar was sent to the server)
     final bool imageEmpty = listEquals( ProfileSyncGlobals.userProfileAvatarBytes, Uint8List.fromList(<int>[]) );
 
@@ -188,7 +188,7 @@ class _ProfileAvatarState extends State<ProfileAvatar> with TickerProviderStateM
                 // widget will assume the user wants to upload an image
                 _handleProfileAvatarUploadIntent();
               },
-              child: buildDefaultProfileAvatarHero(),
+              child: _buildDefaultProfileAvatarHero(),
             ) : buildProfileAvatarHero(),
           ),
         ),
@@ -196,7 +196,7 @@ class _ProfileAvatarState extends State<ProfileAvatar> with TickerProviderStateM
     );
   }
 
-  Widget buildAvatarActionButton() => Positioned(
+  Widget _buildAvatarActionButton() => Positioned(
     top: _circleAvatarRadius + 17,
     left: _circleAvatarRadius + 17,
     child: Material(
@@ -237,7 +237,7 @@ class _ProfileAvatarState extends State<ProfileAvatar> with TickerProviderStateM
     ),
   );
 
-  Widget buildDefaultProfileAvatarHero() {
+  Widget _buildDefaultProfileAvatarHero() {
     final Widget defaultProfileAvatarImage = Material(
       color: Colors.transparent,
       child: Container(

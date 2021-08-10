@@ -1,5 +1,6 @@
+import 'package:flutter/cupertino.dart' show CupertinoPageRoute;
 import 'package:flutter/material.dart';
-import 'package:jobee/screens/theme/navigation.dart';
+//import 'package:jobee/screens/theme/navigation.dart' show slideFromLeftNavigatorPush;
 import 'package:jobee/services/service01_database/aux_app_user_data.dart' show AppUserData;
 import 'package:jobee/screens/screen05_profile/aux_profile_summarized.dart' show ProfileSummarized;
 import 'package:jobee/screens/screen07_jobee_services/7.0_jobee_service_list.dart'
@@ -77,8 +78,8 @@ class _HomeDrawerState extends State<HomeDrawer> {
             // - SERVICES
             appBarButton(context: context, text: "Services", iconData: Icons.pages_outlined, onClicked: () async {
               // push the service list page
-              //Navigator.push(context, CupertinoPageRoute<dynamic>(builder: (_) => const JobeeServiceList()));
-              await slideFromLeftNavigatorPush(context, const JobeeServiceList());
+              Navigator.push(context, CupertinoPageRoute<dynamic>(builder: (_) => const JobeeServiceList()));
+              //await slideFromLeftNavigatorPush(context, const JobeeServiceList());
               // rather than popping the drawer menu, close it without pop AFTER the requested action has completed
               Scaffold.of(context).openEndDrawer();
             }),
