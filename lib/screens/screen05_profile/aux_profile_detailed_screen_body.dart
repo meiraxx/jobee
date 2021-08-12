@@ -24,7 +24,7 @@ class _ProfileDetailedScreenBodyState extends State<ProfileDetailedScreenBody> {
     const double topPadding = 15.0;
     final double profilePageWidth = queryData.size.width - horizontalPadding*2;
     final double profilePageHeight = queryData.size.height;
-    const double profileAvatarDiameter = 86.0;
+    const double profileAvatarDiameter = 40.0*2 + 3.0*2; // profile avatar radius * 2 + avatar border * 2
 
     return Scaffold(
       body: Column(
