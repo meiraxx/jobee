@@ -254,7 +254,7 @@ class _MailPasswordRegisterScreenState extends State<MailPasswordRegisterScreen>
                       "Sign in",
                       style: TextStyle(color: Colors.blue),
                     ),
-                  )
+                  ),
                 ],
               )
             ],

@@ -6,7 +6,6 @@ import 'package:jobee/screens/widgets/custom_material_widgets/popup_menu/popup_m
 import 'package:jobee/services/service01_database/aux_app_user_data.dart' show AppUserData;
 import 'package:jobee/models/profile.dart' show Profile;
 import 'package:jobee/screens/screen05_profile/aux_profile_avatar.dart' show ProfileAvatar;
-import 'package:jobee/screens/screen05_profile/aux_profile_detailed_screen_body.dart' show ProfileDetailedScreenBody;
 import 'package:jobee/screens/widgets/jobee/logo.dart' show Logo;
 import 'package:jobee/screens/widgets/jobee/drawer.dart' show HomeDrawer;
 import 'package:jobee/services/service01_database/1.0_database.dart' show DatabaseService;
@@ -14,6 +13,7 @@ import 'package:jobee/screens/theme/jobee_theme_data.dart' show JobeeThemeData;
 import 'package:provider/provider.dart' show Provider, StreamProvider;
 import 'package:jobee/screens/widgets/buttons/app_bar_button.dart' show appBarButton;
 import 'package:jobee/screens/widgets/navigation_bar_generator.dart' show bottomNavigationBarGenerator;
+import 'package:jobee/screens/screen05_profile/5.0_profile_screen.dart' show ProfileScreen;
 
 import 'aux_home_screen_body.dart' show HomeScreenBody;
 
@@ -26,6 +26,11 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _bottomNavigationCurrentIndex = 0;
+  final Map<String, int> _bottomNavigationMap = <String, int>{
+    'home': 0,
+    'service': 1,
+    'profile': 2,
+  };
 
   // Out-callable setState function
   void updateWidgetState() {
@@ -41,9 +46,13 @@ class _HomeScreenState extends State<HomeScreen> {
     // - BOTTOM NAVIGATION BAR WIDGETS
     const Widget homeWidget = HomeScreenBody(page: 'Page 1: Home (client posts for services based on location VS service posts for clients based on location)');
     const Widget serviceWidget = HomeScreenBody(page: 'Page 2: Service (create, Icons.add_circle_outlined VS search, Icons.search_rounded)');
-    final Widget profileWidget = ProfileDetailedScreenBody(appUserData: appUserData, hasLogoutButton: false, heroTag: 'homeAvatar');
+    final Widget profileWidget = ProfileScreen(appUserData: appUserData);
 
-    final List<Widget> bottomNavigationWidgetList = <Widget>[homeWidget, serviceWidget, profileWidget];
+    final List<Widget> bottomNavigationWidgetList = <Widget>[
+      homeWidget,
+      serviceWidget,
+      profileWidget,
+    ];
 
     // TODO: unify all profile avatar widgets
 
@@ -58,55 +67,8 @@ class _HomeScreenState extends State<HomeScreen> {
           // on drawer changed, update UI
           setState(() {});
         },
-        drawer: const HomeDrawer(),
-        appBar: AppBar(
-          leading: Builder(
-            builder: (BuildContext context) {
-              return appBarButton(context: context, iconData: Icons.menu, onClicked: () {
-                Scaffold.of(context).openDrawer();
-              });
-            },
-          ),
-          title: Logo(updateWidgetStateCallback: this.updateWidgetState, defaultLogoColor: Theme.of(context).colorScheme.onPrimary),
-          actions: <Widget>[
-            appBarButton(context: context, iconData: Icons.notifications_none, onClicked: () {
-              // TODO: show notifications
-            }),
-            appBarButton(context: context, iconData: Icons.search_rounded, onClicked: () {
-              // TODO: search through jobs (not job types)
-            }),
-            CustomPopupMenuButton<int>(
-              color: Theme.of(context).colorScheme.primary,
-              onSelected: (int item) => onSelected(context, item),
-              itemBuilder: (BuildContext context) => [
-                const CustomPopupMenuItem<int>(
-                  value: 0,
-                  child: Text('Settings'),
-                ),
-                const CustomPopupMenuItem<int>(
-                  value: 1,
-                  child: Text('Help'),
-                ),
-                const CustomPopupMenuDivider(),
-                CustomPopupMenuItem<int>(
-                  value: 2,
-                  child: Row(
-                    children: const <Widget>[
-                      Icon(Icons.logout),
-                      SizedBox(width: 8),
-                      Text("Sign Out"),
-                    ],
-                  ),
-                ),
-              ],
-              icon: InkWell(
-                splashColor: JobeeThemeData.darkSplashColor,
-                highlightColor: JobeeThemeData.darkHighlightColor,
-                child: const Icon(Icons.more_horiz),
-              ),
-            ),
-          ],
-        ),
+        drawer: _buildDrawer(profileIndex: _bottomNavigationMap['profile']!),
+        appBar: _buildAppBar(),
         body: IndexedStack(
           index: _bottomNavigationCurrentIndex,
           children: bottomNavigationWidgetList,
@@ -179,5 +141,63 @@ class _HomeScreenState extends State<HomeScreen> {
         break;
     }
   }
+
+  Widget _buildDrawer({required int profileIndex}) => HomeDrawer(
+    goToProfileCallback: () {
+      // close drawer
+      Navigator.pop(context);
+      // navigate to the profile screen
+      _bottomNavigationCurrentIndex = profileIndex;
+    },
+  );
+
+  PreferredSizeWidget _buildAppBar() => AppBar(
+    leading: Builder(
+      builder: (BuildContext context) {
+        return appBarButton(context: context, iconData: Icons.menu, onClicked: () {
+          Scaffold.of(context).openDrawer();
+        });
+      },
+    ),
+    title: Logo(updateWidgetStateCallback: this.updateWidgetState, defaultLogoColor: Theme.of(context).colorScheme.onPrimary),
+    actions: <Widget>[
+      appBarButton(context: context, iconData: Icons.notifications_none, onClicked: () {
+        // TODO: show notifications
+      }),
+      appBarButton(context: context, iconData: Icons.search_rounded, onClicked: () {
+        // TODO: search through jobs (not job types)
+      }),
+      CustomPopupMenuButton<int>(
+        color: Theme.of(context).colorScheme.primary,
+        onSelected: (int item) => onSelected(context, item),
+        itemBuilder: (BuildContext context) => [
+          const CustomPopupMenuItem<int>(
+            value: 0,
+            child: Text('Settings'),
+          ),
+          const CustomPopupMenuItem<int>(
+            value: 1,
+            child: Text('Help'),
+          ),
+          const CustomPopupMenuDivider(),
+          CustomPopupMenuItem<int>(
+            value: 2,
+            child: Row(
+              children: const <Widget>[
+                Icon(Icons.logout),
+                SizedBox(width: 8),
+                Text("Sign out"),
+              ],
+            ),
+          ),
+        ],
+        icon: InkWell(
+          splashColor: JobeeThemeData.darkSplashColor,
+          highlightColor: JobeeThemeData.darkHighlightColor,
+          child: const Icon(Icons.more_horiz),
+        ),
+      ),
+    ],
+  );
 
 }

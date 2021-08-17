@@ -10,8 +10,9 @@ import 'package:jobee/screens/widgets/buttons/app_bar_button.dart' show appBarBu
 import 'package:provider/provider.dart' show Provider;
 
 class HomeDrawer extends StatefulWidget {
+  final void Function()? goToProfileCallback;
 
-  const HomeDrawer({Key? key}) : super(key: key);
+  const HomeDrawer({Key? key, this.goToProfileCallback}) : super(key: key);
 
   @override
   _HomeDrawerState createState() => _HomeDrawerState();
@@ -72,7 +73,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
               ],
             ),
             // - SUMMARIZED PROFILE
-            ProfileSummarized(appUserData: appUserData),
+            ProfileSummarized(appUserData: appUserData, goToProfileCallback: widget.goToProfileCallback),
             const Divider(height: 0.0),
             const Divider(height: 0.0),
             // - SERVICES

@@ -8,6 +8,7 @@ import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
 import 'package:image_picker/image_picker.dart' show PickedFile;
+import 'package:jobee/screens/screen05_profile/5.0_profile_screen.dart';
 import 'package:jobee/services/service01_database/aux_app_user_data.dart' show AppUserData;
 import 'package:jobee/services/service03_storage/3.0_storage.dart' show storageService;
 import 'package:jobee/screens/widgets/custom_material_widgets/ink_splash/custom_icon_button_ink_splash.dart' show CustomIconButtonInkSplash;
@@ -15,8 +16,7 @@ import 'package:jobee/screens/widgets/dialogs/confirmation_dialog.dart' show sho
 import 'package:jobee/screens/widgets/loaders/in_place_loader.dart' show InPlaceLoader;
 import 'package:jobee/screens/widgets/media_files.dart' show showProfileImageActionSheet;
 
-import '5.0_profile_detailed_screen.dart' show ProfileDetailedScreen;
-import '5.1_profile_avatar_fullscreen.dart' show ProfileAvatarFullScreen;
+import 'aux_profile_avatar_fullscreen.dart' show ProfileAvatarFullScreen;
 import 'global_variables_profile.dart' show ProfileAsyncGlobals, ProfileSyncGlobals;
 
 /// Class for the profile avatar shown inside an outer widget
@@ -25,13 +25,13 @@ class ProfileAvatar extends StatefulWidget {
   final Color borderColor;
   final bool isHero;
   final String? heroTag;
-  final bool isProfileDetailedAvatar;
+  final void Function()? goToProfileCallback;
 
   final double borderWidth;
   final double avatarTextFontSize;
 
   const ProfileAvatar({Key? key, required this.appUserData, required this.borderColor,
-    this.isProfileDetailedAvatar = false, this.borderWidth = 3.0, this.isHero = false,
+    this.borderWidth = 3.0, this.isHero = false, this.goToProfileCallback,
     this.heroTag, this.avatarTextFontSize = 28.0}) : super(key: key);
 
   @override
@@ -294,24 +294,24 @@ class _ProfileAvatarState extends State<ProfileAvatar> with TickerProviderStateM
         height: 200,
         child: InkWell(
           onTap: () {
-            // if we're already in the detailed profile view
-            if (widget.isProfileDetailedAvatar) {
-              // navigate to a widget with a full-screen image
-              Navigator.push(
-                context,
-                PageRouteBuilder<dynamic>(
-                  pageBuilder: (BuildContext context, Animation<double> a, Animation<double> b) => ProfileAvatarFullScreen(
-                    profileAvatar: widget,
-                    heroTag: widget.heroTag!,
-                    handleProfileAvatarUploadIntent: _handleProfileAvatarUploadIntent,
-                  ),
-                  transitionDuration: const Duration(milliseconds: 500),
-                ),
-              );
+            // if the profile avatar is not hero
+            if (!widget.isHero) {
+              // call go-to-profile callback action (if provided) and return
+              if (widget.goToProfileCallback != null) widget.goToProfileCallback!();
               return;
             }
-            // else, we assume the user wants to navigate to the detailed profile view
-            Navigator.push(context, CupertinoPageRoute<dynamic>(builder: (_) => ProfileDetailedScreen(appUserData: widget.appUserData)));
+            // navigate to a widget with a full-screen image
+            Navigator.push(
+              context,
+              PageRouteBuilder<dynamic>(
+                pageBuilder: (BuildContext context, Animation<double> a, Animation<double> b) => ProfileAvatarFullScreen(
+                  profileAvatar: widget,
+                  heroTag: widget.heroTag!,
+                  handleProfileAvatarUploadIntent: _handleProfileAvatarUploadIntent,
+                ),
+                transitionDuration: const Duration(milliseconds: 500),
+              ),
+            );
           },
         ),
       ),

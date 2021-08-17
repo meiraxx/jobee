@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 Widget appBarButton({ required BuildContext context, String? text, IconData? iconData, Image? image,
-  String? tooltip, Color? color, required Function() onClicked }) {
+  String? tooltip, Color? color, required Function() onClicked, Color? customSplashColor, Color? customHighlightColor }) {
   assert(text!=null || iconData!=null || image != null);
   
   if (text != null) {
@@ -85,8 +85,8 @@ Widget appBarButton({ required BuildContext context, String? text, IconData? ico
         ),
         tooltip: tooltip,
         color: color,
-        splashColor: Theme.of(context).splashColor,
-        highlightColor: Theme.of(context).highlightColor,
+        splashColor: customSplashColor ?? Theme.of(context).splashColor,
+        highlightColor: customHighlightColor ?? Theme.of(context).highlightColor,
         splashRadius: 20.0,
         onPressed: onClicked,
       );

@@ -7,22 +7,23 @@ class AppUserData {
   final bool? hasRegisteredPublicData;
   final bool? hasRegisteredPersonalData;
 
-  // appUserData variables
+  // appUserData public data variables
   final String? userName;
   final String? firstName;
   final String? lastName;
   final String? gender;
   final String? birthDay;
+  final String? about;
+
+  // appUserData private data variables
   final String? phoneCountryDialCode;
   final String? phoneNumber;
-
   // TODO-BackEnd: transform all firstName and lastName first character to uppercase
   // TODO-BackEnd: allow only firstName and lastName with letters or letters with hyphens in-between
   // TODO-BackEnd: transform all userName characters to lowercase
 
-  AppUserData({ required this.uid, required this.email, this.hasRegisteredPublicData,
-    this.hasRegisteredPersonalData,
-    this.userName, this.firstName, this.lastName, this.gender, this.birthDay,
+  AppUserData({ required this.uid, required this.email, this.hasRegisteredPublicData, this.hasRegisteredPersonalData,
+    this.userName, this.firstName, this.lastName, this.gender, this.birthDay, this.about,
     this.phoneCountryDialCode, this.phoneNumber });
 
   @override

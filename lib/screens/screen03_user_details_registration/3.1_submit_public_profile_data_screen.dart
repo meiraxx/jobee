@@ -311,7 +311,7 @@ class _SubmitPublicProfileDataScreenState extends State<SubmitPublicProfileDataS
                                     final DateTime? picked = await showDatePicker(
                                       context: context,
                                       // initialDate is set to
-                                      initialDate: _birthDay??DateTime(today.year-18, today.month, today.day),
+                                      initialDate: _birthDay ?? DateTime(today.year-18, today.month, today.day),
                                       // assumption: no person above 120
                                       // years-old will be using this app
                                       // TODO-BackEnd: force age between below 120

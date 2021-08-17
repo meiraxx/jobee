@@ -25,15 +25,14 @@ class _ProfileAvatarFullScreenState extends State<ProfileAvatarFullScreen> with 
         backgroundColor: Colors.black,
         leading: appBarButton(context: context, iconData: Icons.arrow_back, onClicked: () {
           Navigator.pop(context);
-        }, color: Colors.white),
+        }, color: Colors.white, customSplashColor: Colors.white24, customHighlightColor: Colors.white24),
         title: const Text("Profile picture", style: TextStyle(color: Colors.white)),
         elevation: 0.0,
         actions: <Widget>[
           appBarButton(context: context, iconData: Icons.edit, onClicked: () async {
             final bool requiresUpdate = await widget.handleProfileAvatarUploadIntent();
-            print(requiresUpdate);
             if (requiresUpdate) Navigator.pop(context);
-          }, color: Colors.white),
+          }, color: Colors.white, customSplashColor: Colors.white24, customHighlightColor: Colors.white24),
         ],
       ),
       body: Column(

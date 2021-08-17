@@ -5,8 +5,9 @@ import 'aux_profile_avatar.dart' show ProfileAvatar;
 
 class ProfileSummarized extends StatelessWidget {
   final AppUserData appUserData;
+  final void Function()? goToProfileCallback;
 
-  const ProfileSummarized({Key? key, required this.appUserData}) : super(key: key);
+  const ProfileSummarized({Key? key, required this.appUserData, this.goToProfileCallback}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +28,7 @@ class ProfileSummarized extends StatelessWidget {
     child: ProfileAvatar(
       appUserData: this.appUserData,
       borderColor: Colors.transparent,
+      goToProfileCallback: this.goToProfileCallback,
     ),
   );
 
