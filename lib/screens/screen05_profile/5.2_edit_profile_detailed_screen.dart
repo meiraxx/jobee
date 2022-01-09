@@ -5,6 +5,7 @@ import 'package:jobee/services/service01_database/aux_app_user_data.dart' show A
 import 'package:jobee/screens/widgets/input/date_picker_form_field_widget.dart' show DatePickerFormFieldWidget;
 import 'package:jobee/screens/widgets/input/dropdown_button_form_field_widget.dart' show DropdownButtonFormFieldWidget;
 import 'package:jobee/screens/widgets/input/text_form_field_widget.dart' show TextFormFieldWidget;
+import 'package:jobee/utils/type_utils.dart' show convertStringToDateTime;
 
 import 'aux_profile_avatar.dart' show ProfileAvatar;
 
@@ -47,8 +48,13 @@ class _EditProfileDetailedScreenState extends State<EditProfileDetailedScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
+                Align(
+                  alignment: Alignment.topRight,
+                  child: _buildToggleProfileViewButton(), // height: 48.0
+                ),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(horizontalPadding, topPadding, horizontalPadding, 0.0),
+                  //padding: const EdgeInsets.fromLTRB(horizontalPadding, topPadding, horizontalPadding, 0.0),
+                  padding: const EdgeInsets.symmetric(horizontal: horizontalPadding),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -108,7 +114,7 @@ class _EditProfileDetailedScreenState extends State<EditProfileDetailedScreen> {
                   children: <Widget>[
                     _buildSaveButton(),
                     const SizedBox(width: 8.0),
-                    _buildToggleProfileViewButton(),
+                    _buildCancelProfileEditButton(),
                   ],
                 ),
               ],
@@ -119,12 +125,27 @@ class _EditProfileDetailedScreenState extends State<EditProfileDetailedScreen> {
     );
   }
 
-  Widget _buildToggleProfileViewButton() => TextButton(
+  Widget _buildCancelProfileEditButton() => TextButton(
     onPressed: () {
       widget.toggleProfileViewCallback();
     },
     child: Text(
       "Cancel",
+      style: TextStyle(color: Theme.of(context).colorScheme.primaryVariant),
+    ),
+  );
+
+  Widget _buildToggleProfileViewButton() => TextButton.icon(
+    onPressed: () {
+      widget.toggleProfileViewCallback();
+    },
+    // icon and label reversed
+    label: Icon(
+      Icons.remove_red_eye_sharp,
+      color: Theme.of(context).colorScheme.primaryVariant,
+    ),
+    icon: Text(
+      "View Profile",
       style: TextStyle(color: Theme.of(context).colorScheme.primaryVariant),
     ),
   );
@@ -245,6 +266,7 @@ class _EditProfileDetailedScreenState extends State<EditProfileDetailedScreen> {
   Widget _buildBirthDayEditField() => DatePickerFormFieldWidget(
     label: 'Birthday',
     text: widget.appUserData.birthDay!,
+    initialDate: convertStringToDateTime(widget.appUserData.birthDay!),
     validate: () {},
   );
 

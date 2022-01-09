@@ -120,7 +120,7 @@ class _ViewProfileDetailedScreenState extends State<ViewProfileDetailedScreen> {
       color: Theme.of(context).colorScheme.primaryVariant,
     ),
     icon: Text(
-      "Edit",
+      "Edit Profile",
       style: TextStyle(color: Theme.of(context).colorScheme.primaryVariant),
     ),
   );

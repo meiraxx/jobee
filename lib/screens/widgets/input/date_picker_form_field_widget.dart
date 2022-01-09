@@ -57,16 +57,16 @@ class _DatePickerFormFieldWidgetState extends State<DatePickerFormFieldWidget> {
           initialDate: _currentDate ?? widget.initialDate ?? DateTime(today.year-18, today.month, today.day),
           // assumption: no person above 120
           // years-old will be using this app
-          // TODO-BackEnd: force age between below 120
+          // TODO-BackEnd: force age below 120
           firstDate: widget.firstDate ?? DateTime(today.year-120, today.month, today.day),
           // assumption: it should be a requirement to be
           // at least 18 years-old to be using this app
-          // TODO-BackEnd: force age between above 16
+          // TODO-BackEnd: force age above 16
           lastDate: widget.lastDate ?? DateTime(today.year-18, today.month, today.day),
           locale: userLocale,
         );
-        /* if date isn't null and isn't the same picked before,
-                                                  * build the page again with the picked value */
+
+        // if date isn't null and isn't the same picked before, build the page again with the picked value
         if(picked != null && picked != _currentDate) {
           _currentDate = picked;
           _controller.value = TextEditingValue(
