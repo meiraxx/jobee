@@ -52,6 +52,8 @@ class _SubmitPersonalProfileDataScreenState extends State<SubmitPersonalProfileD
 
   @override
   Widget build(BuildContext context) {
+    // TODO: after this screen, go to a phone OTP validator screen
+
     final MediaQueryData queryData = MediaQuery.of(context);
     // WIDGETS
     final PreferredSizeWidget appBar = AppBar(
@@ -212,10 +214,10 @@ class _SubmitPersonalProfileDataScreenState extends State<SubmitPersonalProfileD
 
                                       await InPlaceLoader.extendLoadingDuration(const Duration(seconds: 1));
                                       try {
-                                        await DatabaseService(uid: appUserData.uid, email: appUserData.email).updatePersonalUserData(
+                                        await DatabaseService(uid: appUserData.uid, email: appUserData.email).submitUserPersonalData(
                                           hasRegisteredPersonalData: true,
                                           phoneCountryDialCode: _phoneCountryDialCode,
-                                          phoneNumber: _phoneNumber,
+                                          phoneNumber: _phoneNumber!,
                                         );
                                       } on Exception catch(e) {
                                         // grab the exception message and remove

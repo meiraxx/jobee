@@ -160,7 +160,7 @@ class _SubmitPublicProfileDataScreenState extends State<SubmitPublicProfileDataS
     // app user data
     final AppUserData appUserData = Provider.of<AppUserData>(context);
     if (appUserData.hasRegisteredPublicData == null) return const TextLoader(text: "Loading initial user data...");
-    if (appUserData.hasRegisteredPersonalData == true) return const SubmitPersonalProfileDataScreen();
+    if (appUserData.hasRegisteredPublicData == true) return const SubmitPersonalProfileDataScreen();
 
     // if appUserData.hasRegisteredPublicData false, then we present the public data form
     return GestureDetector(
@@ -379,12 +379,12 @@ class _SubmitPublicProfileDataScreenState extends State<SubmitPublicProfileDataS
 
                                 await InPlaceLoader.extendLoadingDuration(const Duration(seconds: 1));
                                 try {
-                                  await DatabaseService(uid: appUserData.uid, email: appUserData.email).updatePublicUserData(
+                                  await DatabaseService(uid: appUserData.uid, email: appUserData.email).submitUserPublicData(
                                     hasRegisteredPublicData: true,
                                     userName: _userNameController.text,
                                     firstName: _firstNameController.text,
                                     lastName: _lastNameController.text,
-                                    gender: _gender,
+                                    gender: _gender!,
                                     birthDay: _birthDayController.text,
                                   );
                                 } on Exception catch (e) {

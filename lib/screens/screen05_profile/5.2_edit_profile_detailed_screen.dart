@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:jobee/screens/widgets/buttons/app_bar_button.dart' show appBarButton;
+import 'package:jobee/screens/widgets/loaders/in_place_loader.dart';
 import 'package:jobee/screens/widgets/size_provider.dart';
+import 'package:jobee/services/service01_database/1.0_database.dart';
 import 'package:jobee/services/service01_database/aux_app_user_data.dart' show AppUserData;
 import 'package:jobee/screens/widgets/input/date_picker_form_field_widget.dart' show DatePickerFormFieldWidget;
 import 'package:jobee/screens/widgets/input/dropdown_button_form_field_widget.dart' show DropdownButtonFormFieldWidget;
 import 'package:jobee/screens/widgets/input/text_form_field_widget.dart' show TextFormFieldWidget;
+import 'package:jobee/utils/input_field_validation.dart';
 import 'package:jobee/utils/type_utils.dart' show convertStringToDateTime;
 
 import 'aux_profile_avatar.dart' show ProfileAvatar;
@@ -22,6 +25,41 @@ class EditProfileDetailedScreen extends StatefulWidget {
 }
 
 class _EditProfileDetailedScreenState extends State<EditProfileDetailedScreen> {
+  // Form constants
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  bool _loading = false;
+  bool _formNotSubmitted = true;
+
+  // text field state
+  final TextEditingController _userNameController = TextEditingController();
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
+  final TextEditingController _birthDayController = TextEditingController();
+  String? _gender;
+  final List<String> _genders = <String>['Male', 'Female', 'Other', "I'd rather not say"];
+  DateTime? _birthDay;
+
+  // field error state
+  double _errorSizedBoxSizeUserName = 0.0;
+  double _errorSizedBoxSizeFirstName = 0.0;
+  double _errorSizedBoxSizeLastName = 0.0;
+  double _errorSizedBoxSizeGender = 0.0;
+  double _errorSizedBoxSizeBirthday = 0.0;
+
+  // error state - field padding correction
+  final double _birthDayTopPadding = 4.0;
+  final bool _spacedFormFields = false;
+
+  // back-end error state
+  String _submissionError = '';
+  double _submissionErrorSizedBoxHeight = 0.0;
+
+  // Open Dropdown
+  final GlobalKey _dropdownButtonKey = GlobalKey();
+
+  genderUpdateCallback(String gender) {
+    _gender = gender;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +70,13 @@ class _EditProfileDetailedScreenState extends State<EditProfileDetailedScreen> {
     final double profilePageHeight = queryData.size.height;
     const double profileAvatarDiameter = 40.0*2 + 3.0*2; // profile avatar radius * 2 + avatar border * 2
     const double toggleProfileViewButtonHeight = 48.0;
+
+    // etc.
+    final DateTime today = DateTime.now();
+    final Locale userLocale = Localizations.localeOf(context);
+
+    // app user data
+    final AppUserData appUserData = widget.appUserData;
 
     return GestureDetector(
       onTap: () {
@@ -114,7 +159,7 @@ class _EditProfileDetailedScreenState extends State<EditProfileDetailedScreen> {
                   children: <Widget>[
                     _buildSaveButton(),
                     const SizedBox(width: 8.0),
-                    _buildCancelProfileEditButton(),
+                    _buildCancelButton(),
                   ],
                 ),
               ],
@@ -124,16 +169,6 @@ class _EditProfileDetailedScreenState extends State<EditProfileDetailedScreen> {
       ),
     );
   }
-
-  Widget _buildCancelProfileEditButton() => TextButton(
-    onPressed: () {
-      widget.toggleProfileViewCallback();
-    },
-    child: Text(
-      "Cancel",
-      style: TextStyle(color: Theme.of(context).colorScheme.primaryVariant),
-    ),
-  );
 
   Widget _buildToggleProfileViewButton() => TextButton.icon(
     onPressed: () {
@@ -261,6 +296,7 @@ class _EditProfileDetailedScreenState extends State<EditProfileDetailedScreen> {
     initialOption: widget.appUserData.gender,
     onChanged: (String? gender) {},
     validate: () {},
+    updateCallback: genderUpdateCallback,
   );
 
   Widget _buildBirthDayEditField() => DatePickerFormFieldWidget(
@@ -278,10 +314,52 @@ class _EditProfileDetailedScreenState extends State<EditProfileDetailedScreen> {
     maxLines: 4,
   );
 
+  Widget _buildCancelButton() => TextButton(
+    onPressed: () {
+      widget.toggleProfileViewCallback();
+    },
+    child: Text(
+      "Cancel",
+      style: TextStyle(color: Theme.of(context).colorScheme.primaryVariant),
+    ),
+  );
+
   Widget _buildSaveButton() => Center(
     child: ElevatedButton(
       onPressed: () async {
         // save logic
+
+        _formNotSubmitted = false;
+        //if (allFormFieldsValidated()) {
+        if (true) {
+          // while submitting data, set loading to true
+          _loading = true;
+          if (this.mounted) setState(() {});
+
+          await InPlaceLoader.extendLoadingDuration(const Duration(seconds: 1));
+          try {
+            await DatabaseService(uid: widget.appUserData.uid, email: widget.appUserData.email).updateUserProfileData(
+              firstName: _firstNameController.text,
+              lastName: _lastNameController.text,
+              gender: _gender!,
+              birthDay: _birthDayController.text,
+              about: '',
+            );
+          } on Exception catch (e) {
+            // grab the exception message and remove
+            // the "Exception: " extra text
+            //_submissionError = e.toString().replaceFirst("Exception: ", '');
+            //_submissionErrorSizedBoxHeight = defaultSubmissionErrorHeight;
+            if (this.mounted) setState(() {});
+          }
+          // after everything is done, set _loading back to false
+          _loading = false;
+          if (this.mounted) setState(() {});
+        }
+        // rebuild page on submit
+        if (this.mounted) setState(() {});
+        // after save is done, toggle back to profile view mode
+        widget.toggleProfileViewCallback();
       },
       style: ButtonStyle(
         backgroundColor: MaterialStateProperty.all( Theme.of(context).colorScheme.primaryVariant ),

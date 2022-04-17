@@ -6,6 +6,7 @@ class DropdownButtonFormFieldWidget extends StatefulWidget {
   final String? initialOption;
   final ValueChanged<String?> onChanged;
   final String? Function() validate;
+  final dynamic Function(String) updateCallback;
 
   const DropdownButtonFormFieldWidget({
     Key? key,
@@ -14,6 +15,7 @@ class DropdownButtonFormFieldWidget extends StatefulWidget {
     required this.initialOption,
     required this.onChanged,
     required this.validate,
+    required this.updateCallback,
   }) : super(key: key);
 
   @override
@@ -47,6 +49,7 @@ class _DropdownButtonFormFieldWidgetState extends State<DropdownButtonFormFieldW
         onChanged: (String? optionVal) {
           widget.onChanged(optionVal);
           _currentOption = optionVal;
+          widget.updateCallback(_currentOption ?? widget.initialOption ?? '');
           setState((){});
         },
         items: widget.optionList.map((String option) {

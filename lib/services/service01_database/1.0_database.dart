@@ -19,7 +19,7 @@ class DatabaseService {
 
     // TODO-BackEnd: Firestore must expect these same exact fields, along with two false values upfront ('hasRegisteredPublicData' and 'hasRegisteredPersonalData')
     // TODO-BackEnd: Firestore must keep track of the values of 'hasRegisteredPublicData' and 'hasRegisteredPersonalData' to enforce that they change only once to true,
-    //  and only with the expected set fields, as explained in the updatePublicUserData() and updatePersonalUserData() back-end to do list
+    //  and only with the expected set fields, as explained in the submitPublicUserData() and submitPersonalUserData() back-end to do list
     await userCollection.doc(uid).set(<String, dynamic>{
       'email': this.email,
       'authProvider': authProvider,
@@ -29,8 +29,8 @@ class DatabaseService {
   }
 
   // TODO-BackEnd: Firestore must throw an error when a document not owned by the user is write-accessed
-  Future<void> updatePublicUserData({required bool hasRegisteredPublicData, String? userName, String? firstName, String? lastName,
-      String? gender, String? birthDay}) async {
+  Future<void> submitUserPublicData({required bool hasRegisteredPublicData, required String userName, required String firstName, required String lastName,
+      required String gender, required String birthDay}) async {
 
     // TODO-BackEnd: Firestore must expect these same exact fields, with the 'hasRegisteredPublicData' true value
     final Map<String, dynamic> updatesMap = <String, dynamic>{
@@ -42,20 +42,15 @@ class DatabaseService {
       'birthDay': birthDay,
     };
 
-    // eliminate null values
-    updatesMap.removeWhere((String key, dynamic value) => value==null);
-
     // TODO-BackEnd: Firestore must disallow the creation of a non-unique username
-    if (userName!=null) {
-      final bool userNameAvailable = await _isUserNameAvailable(userName);
-      if (!userNameAvailable) throw Exception('The username "$userName" has already been taken. Please choose another one.');
-    }
+    final bool userNameAvailable = await _isUserNameAvailable(userName);
+    if (!userNameAvailable) throw Exception('The username "$userName" has already been taken. Please choose another one.');
 
     await userCollection.doc(uid).update(updatesMap);
   }
 
   // TODO-BackEnd: Firestore must throw an error when a document not owned by the user is write-accessed
-  Future<void> updatePersonalUserData({required bool hasRegisteredPersonalData, String? phoneCountryDialCode, String? phoneNumber}) async {
+  Future<void> submitUserPersonalData({required bool hasRegisteredPersonalData, required String phoneCountryDialCode, required String phoneNumber}) async {
 
     // TODO-BackEnd: Firestore must expect these same exact fields, with the 'hasRegisteredPersonalData' true value
     final Map<String, dynamic> updatesMap = <String, dynamic>{
@@ -64,17 +59,31 @@ class DatabaseService {
       'phoneNumber': phoneNumber
     };
 
-    // eliminate null values
-    updatesMap.removeWhere((String key, dynamic value) => value==null);
-
     // TODO-BackEnd: Firestore must disallow the creation of a non-unique phone complete number (phone country dial code + phone number)
-    if (phoneCountryDialCode!=null && phoneNumber!=null) {
-      final bool phoneCompleteNumberAvailable = await _isPhoneCompleteNumberAvailable(phoneCountryDialCode, phoneNumber);
-      if (!phoneCompleteNumberAvailable) {
-        throw Exception("The phone number '$phoneCountryDialCode $phoneNumber' has already been registered. "
-          "Please register another number.");
-      }
+    final bool phoneCompleteNumberAvailable = await _isPhoneCompleteNumberAvailable(phoneCountryDialCode, phoneNumber);
+    if (!phoneCompleteNumberAvailable) {
+      throw Exception("The phone number '$phoneCountryDialCode $phoneNumber' has already been registered. "
+        "Please register another number.");
     }
+
+    await userCollection.doc(uid).update(updatesMap);
+  }
+
+  // TODO-BackEnd: Firestore must throw an error when a document not owned by the user is write-accessed
+  Future<void> updateUserProfileData({required String firstName, required String lastName,
+    required String gender, required String birthDay, required String about}) async {
+
+    // TODO-BackEnd: Firestore must expect these same exact fields
+    final Map<String, dynamic> updatesMap = <String, dynamic>{
+      'firstName': firstName,
+      'lastName': lastName,
+      'gender': gender,
+      'birthDay': birthDay,
+      'about': about,
+    };
+
+    // eliminate null values
+    //updatesMap.removeWhere((String key, dynamic value) => value==null);
 
     await userCollection.doc(uid).update(updatesMap);
   }
